@@ -1,0 +1,13 @@
+#version 330 core
+layout (location = 0) in vec2 vertIn;
+layout (location = 1) in vec2 vertUV;
+precision highp float;
+                
+uniform vec2 offset;
+
+out vec2 UV;
+
+void main() {
+    gl_Position = vec4((vertIn.x + offset.x), vertIn.y + offset.y, 0.0, 1.0);
+    UV = vertUV;
+}
