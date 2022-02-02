@@ -51,23 +51,15 @@ public class Window {
     public Window(GUILayer layer) {
         this.imGuiLayer = layer;
         runMan = new RuntimeManager(this, this.imGuiLayer);
-        this.imGuiLayer.initLayer(this, runMan);
-        this.setGen = new SettlementGenerator();
-//        Shape s = new Shape(new Point[]{
-//            new Point(0f, 0f), new Point(1f, 0f),
-//            new Point(0f, 1f),
-//            new Point(1f, 0f), new Point(1f, 1f),
-//            new Point(0f, 1f)
-//        });
 
-        //draw = new Shape[]{s,s.translateCopyShape(0.2f, 0), s.translateCopyShape(0.4f, 0),s.translateCopyShape(0.6f, 0),s.translateCopyShape(0.8f, 0)};
+        this.setGen = new SettlementGenerator();
     }
 
     public void init() {
         this.initWindow();
         WindowVisualizer.WindowVisualizerInit();
         this.initImGui();
-
+        this.imGuiLayer.initLayer(this, runMan);
         imGuiGlfw.init(windowPtr, true);
         imGuiGl3.init();
         this.shadersInit();
@@ -136,7 +128,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             openGlRun();
-
+            runMan.update();
             imGuiGlfw.newFrame();
             ImGui.newFrame();
             imGuiLayer.imgui();

@@ -5,9 +5,15 @@
 package settlementmapmaker;
 
 import imgui.ImGui;
+import imgui.ImGuiStyle;
+import imgui.ImColor;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiCond;
+import imgui.flag.ImGuiInputTextFlags;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
+import imgui.type.ImString;
 
 /**
  *
@@ -30,7 +36,10 @@ public class GUILayer {
     private Window myWindow;
     private RuntimeManager runMan;
 
-    private int blue = ImGui.colorConvertFloat4ToU32(0.6f, 0.6f, 1, 1);
+    private int warmParchment = ImColor.intToColor(150, 109, 80, 255);
+    private int parchment = ImColor.intToColor(230, 203, 156, 255);
+
+    private ImString settlementName = new ImString();
 
     public GUILayer() {
 
@@ -39,6 +48,10 @@ public class GUILayer {
     public void initLayer(Window window, RuntimeManager runMan) {
         this.myWindow = window;
         this.runMan = runMan;
+        
+//        ImGuiStyle style = ImGui.getStyle();
+//        style.setColor(ImGuiCol.Button, warmParchment);
+//        style.setColor(ImGuiCol.WindowBg, parchment);
     }
 
     public void imgui() {
@@ -69,34 +82,41 @@ public class GUILayer {
         ImGui.end();
     }
 
+    private ImBoolean showNewSetWin = new ImBoolean(false);
+
     public void toolBar() {
         ImGui.beginMainMenuBar();
 
-        if (ImGui.beginPopup("newSettle")) {
-            ImGui.text("this is a test message this will be replaced later.");
-            ImGui.endPopup();
-        }
+        ImGui.setNextWindowPos(runMan.getWidth() / 2, runMan.getHeight() / 2);
 
         ImGui.setNextWindowPos(0, 20);
-        boolean openNewSettle = false;
+
         if (ImGui.beginPopup("fileMenu")) {
             if (ImGui.button("new", 50, 20)) {
-                openNewSettle = true;
-
+                showNewSetWin.set(true);
             }
             ImGui.button("open", 50, 20);
             ImGui.endPopup();
         }
+        
 
-        if (openNewSettle) {
-            ImGui.openPopup("newSettle");
+        if (showNewSetWin.get()) {
+            if (!ImGui.begin("settlementCreate", showNewSetWin, ImGuiWindowFlags.NoCollapse)) {
+                ImGui.end();
+            } else {
+                
+                ImGui.text("test");
+                ImGui.inputText("Name", settlementName);
+                ImGui.button("Create");
+                ImGui.end();
+            }
         }
 
         if (ImGui.button("file")) {
             ImGui.openPopup("fileMenu");
         }
 
-        ImGui.textColored(blue, "no file open");
+        ImGui.textColored(parchment, "no file open");
 
         ImGui.endMainMenuBar();
     }
