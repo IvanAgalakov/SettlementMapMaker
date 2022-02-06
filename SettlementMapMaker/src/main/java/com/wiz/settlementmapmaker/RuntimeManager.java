@@ -5,6 +5,9 @@
 package com.wiz.settlementmapmaker;
 
 import imgui.type.ImString;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
 
@@ -15,11 +18,11 @@ import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
 public class RuntimeManager {
 
     public Settlement currentSettlement;
-    private ImString settlementName = new ImString();
+    private ImString pendingSettlementName = new ImString();
+    private ImString pendingSettlementFolderPath = new ImString();
 
-    private ImString settlementFolderDirectory = new ImString();
-    private ImString settlementFileDirectory = new ImString();
-    
+    private ImString settlementFilePath = new ImString();
+
     private Window window;
     private GUILayer gui;
     private int[] windowWidth = new int[1];
@@ -48,8 +51,19 @@ public class RuntimeManager {
 
     }
 
-    public void makeNewSettlement(String name) {
+    public void createNewSettlement(String name, String path) {
+
+        System.out.println(name);
         currentSettlement = new Settlement(name);
+        settlementFilePath.set(path);
+        String fileDir = pendingSettlementFolderPath.get() + "\\" + name + ".stmap";
+        FileManager.saveSettlement(currentSettlement, fileDir);
+        this.setSettlementFileDirectory(fileDir);
+
+    }
+
+    public Settlement getCurrentSettlement() {
+        return currentSettlement;
     }
 
     public int getWidth() {
@@ -76,24 +90,29 @@ public class RuntimeManager {
         return lineWidth;
     }
 
-    public ImString getSettlementName() {
-        return settlementName;
+    public ImString getPendingSettlementName() {
+        return pendingSettlementName;
     }
 
-    public ImString getSettlementFolderDirectory() {
-        return settlementFolderDirectory;
+    public ImString getPendingSettlementFolderDirectory() {
+        return pendingSettlementFolderPath;
     }
-    
-    public void setSettlementFolderDirectory(String loc) {
-        settlementFolderDirectory.set(loc);
+
+    public void setPendingSettlementFolderDirectory(String loc) {
+        pendingSettlementFolderPath.set(loc);
     }
-    
+
     public ImString getSettlementFileDirectory() {
-        return settlementFileDirectory;
+        return settlementFilePath;
     }
-    
+
     public void setSettlementFileDirectory(String loc) {
-        settlementFileDirectory.set(loc);
+        settlementFilePath.set(loc);
+    }
+
+    public void openSettlementFile(String loc) {
+        settlementFilePath.set(loc);
+        currentSettlement = FileManager.openSettlement(loc);
     }
 
     public boolean getWindowFocus() {

@@ -18,7 +18,7 @@ public class Settlement {
     private Obstacle[] cityObstacles;
     
     public Settlement(String name) {
-        
+        this.name = name;
     }
     
     public void setName(String name) {

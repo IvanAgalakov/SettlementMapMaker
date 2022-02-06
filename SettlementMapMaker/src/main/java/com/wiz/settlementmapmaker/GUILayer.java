@@ -19,6 +19,7 @@ import java.awt.event.FocusListener;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -91,7 +92,26 @@ public class GUILayer {
             if (ImGui.button("new", 50, 20)) {
                 showNewSetWin.set(true);
             }
-            ImGui.button("open", 50, 20);
+            if (ImGui.button("open", 50, 20) && !this.fileChooserOpen) {
+                SwingUtilities.invokeLater(() -> {
+                    JFrame j = new JFrame();
+                    j.setAlwaysOnTop(true);
+                    JFileChooser fileChooser = new JFileChooser();
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Settlement Map Files", "stmap", "settlement map");
+                    fileChooser.setFileFilter(filter);
+                    this.fileChooserOpen = true;
+                    //fileChooser.setFileSelectionMode(JFileChooser.);
+                    int choice = fileChooser.showOpenDialog(j);
+
+                    if (choice == JFileChooser.APPROVE_OPTION) {
+                        // set the label to the path of the selected file
+                        runMan.openSettlementFile(fileChooser.getSelectedFile().getAbsolutePath());
+                    }
+
+                    this.fileChooserOpen = false;
+                });
+
+            }
             ImGui.endPopup();
         }
 
@@ -103,7 +123,11 @@ public class GUILayer {
             ImGui.openPopup("fileMenu");
         }
 
-        ImGui.textColored(parchment, "no file open");
+        if (runMan.getCurrentSettlement() == null) {
+            ImGui.textColored(parchment, "no file open");
+        } else {
+            ImGui.textColored(parchment, "file opened: " + runMan.getSettlementFileDirectory().get());
+        }
 
         ImGui.endMainMenuBar();
     }
@@ -117,7 +141,7 @@ public class GUILayer {
 
             ImGui.text("To start a new project give your new settlement a name:\n"
                     + "(or just hit the \"Generate Name\" button to generate a random name.)");
-            ImGui.inputText("File Location", runMan.getSettlementFolderDirectory());
+            ImGui.inputText("File Location", runMan.getPendingSettlementFolderDirectory());
             ImGui.sameLine();
 
             if (ImGui.button("choose file location") && !this.fileChooserOpen) {
@@ -131,16 +155,19 @@ public class GUILayer {
 
                     if (choice == JFileChooser.APPROVE_OPTION) {
                         // set the label to the path of the selected file
-                        runMan.setSettlementFolderDirectory(fileChooser.getSelectedFile().getAbsolutePath());
+                        runMan.setPendingSettlementFolderDirectory(fileChooser.getSelectedFile().getAbsolutePath());
                     }
 
                     this.fileChooserOpen = false;
                 });
             }
 
-            ImGui.inputText("Name", runMan.getSettlementName());
+            ImGui.inputText("Name", runMan.getPendingSettlementName());
             ImGui.button("Generate Name");
-            ImGui.button("Create");
+            if (ImGui.button("Create")) {
+                runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
+                showNewSetWin.set(false);
+            }
             ImGui.end();
         }
     }

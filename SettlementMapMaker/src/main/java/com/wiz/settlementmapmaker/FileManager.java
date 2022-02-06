@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,17 +18,26 @@ import java.nio.file.Path;
 public class FileManager {
     
     
-    public static void saveSettlement(Settlement settle, String path) throws IOException {
+    public static void saveSettlement(Settlement settle, String path) {
         Gson settleGson = new Gson();
         String save = settleGson.toJson(settle);
-        Files.writeString(Path.of(path), save);
+        try {
+            Files.writeString(Path.of(path), save);
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    public static Settlement openSettlement(String path) throws IOException {
-        String save = Files.readString(Path.of(path));
-        Gson settleGson = new Gson();
-        Settlement settle = settleGson.fromJson(save, Settlement.class);
-        return settle;
+    public static Settlement openSettlement(String path) {
+        try {
+            String save = Files.readString(Path.of(path));
+            Gson settleGson = new Gson();
+            Settlement settle = settleGson.fromJson(save, Settlement.class);
+            return settle;
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     
