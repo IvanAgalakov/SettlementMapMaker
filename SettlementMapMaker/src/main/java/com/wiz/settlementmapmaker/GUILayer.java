@@ -58,7 +58,21 @@ public class GUILayer {
         // adjustmentsWindow();
         toolBar();
         // editWindow();
-
+        if(!runMan.getSettlementFileDirectory().get().equals("")) {
+            settlementManagement();
+        }
+    }
+    
+    public void settlementManagement() {
+        ImGui.setNextWindowSize(500, 400, ImGuiCond.Appearing);
+        ImGui.setNextWindowPos(runMan.getWidth()-500, 20, ImGuiCond.Appearing);
+        ImGui.begin("management");
+        
+        ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
+        ImGui.button("toggle draw menu");
+        
+        
+        ImGui.end();
     }
 
     public void adjustmentsWindow() {

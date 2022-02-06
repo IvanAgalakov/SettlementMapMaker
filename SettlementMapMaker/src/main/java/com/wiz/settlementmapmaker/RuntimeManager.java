@@ -8,6 +8,7 @@ import imgui.type.ImString;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.filechooser.FileSystemView;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
 
@@ -19,7 +20,7 @@ public class RuntimeManager {
 
     public Settlement currentSettlement;
     private ImString pendingSettlementName = new ImString();
-    private ImString pendingSettlementFolderPath = new ImString();
+    private ImString pendingSettlementFolderPath = new ImString(FileSystemView.getFileSystemView().getDefaultDirectory().getPath());
 
     private ImString settlementFilePath = new ImString();
 
@@ -35,6 +36,10 @@ public class RuntimeManager {
     private int[] lineWidth = new int[]{4};
 
     private boolean windowFocused = false;
+    
+    // Settlement Value Alterations
+    private ImString settlementName = new ImString();
+    
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -52,14 +57,17 @@ public class RuntimeManager {
     }
 
     public void createNewSettlement(String name, String path) {
-
         System.out.println(name);
-        currentSettlement = new Settlement(name);
+        setupSettlement(new Settlement(name));
         settlementFilePath.set(path);
         String fileDir = pendingSettlementFolderPath.get() + "\\" + name + ".stmap";
         FileManager.saveSettlement(currentSettlement, fileDir);
         this.setSettlementFileDirectory(fileDir);
-
+    }
+    
+    public void setupSettlement(Settlement s) { // allows the setup of additional valeus which will be altered later by gui interaction
+        currentSettlement = s;
+        settlementName.set(currentSettlement.getName());
     }
 
     public Settlement getCurrentSettlement() {
@@ -112,11 +120,15 @@ public class RuntimeManager {
 
     public void openSettlementFile(String loc) {
         settlementFilePath.set(loc);
-        currentSettlement = FileManager.openSettlement(loc);
+        setupSettlement(FileManager.openSettlement(loc));
     }
 
     public boolean getWindowFocus() {
         return windowFocused;
+    }
+    
+    public ImString getSettlementName() {
+        return this.settlementName;
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
