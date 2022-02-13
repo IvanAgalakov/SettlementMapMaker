@@ -57,7 +57,7 @@ public class Window {
 
     public void init() {
         this.initWindow();
-        WindowVisualizer.WindowVisualizerInit();
+        WindowVisualizer.WindowVisualizerInit(this);
         this.initImGui();
         this.imGuiLayer.initLayer(this, runMan);
         imGuiGlfw.init(windowPtr, true);
@@ -107,7 +107,7 @@ public class Window {
 
     private void initImGui() {
         ImGui.createContext();
-        io = imgui.internal.ImGui.getIO();
+        runMan.initIO(imgui.internal.ImGui.getIO());
     }
 
     private void shadersInit() {
@@ -128,7 +128,6 @@ public class Window {
             glClearColor(0.92f, 0.83f, 0.7f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            openGlRun();
             runMan.update();
             imGuiGlfw.newFrame();
             ImGui.newFrame();
@@ -147,125 +146,13 @@ public class Window {
             GLFW.glfwPollEvents();
         }
     }
-
-    private boolean lastMiddleState = false;
-    private float initMouseX = 0f, initMouseY = 0f;
-    private float initCameraX = 0f, initCameraY = 0f;
-    private float cameraX = 0f, cameraY = 0f;
-    private ImGuiIO io;
-    
-    private float realMouseX = 0f;
-    private float realMouseY = 0f;
-    
-    private float lastLeftPressDelta = 0f;
-
-    private void openGlRun() {
-        int[] width = new int[1], height = new int[1];
-        GLFW.glfwGetWindowSize(windowPtr, width, height);
-        
-        GL33C.glUseProgram(program);
-
-        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
-
-            if (lastMiddleState == false) {
-                initMouseX = io.getMousePosX();
-                initMouseY = io.getMousePosY();
-                initCameraX = cameraX;
-                initCameraY = cameraY;
-            }
-            cameraX = initCameraX + (io.getMousePosX() - initMouseX);
-            cameraY = initCameraY + (io.getMousePosY() - initMouseY);
-            lastMiddleState = true;
-        } else {
-            lastMiddleState = false;
-        }
-        
-        float normx = cameraX / width[0],
-                normy = 1 - cameraY / (float) height[0];
-        GL33C.glUniform2f(GL33C.glGetUniformLocation(program, "offset"), normx * 2 - 1, normy * 2 - 1);
-
-        
-        
-        
-        
-        
-        
-        
-        realMouseX = (((io.getMousePosX()/width[0])*2) - (normx * 2))/runMan.getZoom()[0];
-        realMouseY = -(((io.getMousePosY()/height[0])*2) - (normy * 2 - 2))/runMan.getZoom()[0];
-        
-//        if(imGuiLayer.getEditMode()) {
-//            editMode();
-//        }
-//        
-//        int mod = 0;
-//        if(imGuiLayer.getEditMode()) {
-//            mod = 1;
-//        }
-//        
-//        Point[] cur = new Point[currentShape.size()+mod];
-//        cur = currentShape.toArray(cur);
-//        
-//        if(imGuiLayer.getEditMode()) {
-//            cur[currentShape.size()] = new Point(realMouseX, realMouseY);
-//        }
-        
-        
-        //Shape s = new Shape(cur);
-        
-//        Shape s = new Shape( new Point[] {
-//            new Point(1,0),
-//            new Point(0,0),
-//            new Point(0,1),
-//            new Point(1,0),
-//            new Point(2,3),
-//            new Point(0.1f,2),
-//            new Point(3,2),
-//            new Point(1.2f,3f),
-//            new Point(1,0),
-//            new Point(2,0),
-//            new Point(3,0),
-//            new Point(4,0),
-//            new Point(5,0),
-//            new Point(6,0),
-//            new Point(7,0),
-//            new Point(8,0),
-//            new Point(9,0),
-//            new Point(10,0),
-//        }
-//        );
-        
-//        draw = new Shape[]{s};
-//        if(imGuiLayer.renderBuildings()) {
-//            draw = setGen.convertToBlock(s, imGuiLayer.getMinimumBuildingSize(), imGuiLayer.getMaximumBuildingSize());
-//        }
-        
-//        Shape[] scaledDraw = new Shape[draw.length];
-//        
-//        for (int i = 0; i < draw.length; i++) {
-//            scaledDraw[i] = draw[i].SimulateScaleAroundPoint(imGuiLayer.getZoom(), imGuiLayer.getZoom(), new Point(cameraX / (float) width[0], cameraY / (float) height[0]));
-//        }
-
-        
-       // WindowVisualizer.drawEnclosedLines(scaledDraw, imGuiLayer.getLineWidth());
-       
-    }
-    
-    public void editMode() {
-        if(io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && lastLeftPressDelta <= 0) {
-            this.currentShape.add(new Point(realMouseX, realMouseY));
-            lastLeftPressDelta = 0.1f;
-        } else {
-            lastLeftPressDelta -= io.getDeltaTime();
-        }
-    }
-    
-    public void changeleftPressDelta(float time) {
-        lastLeftPressDelta = 0.3f;
-    }
     
     public long getWindowPointer() {
         return this.windowPtr;
+    }
+    
+    public int getProgram() {
+        return this.program;
     }
 
 }

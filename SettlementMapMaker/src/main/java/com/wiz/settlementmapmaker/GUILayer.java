@@ -4,9 +4,11 @@
  */
 package com.wiz.settlementmapmaker;
 
+import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImColor;
+import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiInputTextFlags;
@@ -26,10 +28,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author 904187003
  */
 public class GUILayer {
-
-    private boolean show = false;
-
-    private boolean editMode = false;
 
     private boolean filePopupShow = false;
 
@@ -55,86 +53,128 @@ public class GUILayer {
     }
 
     public void imgui() {
-        // adjustmentsWindow();
         toolBar();
-        // editWindow();
-        if(!runMan.getSettlementFileDirectory().get().equals("")) {
+        if (!runMan.getSettlementFileDirectory().get().equals("")) {
             settlementManagement();
         }
     }
-    
+
+    private boolean showDrawMenu = false;
+
     public void settlementManagement() {
-        ImGui.setNextWindowSize(500, 400, ImGuiCond.Appearing);
-        ImGui.setNextWindowPos(runMan.getWidth()-500, 20, ImGuiCond.Appearing);
+        ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
+        ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("management");
-        
+
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
-        ImGui.button("toggle draw menu");
-        
-        
+        if (ImGui.button("toggle draw menu")) {
+            showDrawMenu = !showDrawMenu;
+        }
+        if (showDrawMenu) {
+            drawMenu();
+        }
+
         ImGui.end();
     }
 
-    public void adjustmentsWindow() {
-        ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
-        ImGui.begin("Adjustments", new ImBoolean(true));
+    ImInt test = new ImInt();
 
-        ImGui.sliderFloat("Zoom", runMan.getZoom(), 0f, 1f);
+    public void drawMenu() {
+        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowPos(0, 20, ImGuiCond.Once);
+        ImGui.begin("Draw Menu");
 
-        //ImGui.sliderFloat("Minimum Building Size", minBuildingSize, 0.01f, maxBuildingSize[0] - 0.001f);
-        //ImGui.sliderFloat("Maximum Building Size", maxBuildingSize, minBuildingSize[0] + 0.001f, 1f);
-        ImGui.sliderInt("Line Width", runMan.lineWidth(), 1, 20);
-
-        if (ImGui.button("Show Buildings")) {
-            show = !show;
+        if (ImGui.button("Building Drawing Menu")) {
+            if (runMan.getSelectedDrawMenu().get().equals("building")) {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
+            } else {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "building"));
+            }
         }
-        if (show) {
-            ImGui.text("Showing Buildings");
+        if (ImGui.button("Zone Drawing Menu")) {
+            if (runMan.getSelectedDrawMenu().get().equals("zone")) {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
+            } else {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "zone"));
+            }
+        }
+        if (ImGui.button("Obstacle Drawing Menu")) {
+            if (runMan.getSelectedDrawMenu().get().equals("obstacle")) {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
+            } else {
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "obstacle"));
+            }
         }
 
+        ImVec2 pos = ImGui.getWindowPos();
+        pos.set(pos.x + ImGui.getWindowSizeX(), pos.y);
+
+        switch (runMan.getSelectedDrawMenu().get()) {
+            case "building":
+                this.buildingDrawingMenu(pos);
+                break;
+            case "zone":
+                this.zoneDrawingMenu(pos);
+                break;
+            case "obstacle":
+                this.obstacleDrawingMenu(pos);
+                break;
+            default:
+                break;
+        }
+
+        ImGui.end();
+    }
+
+    public void zoneDrawingMenu(ImVec2 pos) {
+        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
+        ImGui.begin("Zone Drawing Menu");
+        ImGui.listBox("Zones", runMan.getSelectedZone(), runMan.getZonesList(), 3);
+        ImGui.button("draw new zone");
+        ImGui.end();
+    }
+
+    public void buildingDrawingMenu(ImVec2 pos) {
+        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
+        ImGui.begin("Building Drawing Menu");
+        ImGui.listBox("Buildings", runMan.getSelectedZone(), runMan.getZonesList(), 3);
+        ImGui.button("draw new building");
+        ImGui.end();
+    }
+
+    public void obstacleDrawingMenu(ImVec2 pos) {
+        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
+        ImGui.begin("Obstacle Drawing Menu");
+        ImGui.listBox("Obstacles", runMan.getSelectedZone(), runMan.getZonesList(), 3);
+        ImGui.button("draw new obstacle");
         ImGui.end();
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);
+    private ImBoolean showPreferencesWin = new ImBoolean(false);
 
-    public void toolBar() {
+    public void toolBar() { // the gui for the bar at the top of the screen, file, edit, window, etc.
         ImGui.beginMainMenuBar();
-
-        ImGui.setNextWindowPos(0, 20);
-
-        if (ImGui.beginPopup("fileMenu")) {
-            if (ImGui.button("new", 50, 20)) {
-                showNewSetWin.set(true);
-            }
-            if (ImGui.button("open", 50, 20) && !this.fileChooserOpen) {
-                SwingUtilities.invokeLater(() -> {
-                    JFrame j = new JFrame();
-                    j.setAlwaysOnTop(true);
-                    JFileChooser fileChooser = new JFileChooser();
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Settlement Map Files", "stmap", "settlement map");
-                    fileChooser.setFileFilter(filter);
-                    this.fileChooserOpen = true;
-                    //fileChooser.setFileSelectionMode(JFileChooser.);
-                    int choice = fileChooser.showOpenDialog(j);
-
-                    if (choice == JFileChooser.APPROVE_OPTION) {
-                        // set the label to the path of the selected file
-                        runMan.openSettlementFile(fileChooser.getSelectedFile().getAbsolutePath());
-                    }
-
-                    this.fileChooserOpen = false;
-                });
-
-            }
-            ImGui.endPopup();
-        }
 
         if (showNewSetWin.get()) {
             newSettlementWindow();
         }
 
-        if (ImGui.button("file")) {
-            ImGui.openPopup("fileMenu");
+        if (showPreferencesWin.get()) {
+            preferencesWindow();
+        }
+
+        if (ImGui.beginMenu("file")) {
+            fileMenu();
+            ImGui.endMenu();
+        }
+
+        if (ImGui.beginMenu("edit")) {
+            editMenu();
+            ImGui.endMenu();
         }
 
         if (runMan.getCurrentSettlement() == null) {
@@ -144,6 +184,97 @@ public class GUILayer {
         }
 
         ImGui.endMainMenuBar();
+    }
+
+    public void editMenu() {
+
+        if (runMan.canUndo()) {
+            if (ImGui.menuItem("undo", "Ctrl+Z")) {
+                runMan.undo();
+            }
+        } else {
+            ImGui.beginDisabled();
+            ImGui.menuItem("undo", "Ctrl+Z");
+            ImGui.endDisabled();
+        }
+
+        if (runMan.canRedo()) {
+            if (ImGui.menuItem("redo", "Ctrl+Y")) {
+                runMan.redo();
+            }
+        } else {
+            ImGui.beginDisabled();
+            ImGui.menuItem("redo", "Ctrl+Y");
+            ImGui.endDisabled();
+        }
+
+        if (ImGui.menuItem("preferences")) {
+            showPreferencesWin.set(true);
+        }
+
+    }
+
+    public void fileMenu() {
+
+        if (ImGui.menuItem("new")) {
+            showNewSetWin.set(true);
+        }
+
+        if (ImGui.menuItem("open") && !this.fileChooserOpen) {
+            SwingUtilities.invokeLater(() -> {
+                JFrame j = new JFrame();
+                j.setAlwaysOnTop(true);
+                JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Settlement Map Files", "stmap", "settlement map");
+                fileChooser.setFileFilter(filter);
+                this.fileChooserOpen = true;
+                //fileChooser.setFileSelectionMode(JFileChooser.);
+                int choice = fileChooser.showOpenDialog(j);
+
+                if (choice == JFileChooser.APPROVE_OPTION) {
+                    // set the label to the path of the selected file
+                    runMan.openSettlementFile(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+
+                this.fileChooserOpen = false;
+            });
+
+        }
+
+        if (runMan.getCurrentSettlement() == null) {
+            ImGui.beginDisabled();
+            ImGui.menuItem("save", "Ctrl+S");
+            ImGui.endDisabled();
+        } else {
+            if (ImGui.menuItem("save", "Ctrl+S")) {
+                runMan.saveCurrentSettlement();
+            }
+        }
+
+    }
+
+    int selectedTab = 0;
+    float[] outlineColor = new float[3];
+    public void preferencesWindow() {
+        ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
+        ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
+        if (!ImGui.begin("preferences", showPreferencesWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
+            ImGui.end();
+        } else {
+            ImGui.beginTabBar("select");
+            if (ImGui.tabItemButton("test")) {
+                selectedTab = 0;
+            }
+            if (ImGui.tabItemButton("color select")) {
+                selectedTab = 1;
+            }
+            ImGui.endTabBar();
+            if(selectedTab == 1) {
+                ImGui.colorEdit3("building outline color", outlineColor);
+            }
+
+            ImGui.end();
+        }
     }
 
     public void newSettlementWindow() {
@@ -184,38 +315,6 @@ public class GUILayer {
             }
             ImGui.end();
         }
-    }
-
-    public void editWindow() {
-        ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
-        ImGui.begin("Tools", new ImBoolean(true));
-        ImGui.text("Your middle mouse button allows you to drag the screen,\n"
-                + "turning on the \"edit\" button below allows you to start placing\n"
-                + "a city block");
-
-        if (ImGui.button("edit")) {
-            editMode = !editMode;
-            myWindow.changeleftPressDelta(0.1f);
-
-        }
-
-        if (editMode) {
-//            if(ImGui.button("enclose")) {
-//                
-//            }
-
-            //ImGui.listBox("City Blocks", currentBlock, cityBlocks);
-        }
-
-        ImGui.end();
-    }
-
-    public boolean getEditMode() {
-        return editMode;
-    }
-
-    public boolean renderBuildings() {
-        return show;
     }
 
 }
