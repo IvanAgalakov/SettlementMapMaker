@@ -279,16 +279,22 @@ public class GUILayer {
 
             if (selectedTab == 1) {
                 ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor());
-                
-                String markForRemoval = "";
+
+                String styleRemove = "";
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
-                    if (ImGui.button("remove")) {
-                        markForRemoval = runMan.getCityStyles().get(i);
+                    if (ImGui.button("remove " + "\""+(i+1)+"\"")) {
+                        if (!ImGui.isPopupOpen("StyleRemovePopup")) {
+                            System.out.println("active");
+                            styleRemove = runMan.getCityStyles().get(i);
+                            this.stringPopupString = "remove " + styleRemove;
+                            ImGui.openPopup("StyleRemovePopup");
+                        }
                     }
                     ImGui.sameLine();
                     ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getStyle(runMan.getCityStyles().get(i)));
                 }
-                runMan.removeStyle(markForRemoval);
+
+                this.confirmationStringPopup("StyleRemovePopup", s -> runMan.removeStyle(s));
 
                 if (ImGui.button("Add Style") && !newStyle.get().equals("")) {
                     runMan.addStyle(newStyle.get());
@@ -345,4 +351,24 @@ public class GUILayer {
         return runMan.getCurrentSettlement() != null;
     }
 
+    private String stringPopupString = "";
+    private void confirmationStringPopup(String confirmationName, I myMethodInterface) {
+        if (ImGui.beginPopup(confirmationName)) {
+            ImGui.text("Are you sure you want to " + stringPopupString + "?");
+            if (ImGui.button("yes", 40, 20)) {
+                myMethodInterface.myMethod(stringPopupString.replace("remove ", ""));
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.sameLine();
+            if (ImGui.button("no", 40, 20)) {
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.endPopup();
+        }
+    }
+
+}
+
+interface I {
+    public void myMethod(String s);
 }
