@@ -7,11 +7,13 @@ package com.wiz.settlementmapmaker;
 import com.wiz.settlementmapmaker.Actions.Action;
 import imgui.ImGuiIO;
 import imgui.app.Color;
+
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGui;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.filechooser.FileSystemView;
@@ -247,6 +249,26 @@ public class RuntimeManager {
     public void useAction(Action action) {
         redoHistory.clear();
         undoHistory.push(action);
+    }
+    
+    public float[] getStyle(String key) {
+        return this.currentSettlement.getStyle(key);
+    }
+    
+    public ArrayList<String> getCityStyles() {
+        return this.currentSettlement.getCityStyles();
+    }
+    
+    public DrawColor getDefaultStyle() {
+        return this.currentSettlement.getDefaultStyle();
+    }
+    
+    public void addStyle(String style) {
+        this.currentSettlement.addStyle(style);
+    }
+    
+    public void removeStyle(String style) {
+        this.currentSettlement.removeStyle(style);
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

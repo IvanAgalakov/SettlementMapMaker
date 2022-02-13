@@ -177,7 +177,7 @@ public class GUILayer {
             ImGui.endMenu();
         }
 
-        if (runMan.getCurrentSettlement() == null) {
+        if (!this.settlementOpen()) {
             ImGui.textColored(parchment, "no file open");
         } else {
             ImGui.textColored(parchment, "file opened: " + runMan.getSettlementFileDirectory().get());
@@ -241,7 +241,7 @@ public class GUILayer {
 
         }
 
-        if (runMan.getCurrentSettlement() == null) {
+        if (!this.settlementOpen()) {
             ImGui.beginDisabled();
             ImGui.menuItem("save", "Ctrl+S");
             ImGui.endDisabled();
@@ -254,7 +254,8 @@ public class GUILayer {
     }
 
     int selectedTab = 0;
-    float[] outlineColor = new float[3];
+    ImString newStyle = new ImString();
+
     public void preferencesWindow() {
         ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
         ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
@@ -265,12 +266,35 @@ public class GUILayer {
             if (ImGui.tabItemButton("test")) {
                 selectedTab = 0;
             }
-            if (ImGui.tabItemButton("color select")) {
-                selectedTab = 1;
+            if (this.settlementOpen()) {
+                if (ImGui.tabItemButton("style select")) {
+                    selectedTab = 1;
+                }
+            } else {
+                ImGui.beginDisabled();
+                ImGui.tabItemButton("style select");
+                ImGui.endDisabled();
             }
             ImGui.endTabBar();
-            if(selectedTab == 1) {
-                ImGui.colorEdit3("building outline color", outlineColor);
+
+            if (selectedTab == 1) {
+                ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor());
+                
+                String markForRemoval = "";
+                for (int i = 0; i < runMan.getCityStyles().size(); i++) {
+                    if (ImGui.button("remove")) {
+                        markForRemoval = runMan.getCityStyles().get(i);
+                    }
+                    ImGui.sameLine();
+                    ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getStyle(runMan.getCityStyles().get(i)));
+                }
+                runMan.removeStyle(markForRemoval);
+
+                if (ImGui.button("Add Style") && !newStyle.get().equals("")) {
+                    runMan.addStyle(newStyle.get());
+                }
+
+                ImGui.inputText("New Style Name", newStyle);
             }
 
             ImGui.end();
@@ -315,6 +339,10 @@ public class GUILayer {
             }
             ImGui.end();
         }
+    }
+
+    private boolean settlementOpen() {
+        return runMan.getCurrentSettlement() != null;
     }
 
 }
