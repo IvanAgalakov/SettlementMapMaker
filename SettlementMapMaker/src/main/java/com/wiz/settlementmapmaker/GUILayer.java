@@ -282,7 +282,7 @@ public class GUILayer {
 
                 String styleRemove = "";
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
-                    if (ImGui.button("remove " + "\""+(i+1)+"\"")) {
+                    if (ImGui.button("remove##"+i)) {
                         if (!ImGui.isPopupOpen("StyleRemovePopup")) {
                             System.out.println("active");
                             styleRemove = runMan.getCityStyles().get(i);

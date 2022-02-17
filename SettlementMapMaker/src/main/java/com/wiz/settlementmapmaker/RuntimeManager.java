@@ -75,6 +75,7 @@ public class RuntimeManager {
         this.displayData();
     }
 
+    boolean lastSPress = false;
     public void controls() {
         if (ImGui.isKeyPressed(ImGui.getKeyIndex(ImGuiKey.Z)) && io.getKeyCtrl()) {
             if (this.canUndo()) {
@@ -87,6 +88,11 @@ public class RuntimeManager {
                 this.redo();
             }
         }
+        
+        if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
+            this.saveCurrentSettlement();
+        }
+        lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
     }
 
     private boolean lastMiddleState = false;

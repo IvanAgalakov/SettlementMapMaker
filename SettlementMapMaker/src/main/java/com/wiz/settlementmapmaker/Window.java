@@ -91,7 +91,7 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        windowPtr = glfwCreateWindow(1920, 1070, "my window", 0, 0);
+        windowPtr = glfwCreateWindow(1920, 1070, "Settlement Map Maker", 0, 0);
 
         if (windowPtr == 0) {
             System.out.println("Unable to create window");
