@@ -92,6 +92,7 @@ public class RuntimeManager {
         if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
             this.saveCurrentSettlement();
         }
+        
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
     }
 
@@ -257,7 +258,11 @@ public class RuntimeManager {
         undoHistory.push(action);
     }
     
-    public float[] getStyle(String key) {
+    public float[] getColor(String key) {
+        return this.currentSettlement.getColor(key);
+    }
+    
+    public Style getStyle(String key) {
         return this.currentSettlement.getStyle(key);
     }
     
@@ -265,7 +270,7 @@ public class RuntimeManager {
         return this.currentSettlement.getCityStyles();
     }
     
-    public DrawColor getDefaultStyle() {
+    public Style getDefaultStyle() {
         return this.currentSettlement.getDefaultStyle();
     }
     

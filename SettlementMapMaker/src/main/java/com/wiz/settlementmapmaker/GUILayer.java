@@ -278,11 +278,18 @@ public class GUILayer {
             ImGui.endTabBar();
 
             if (selectedTab == 1) {
-                ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor());
+                ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor().getFloatOfColor());
+                ImGui.dummy(0, 5f);
+                ImGui.separator();
+                ImGui.dummy(0, 5f);
 
                 String styleRemove = "";
+
+
+                ImGui.beginChild("styles", ImGui.getWindowContentRegionMaxX()-20f, 300);
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
-                    if (ImGui.button("remove##"+i)) {
+                    
+                    if (ImGui.button("remove##" + i)) {
                         if (!ImGui.isPopupOpen("StyleRemovePopup")) {
                             System.out.println("active");
                             styleRemove = runMan.getCityStyles().get(i);
@@ -291,11 +298,17 @@ public class GUILayer {
                         }
                     }
                     ImGui.sameLine();
-                    ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getStyle(runMan.getCityStyles().get(i)));
+                    ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getColor(runMan.getCityStyles().get(i)));
+                    ImGui.combo("Style Select##" + i, runMan.getStyle(runMan.getCityStyles().get(i)).getSelectedStyle(), Style.styleTypes);
+                    ImGui.dummy(0, 5f);
+                    ImGui.separator();
+                    ImGui.dummy(0, 5f);
                 }
+                ImGui.endChild();
 
                 this.confirmationStringPopup("StyleRemovePopup", s -> runMan.removeStyle(s));
 
+                ImGui.separator();
                 if (ImGui.button("Add Style") && !newStyle.get().equals("")) {
                     runMan.addStyle(newStyle.get());
                 }
@@ -352,6 +365,7 @@ public class GUILayer {
     }
 
     private String stringPopupString = "";
+
     private void confirmationStringPopup(String confirmationName, I myMethodInterface) {
         if (ImGui.beginPopup(confirmationName)) {
             ImGui.text("Are you sure you want to " + stringPopupString + "?");
@@ -370,5 +384,6 @@ public class GUILayer {
 }
 
 interface I {
+
     public void myMethod(String s);
 }

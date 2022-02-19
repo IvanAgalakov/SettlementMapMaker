@@ -20,28 +20,32 @@ public class Settlement {
     private Building[] generatedBuildings;
     private Obstacle[] cityObstacles;
 
-    private DrawColor defaultStyle = new DrawColor(0,0,0,1);
-    private Hashtable<String, DrawColor> style = new Hashtable<>();
+    private Style defaultStyle = new Style(new DrawColor(0,0,0,1), 0);
+    private Hashtable<String, Style> style = new Hashtable<>();
     private ArrayList<String> cityStyles = new ArrayList<>();
 
     public Settlement(String name) {
-        style.put("Zone Color", new DrawColor(0.549f, 0.784f, 0.949f, 1));
+        style.put("Zone Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Zone Color");
-        style.put("Placed Building Color", new DrawColor(0.549f, 0.784f, 0.949f, 1));
+        style.put("Placed Building Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Placed Building Color");
-        style.put("Generated Building Color", new DrawColor(0.549f, 0.784f, 0.949f, 1));
+        style.put("Generated Building Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Generated Building Color");
-        style.put("Obstacle Color", new DrawColor(0.549f, 0.784f, 0.949f, 1));
+        style.put("Obstacle Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Obstacle Color");
 
         this.name = name;
     }
     
-    public float[] getStyle(String key) {
-        return style.get(key).getColor();
+    public float[] getColor(String key) {
+        return style.get(key).getColor().getFloatOfColor();
     }
     
-    public DrawColor getDefaultStyle() {
+    public Style getStyle(String key) {
+        return style.get(key);
+    }
+    
+    public Style getDefaultStyle() {
         return this.defaultStyle;
     }
     
@@ -76,7 +80,7 @@ public class Settlement {
     public void addStyle(String s) {
         if(!cityStyles.contains(s)) {
             cityStyles.add(s);
-            style.put(s, new DrawColor(1,1,1,1));
+            style.put(s, new Style(new DrawColor(1,1,1,1), 0));
         }
     }
     

@@ -34,7 +34,7 @@ public class DrawColor {
         color[3] = a;
     }
     
-    public float[] getColor() {
+    public float[] getFloatOfColor() {
         return this.color;
     }
     
