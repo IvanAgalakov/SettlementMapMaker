@@ -41,7 +41,7 @@ public class WindowVisualizer {
 //        GL33C.glDisableVertexAttribArray(1);
     }
     
-    public static void drawEnclosedLines(Shape[] shapes, int lineWidth, Color color) {
+    public static void drawEnclosedLines(Shape[] shapes, int lineWidth, DrawColor color) {
         
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
         
@@ -92,7 +92,7 @@ public class WindowVisualizer {
     }
     
     
-    public static void drawTriangles(Shape[] shapes, Color color) {
+    public static void drawTriangles(Shape[] shapes, DrawColor color) {
         
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
         
@@ -139,7 +139,7 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
     
-    public static void drawPoints(Shape[] shapes, float pointSize, Color color) {
+    public static void drawPoints(Shape[] shapes, float pointSize, DrawColor color) {
         
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
         

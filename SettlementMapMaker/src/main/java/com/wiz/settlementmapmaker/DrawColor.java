@@ -38,4 +38,16 @@ public class DrawColor {
         return this.color;
     }
     
+    public float getRed() {
+        return r;
+    }
+    
+    public float getGreen() {
+        return g;
+    }
+    
+    public float getBlue() {
+        return b;
+    }
+    
 }

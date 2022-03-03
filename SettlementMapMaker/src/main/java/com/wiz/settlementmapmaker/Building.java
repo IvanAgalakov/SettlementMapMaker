@@ -8,7 +8,12 @@ package com.wiz.settlementmapmaker;
  *
  * @author 904187003
  */
-public class Building extends Shape {
+public class Building extends EditorShape {
+    
+    public Building(String name) {
+        super(name);
+    }
+    
     public void setName() {
         
     }

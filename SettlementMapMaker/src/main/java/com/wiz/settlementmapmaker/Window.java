@@ -111,8 +111,8 @@ public class Window {
     }
 
     private void shadersInit() {
-        Shader basicVertexShader = ShaderManager.shaderNames.BASIC_VERTEX.SHADER;
-        Shader basicFragmentShader = ShaderManager.shaderNames.BASIC_FRAGMENT.SHADER;
+        Shader basicVertexShader = ShaderManager.ShaderNames.BASIC_VERTEX.SHADER;
+        Shader basicFragmentShader = ShaderManager.ShaderNames.BASIC_FRAGMENT.SHADER;
         this.program = ShaderManager.programFromShaders(basicVertexShader.getShader(), basicFragmentShader.getShader());
 //
 //        try {

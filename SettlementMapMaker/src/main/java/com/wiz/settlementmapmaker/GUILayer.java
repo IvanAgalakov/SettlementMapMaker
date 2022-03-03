@@ -18,6 +18,7 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Arrays;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -77,7 +78,7 @@ public class GUILayer {
         ImGui.end();
     }
 
-    ImInt test = new ImInt();
+    
 
     public void drawMenu() {
         ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
@@ -85,6 +86,7 @@ public class GUILayer {
         ImGui.begin("Draw Menu");
 
         if (ImGui.button("Building Drawing Menu")) {
+            showShapeEdit.set(false);
             if (runMan.getSelectedDrawMenu().get().equals("building")) {
                 runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
             } else {
@@ -92,6 +94,7 @@ public class GUILayer {
             }
         }
         if (ImGui.button("Zone Drawing Menu")) {
+            showShapeEdit.set(false);
             if (runMan.getSelectedDrawMenu().get().equals("zone")) {
                 runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
             } else {
@@ -99,6 +102,7 @@ public class GUILayer {
             }
         }
         if (ImGui.button("Obstacle Drawing Menu")) {
+            showShapeEdit.set(false);
             if (runMan.getSelectedDrawMenu().get().equals("obstacle")) {
                 runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
             } else {
@@ -131,7 +135,25 @@ public class GUILayer {
         ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
         ImGui.begin("Zone Drawing Menu");
         ImGui.listBox("Zones", runMan.getSelectedZone(), runMan.getZonesList(), 3);
-        ImGui.button("draw new zone");
+        
+        if (ImGui.button("edit zone")) {
+            if (runMan.getZones().size() > 0) {
+                showShapeEdit.set(true);
+            }
+        }
+        if (ImGui.button("draw new zone")) {
+            int count = 1;
+            while(Arrays.stream(runMan.getZonesList()).anyMatch(("zone"+count)::equals)) {
+                count++;
+            }
+            Zone newZone = new Zone("zone" + count, Zone.ZoneType.BUILDING_GENERATION);
+            runMan.addZone(newZone, showShapeEdit);
+            runMan.getSelectedZone().set(runMan.getZones().size()-1);
+        }
+
+        if (showShapeEdit.get()) {
+            shapeEdit(new ImVec2(pos.x + ImGui.getWindowSizeX(), pos.y), runMan.getZones().get(runMan.getSelectedZone().get()));
+        }
         ImGui.end();
     }
 
@@ -151,6 +173,29 @@ public class GUILayer {
         ImGui.listBox("Obstacles", runMan.getSelectedZone(), runMan.getZonesList(), 3);
         ImGui.button("draw new obstacle");
         ImGui.end();
+    }
+
+    private ImBoolean showShapeEdit = new ImBoolean(false);
+    private ImInt selectedPoint = new ImInt();
+    
+    // allows for the editing of shapes, no matter what type of shape they are.
+    // changing of styles and other drawing modes is also chosen here, per shape
+    public void shapeEdit(ImVec2 pos, EditorShape shapeToEdit) {
+        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
+        if (!ImGui.begin("Shape Edit", showShapeEdit, ImGuiWindowFlags.NoResize)) {
+            ImGui.end();
+        } else {
+            ImGui.text(shapeToEdit.getName());
+            ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray(), 3);
+            if(ImGui.button("Draw Point")) {
+                Point newPoint = new Point(0,0);
+                shapeToEdit.addPoints(newPoint);
+                runMan.setEditPoint(newPoint);
+                runMan.setEditShape(shapeToEdit);
+            }
+            ImGui.end();
+        }
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);
@@ -285,10 +330,9 @@ public class GUILayer {
 
                 String styleRemove = "";
 
-
-                ImGui.beginChild("styles", ImGui.getWindowContentRegionMaxX()-20f, 300);
+                ImGui.beginChild("styles", ImGui.getWindowContentRegionMaxX() - 20f, 300);
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
-                    
+
                     if (ImGui.button("remove##" + i)) {
                         if (!ImGui.isPopupOpen("StyleRemovePopup")) {
                             System.out.println("active");
@@ -384,6 +428,5 @@ public class GUILayer {
 }
 
 interface I {
-
     public void myMethod(String s);
 }

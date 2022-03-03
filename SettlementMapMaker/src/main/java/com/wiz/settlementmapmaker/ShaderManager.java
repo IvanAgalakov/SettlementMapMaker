@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL33C;
  */
 public class ShaderManager {
     
-    public static enum shaderNames {
+    public static enum ShaderNames {
         BASIC_FRAGMENT(new Shader(Shader.shaderTypes.FRAGMENT, "BasicFragmentShader.txt")),
         BASIC_VERTEX(new Shader(Shader.shaderTypes.VERTEX, "BasicVertexShader.txt"));
         
         public final Shader SHADER;
-        private shaderNames(Shader shader) {
+        private ShaderNames(Shader shader) {
            SHADER = shader;
         }
     }

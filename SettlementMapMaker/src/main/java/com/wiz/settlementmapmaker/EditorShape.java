@@ -8,17 +8,18 @@ package com.wiz.settlementmapmaker;
  *
  * @author 904187003
  */
-public class Obstacle extends EditorShape{
-    
-    public Obstacle(String name) {
-        super(name);
+public class EditorShape extends Shape {
+
+    private String name = "";
+    private String style = "default";
+
+    public EditorShape(String name) {
+        super();
+        this.name = name;
     }
     
-    public enum ObstacleType {
-        
+    public String getName() {
+        return name;
     }
-    
-    public void SetObstacleType(ObstacleType type) {
-        
-    }
+
 }

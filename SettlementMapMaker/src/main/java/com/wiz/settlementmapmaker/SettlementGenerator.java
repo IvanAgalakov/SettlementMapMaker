@@ -56,7 +56,7 @@ public class SettlementGenerator {
             int count = 0;
             while (!doneSegment) {
                 // Shape newBuilding = new Shape(new Point[]{startSeg, endSeg, this.normalPointToPoint(endSeg, rise, run, 0.1f), this.normalPointToPoint(startSeg, rise, run, 0.1f), startSeg, endSeg});
-                float deviate = ran.nextFloat(minSize, maxSize);
+                float deviate = minSize+(ran.nextFloat()*(maxSize-minSize));
 
                 if (hypo - (deviate + distanceDownSegment) < minSize) {
                     deviate = hypo;

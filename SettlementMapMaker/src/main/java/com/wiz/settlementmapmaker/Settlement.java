@@ -7,6 +7,7 @@ package com.wiz.settlementmapmaker;
 import imgui.ImColor;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  *
@@ -15,10 +16,10 @@ import java.util.Hashtable;
 public class Settlement {
 
     private String name = "";
-    private Zone[] cityZones;
-    private Building[] cityBuildings;
-    private Building[] generatedBuildings;
-    private Obstacle[] cityObstacles;
+    private List<Zone> cityZones = new ArrayList<>();
+    private List<Building> cityBuildings = new ArrayList<>();
+    private List<Building> generatedBuildings = new ArrayList<>();
+    private List<Obstacle> cityObstacles = new ArrayList<>();
 
     private Style defaultStyle = new Style(new DrawColor(0,0,0,1), 0);
     private Hashtable<String, Style> style = new Hashtable<>();
@@ -69,12 +70,12 @@ public class Settlement {
 
     }
 
-    public Zone[] getZones() {
+    public List<Zone> getZones() {
         return cityZones;
     }
 
-    public void addZones(Zone[] zones) {
-
+    public void addZone(Zone zone) {
+        cityZones.add(zone);
     }
     
     public void addStyle(String s) {

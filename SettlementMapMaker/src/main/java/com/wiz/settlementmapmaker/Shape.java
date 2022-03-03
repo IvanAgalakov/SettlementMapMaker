@@ -4,6 +4,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import java.util.Arrays;
+
 /**
  *
  * @author 904187003
@@ -54,8 +56,12 @@ public class Shape {
         return null;
     }
     
-    public void addPoints(Point[] points) {
-        
+    public void addPoints(Point... addPoints) {
+        Point[] newPoints = Arrays.copyOf(points, points.length+addPoints.length);
+        for(int i = points.length; i < newPoints.length; i++) {
+            newPoints[i] = addPoints[i-points.length];
+        }
+        points = newPoints;
     }
     
     private void CalculateCenter() {
@@ -111,8 +117,12 @@ public class Shape {
         return copy;
     }
     
-    public void SetDrawType(String type) {
-        
+    public String[] toStringArray() {
+        String[] s = new String[points.length];
+        for(int i = 0; i < points.length; i++) {
+            s[i] = points[i].toString();
+        }
+        return s;
     }
     
     @Override
