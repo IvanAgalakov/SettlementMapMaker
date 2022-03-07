@@ -18,10 +18,6 @@ public class Building extends EditorShape {
         
     }
     
-    public String getName() {
-        return null;
-    }
-    
     public void generateName() {
         
     }

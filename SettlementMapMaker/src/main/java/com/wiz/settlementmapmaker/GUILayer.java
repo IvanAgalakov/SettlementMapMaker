@@ -180,13 +180,16 @@ public class GUILayer {
     
     // allows for the editing of shapes, no matter what type of shape they are.
     // changing of styles and other drawing modes is also chosen here, per shape
+    ImInt selectedStyleForShape = new ImInt();
     public void shapeEdit(ImVec2 pos, EditorShape shapeToEdit) {
         ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
         ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
         if (!ImGui.begin("Shape Edit", showShapeEdit, ImGuiWindowFlags.NoResize)) {
             ImGui.end();
         } else {
-            ImGui.text(shapeToEdit.getName());
+            if(ImGui.inputText("name", shapeToEdit.getName())) {
+                runMan.updateZonesList();
+            }
             ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray(), 3);
             if(ImGui.button("Draw Point")) {
                 Point newPoint = new Point(0,0);
@@ -194,6 +197,7 @@ public class GUILayer {
                 runMan.setEditPoint(newPoint);
                 runMan.setEditShape(shapeToEdit);
             }
+            ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles());
             ImGui.end();
         }
     }

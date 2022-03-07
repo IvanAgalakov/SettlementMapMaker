@@ -14,7 +14,7 @@ public class Style {
     
     private DrawColor styleColor;
     private ImInt selectedDrawType = new ImInt();
-    public static final String[] styleTypes = new String[]{"line", "dashed line", "solid"};
+    public static final String[] styleTypes = new String[]{"point", "line", "dashed line", "solid"};
     
     public Style(DrawColor styleColor, int selectedDrawType) {
         this.styleColor = styleColor;

@@ -56,13 +56,16 @@ public class RuntimeManager {
     private ImString selectedDrawMenu = new ImString();
 
     private ImInt selectedZone = new ImInt();
+    
     private String[] zones = new String[]{};
+    private String[] styles = new String[]{};
 
     // Settlement Value Alterations
     private ImString settlementName = new ImString();
 
     private FixedStack<Action> undoHistory = new FixedStack<>(20);
     private FixedStack<Action> redoHistory = new FixedStack<>(20);
+    
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -121,7 +124,7 @@ public class RuntimeManager {
     public void displayData() {
         GL33C.glUseProgram(window.getProgram());
 
-        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
+        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && io.getKeyCtrl()) {
 
             if (lastMiddleState == false) {
                 initMouseX = io.getMousePosX();
@@ -152,7 +155,7 @@ public class RuntimeManager {
             editPoint.setX(realMouseX);
             editPoint.setY(realMouseY);
             WindowVisualizer.drawPoints(new Shape[]{new Shape(new Point[]{editPoint})}, 5, this.currentSettlement.getDefaultStyle().getColor());
-            if(io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+            if(io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
                 editPoint = null;
                 editShape = null;
             }
@@ -240,6 +243,7 @@ public class RuntimeManager {
     public void openSettlementFile(String loc) {
         settlementFilePath.set(loc);
         setupSettlement(FileManager.openSettlement(loc));
+        this.updateStyleList();
     }
 
     public boolean getWindowFocus() {
@@ -267,10 +271,27 @@ public class RuntimeManager {
     }
 
     public void updateZonesList() {
-        zones = currentSettlement.getZones().stream().map(s -> s.getName()).toArray(sz -> new String[sz]);
+        zones = currentSettlement.getZones().stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
         if (zones.length <= this.selectedZone.get()) {
             this.selectedZone.set(zones.length - 1);
         }
+    }
+    
+    public String[] getStyles() {
+        return this.styles;
+    }
+    
+    public void updateStyleList() {
+        this.styles = currentSettlement.getCityStyles().stream().map(s -> s).toArray(sz -> new String[sz]);
+        String[] styleHold = new String[this.styles.length+1];
+        for(int i = 0; i < styleHold.length; i++) {
+            if (i == 0) {
+                styleHold[i] = "default";
+            } else {
+                styleHold[i] = styles[i-1];
+            }
+        }
+        styles = styleHold;
     }
 
     public ImString getSelectedDrawMenu() {

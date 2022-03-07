@@ -4,22 +4,33 @@
  */
 package com.wiz.settlementmapmaker;
 
+import imgui.type.ImInt;
+import imgui.type.ImString;
+
 /**
  *
  * @author 904187003
  */
 public class EditorShape extends Shape {
 
-    private String name = "";
-    private String style = "default";
+    private ImString name = new ImString();
+    private ImInt style = new ImInt(0);
 
     public EditorShape(String name) {
         super();
-        this.name = name;
+        this.name.set(name);
     }
     
-    public String getName() {
+    public ImString getName() {
         return name;
+    }
+    
+    public void setStyle(int style) {
+        this.style.set(style);
+    }
+    
+    public ImInt getStyle() {
+        return this.style;
     }
 
 }

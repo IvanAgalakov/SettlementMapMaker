@@ -18,11 +18,11 @@ public class Zone extends EditorShape {
     }
 
     public void setZoneType(String type) {
-
+        
     }
 
     public String getZoneType() {
-        return null;
+        return type;
     }
 
     public static enum ZoneType {
