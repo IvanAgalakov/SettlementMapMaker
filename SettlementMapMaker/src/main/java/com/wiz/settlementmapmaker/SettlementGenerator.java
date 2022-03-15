@@ -4,6 +4,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.Shape;
+import Shape.Point;
 import java.util.ArrayList;
 import java.util.Random;
 

@@ -18,7 +18,7 @@ public class ImStringChangeAction implements Action {
     public ImStringChangeAction(ImString change, String changeTo) {
         toChange = change;
         changedFrom = change.get();
-        change.set(changeTo);
+        change.set(changeTo, true);
     }
     
     @Override

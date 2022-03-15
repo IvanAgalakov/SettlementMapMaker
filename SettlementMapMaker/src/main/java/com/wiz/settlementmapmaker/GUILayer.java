@@ -4,7 +4,10 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.EditorShape;
+import Shape.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import com.wiz.settlementmapmaker.Utilities.CityEditorState;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImColor;
@@ -34,9 +37,6 @@ public class GUILayer {
 
     private Window myWindow;
     private RuntimeManager runMan;
-
-    private int warmParchment = ImColor.intToColor(150, 109, 80, 255);
-    private int parchment = ImColor.intToColor(230, 203, 156, 255);
 
     private boolean fileChooserOpen = false;
 
@@ -78,35 +78,20 @@ public class GUILayer {
         ImGui.end();
     }
 
-    
-
     public void drawMenu() {
+
+        // runs the shape editor
+        shapeEdit(new ImVec2(runMan.getWidth(), runMan.getHeight()));
+
         ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
         ImGui.setNextWindowPos(0, 20, ImGuiCond.Once);
         ImGui.begin("Draw Menu");
 
-        if (ImGui.button("Building Drawing Menu")) {
-            showShapeEdit.set(false);
-            if (runMan.getSelectedDrawMenu().get().equals("building")) {
+        if (ImGui.button("Shape Drawing Menu")) {
+            if (runMan.getSelectedDrawMenu().get().equals("shape")) {
                 runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
             } else {
-                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "building"));
-            }
-        }
-        if (ImGui.button("Zone Drawing Menu")) {
-            showShapeEdit.set(false);
-            if (runMan.getSelectedDrawMenu().get().equals("zone")) {
-                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
-            } else {
-                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "zone"));
-            }
-        }
-        if (ImGui.button("Obstacle Drawing Menu")) {
-            showShapeEdit.set(false);
-            if (runMan.getSelectedDrawMenu().get().equals("obstacle")) {
-                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), ""));
-            } else {
-                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "obstacle"));
+                runMan.useAction(new ImStringChangeAction(runMan.getSelectedDrawMenu(), "shape"));
             }
         }
 
@@ -114,92 +99,107 @@ public class GUILayer {
         pos.set(pos.x + ImGui.getWindowSizeX(), pos.y);
 
         switch (runMan.getSelectedDrawMenu().get()) {
-            case "building":
-                this.buildingDrawingMenu(pos);
-                break;
-            case "zone":
-                this.zoneDrawingMenu(pos);
-                break;
-            case "obstacle":
-                this.obstacleDrawingMenu(pos);
-                break;
-            default:
+            case "shape":
+                this.editorShapeDrawingMenu(pos);
                 break;
         }
 
         ImGui.end();
     }
 
-    public void zoneDrawingMenu(ImVec2 pos) {
+    ImString editorType = new ImString(Constants.CITY_SHAPE_TYPES[0]);
+
+    public void editorShapeDrawingMenu(ImVec2 pos) {
+        // start of editor window
         ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
         ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
-        ImGui.begin("Zone Drawing Menu");
-        ImGui.listBox("Zones", runMan.getSelectedZone(), runMan.getZonesList(), 3);
+        ImGui.begin("Shape Drawing Menu");
+
+        ImGui.textColored(Constants.CALM_GREEN, "Drawing: " + editorType + "s");
         
-        if (ImGui.button("edit zone")) {
-            if (runMan.getZones().size() > 0) {
-                showShapeEdit.set(true);
+        // start of tab bar
+        ImGui.beginTabBar("Edit Type");
+        for (int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {
+            if (ImGui.tabItemButton(Constants.CITY_SHAPE_TYPES[i])) {
+                runMan.useAction(new ImStringChangeAction(editorType, Constants.CITY_SHAPE_TYPES[i]));
+                runMan.getSelectedShape().set(0);
             }
         }
-        if (ImGui.button("draw new zone")) {
+        ImGui.endTabBar();
+        // end of tab bar
+        
+        
+        // makes sure the selected shape stays within the possible range of selected shapes
+        if(runMan.getSelectedShape().get() >= runMan.getShapeList(editorType.get()).length) {
+            runMan.getSelectedShape().set(runMan.getShapeList(editorType.get()).length-1);
+        }
+        if(runMan.getSelectedShape().get() < 0) {
+            runMan.getSelectedShape().set(0);
+        }
+        // -----------------------------------------------------------------------------------
+        
+        ImGui.listBox(editorType.get(), runMan.getSelectedShape(), runMan.getShapeList(editorType.get()), 4);
+
+        if (runMan.getShapeList(editorType.get()).length != 0) {
+            shapeToEdit = runMan.getShapes(editorType.get()).get(runMan.getSelectedShape().get());
+        } else {
+            shapeToEdit = null;
+        }
+
+        if (ImGui.button("Draw New " + editorType)) {
             int count = 1;
-            while(Arrays.stream(runMan.getZonesList()).anyMatch(("zone"+count)::equals)) {
+            while (Arrays.stream(runMan.getShapeList(editorType.get())).anyMatch((editorType.get() + count)::equals)) {
                 count++;
             }
-            Zone newZone = new Zone("zone" + count, Zone.ZoneType.BUILDING_GENERATION);
-            runMan.addZone(newZone, showShapeEdit);
-            runMan.getSelectedZone().set(runMan.getZones().size()-1);
+            EditorShape newShape = Constants.CityShapeTypes.valueOf(editorType.get().toUpperCase()).supply(new CityEditorState());
+            newShape.setName(editorType.get() + count);
+            runMan.addShape(newShape, editorType.get());
+            runMan.getSelectedShape().set(runMan.getShapeList(editorType.get()).length - 1);
         }
 
-        if (showShapeEdit.get()) {
-            shapeEdit(new ImVec2(pos.x + ImGui.getWindowSizeX(), pos.y), runMan.getZones().get(runMan.getSelectedZone().get()));
+        if (runMan.getShapeList(editorType.get()).length != 0) {
+            if (ImGui.button("Delete Selected " + editorType)) {
+                runMan.removeShape(runMan.getSelectedShape().get(), editorType.get());
+            }
+        } else {
+            ImGui.beginDisabled();
+            ImGui.button("Delete Selected " + editorType);
+            ImGui.endDisabled();
         }
+
         ImGui.end();
     }
 
-    public void buildingDrawingMenu(ImVec2 pos) {
-        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
-        ImGui.begin("Building Drawing Menu");
-        ImGui.listBox("Buildings", runMan.getSelectedZone(), runMan.getZonesList(), 3);
-        ImGui.button("draw new building");
-        ImGui.end();
-    }
-
-    public void obstacleDrawingMenu(ImVec2 pos) {
-        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
-        ImGui.begin("Obstacle Drawing Menu");
-        ImGui.listBox("Obstacles", runMan.getSelectedZone(), runMan.getZonesList(), 3);
-        ImGui.button("draw new obstacle");
-        ImGui.end();
-    }
-
-    private ImBoolean showShapeEdit = new ImBoolean(false);
-    private ImInt selectedPoint = new ImInt();
-    
     // allows for the editing of shapes, no matter what type of shape they are.
     // changing of styles and other drawing modes is also chosen here, per shape
+    ImInt selectedPoint = new ImInt();
     ImInt selectedStyleForShape = new ImInt();
-    public void shapeEdit(ImVec2 pos, EditorShape shapeToEdit) {
-        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
-        if (!ImGui.begin("Shape Edit", showShapeEdit, ImGuiWindowFlags.NoResize)) {
-            ImGui.end();
-        } else {
-            if(ImGui.inputText("name", shapeToEdit.getName())) {
-                runMan.updateZonesList();
+    EditorShape shapeToEdit = null;
+
+    public void shapeEdit(ImVec2 pos) {
+        ImGui.setNextWindowSize(400, 350, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x - 500, pos.y - 400, ImGuiCond.Once);
+        ImGui.begin("Shape Edit");
+        if (shapeToEdit != null) {
+
+            if (shapeToEdit instanceof Zone) {
+                ImGui.text("zone edit");
+            }
+
+            if (ImGui.inputText("name", shapeToEdit.getName())) {
+                runMan.updateShapeList();
             }
             ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray(), 3);
-            if(ImGui.button("Draw Point")) {
-                Point newPoint = new Point(0,0);
-                shapeToEdit.addPoints(newPoint);
-                runMan.setEditPoint(newPoint);
-                runMan.setEditShape(shapeToEdit);
+            if (ImGui.button("Draw Point")) {
+                runMan.addPoint(shapeToEdit);
             }
             ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles());
-            ImGui.end();
+
+        } else {
+            ImGui.text("No shape selected, please select a shape!");
         }
+        ImGui.end();
+
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);
@@ -227,9 +227,9 @@ public class GUILayer {
         }
 
         if (!this.settlementOpen()) {
-            ImGui.textColored(parchment, "no file open");
+            ImGui.textColored(Constants.COLOR_PARCHMENT, "no file open");
         } else {
-            ImGui.textColored(parchment, "file opened: " + runMan.getSettlementFileDirectory().get());
+            ImGui.textColored(Constants.COLOR_PARCHMENT, "file opened: " + runMan.getSettlementFileDirectory().get());
         }
 
         ImGui.endMainMenuBar();
@@ -432,5 +432,6 @@ public class GUILayer {
 }
 
 interface I {
+
     public void myMethod(String s);
 }

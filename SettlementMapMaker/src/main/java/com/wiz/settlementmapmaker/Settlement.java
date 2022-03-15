@@ -4,6 +4,10 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.EditorShape;
+import Shape.Zone;
+import Shape.Obstacle;
+import Shape.Building;
 import imgui.ImColor;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -16,13 +20,12 @@ import java.util.List;
 public class Settlement {
 
     private String name = "";
-    private List<Zone> cityZones = new ArrayList<>();
-    private List<Building> cityBuildings = new ArrayList<>();
-    private List<Building> generatedBuildings = new ArrayList<>();
-    private List<Obstacle> cityObstacles = new ArrayList<>();
+    private Hashtable<String, ArrayList<EditorShape>> cityShapes = new Hashtable<>();
 
     private Style defaultStyle = new Style(new DrawColor(0,0,0,1), 0);
     private Hashtable<String, Style> style = new Hashtable<>();
+    
+
     private ArrayList<String> cityStyles = new ArrayList<>();
 
     public Settlement(String name) {
@@ -34,6 +37,10 @@ public class Settlement {
         cityStyles.add("Generated Building Color");
         style.put("Obstacle Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Obstacle Color");
+        
+        for(int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {
+            cityShapes.put(Constants.CITY_SHAPE_TYPES[i], new ArrayList());
+        }
 
         this.name = name;
     }
@@ -61,21 +68,19 @@ public class Settlement {
     public String getName() {
         return name;
     }
-
-    public Building[] getBuildings() {
-        return null;
+    
+    public void fillHash(Hashtable<String, String[]> hash) {
+        ArrayList<Zone> zones = new ArrayList<>();
+        ArrayList<Building> buildings = new ArrayList<>();
+        ArrayList<Obstacle> Obstacles = new ArrayList<>();
     }
 
-    public void addBuildings(Building[] buildings) {
-
+    public List<EditorShape> getShapes(String shapeType) {
+        return cityShapes.get(shapeType);
     }
 
-    public List<Zone> getZones() {
-        return cityZones;
-    }
-
-    public void addZone(Zone zone) {
-        cityZones.add(zone);
+    public void addShapes(EditorShape shape, String shapeType) {
+        cityShapes.get(shapeType).add(shape);
     }
     
     public void addStyle(String s) {

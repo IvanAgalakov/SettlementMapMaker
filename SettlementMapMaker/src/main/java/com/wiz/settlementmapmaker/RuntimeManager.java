@@ -4,11 +4,15 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.EditorShape;
+import Shape.Shape;
+import Shape.Point;
 import com.wiz.settlementmapmaker.Actions.Action;
 import com.wiz.settlementmapmaker.Actions.AlterListAction;
 import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
+import com.wiz.settlementmapmaker.Actions.Method1ArgAction;
 import imgui.ImGuiIO;
 import imgui.app.Color;
 
@@ -20,6 +24,7 @@ import imgui.type.ImString;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,9 +60,10 @@ public class RuntimeManager {
 
     private ImString selectedDrawMenu = new ImString();
 
-    private ImInt selectedZone = new ImInt();
-    
-    private String[] zones = new String[]{};
+    private ImInt selectedShape = new ImInt();
+    private ImString selectedDrawingType = new ImString();
+    private Hashtable<String, String[]> shapeListVisuals = new Hashtable<>();
+
     private String[] styles = new String[]{};
 
     // Settlement Value Alterations
@@ -65,7 +71,6 @@ public class RuntimeManager {
 
     private FixedStack<Action> undoHistory = new FixedStack<>(20);
     private FixedStack<Action> redoHistory = new FixedStack<>(20);
-    
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -154,21 +159,22 @@ public class RuntimeManager {
         if (editPoint != null) {
             editPoint.setX(realMouseX);
             editPoint.setY(realMouseY);
+            
             WindowVisualizer.drawPoints(new Shape[]{new Shape(new Point[]{editPoint})}, 5, this.currentSettlement.getDefaultStyle().getColor());
-            if(io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
+            if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
                 editPoint = null;
                 editShape = null;
             }
-            if(editShape != null) {
+            if (editShape != null) {
                 WindowVisualizer.drawPoints(new Shape[]{editShape}, 5, this.currentSettlement.getDefaultStyle().getColor());
             }
         }
     }
-    
+
     public void setEditPoint(Point editPoint) {
         this.editPoint = editPoint;
     }
-    
+
     public void setEditShape(EditorShape editShape) {
         this.editShape = editShape;
     }
@@ -190,6 +196,10 @@ public class RuntimeManager {
     public void setupSettlement(Settlement s) { // allows the setup of additional valeus which will be altered later by gui interaction
         currentSettlement = s;
         settlementName.set(currentSettlement.getName());
+
+        // the location for the initial updating of lists for gui visualization
+        this.updateStyleList();
+        this.updateShapeList();
     }
 
     public Settlement getCurrentSettlement() {
@@ -243,7 +253,6 @@ public class RuntimeManager {
     public void openSettlementFile(String loc) {
         settlementFilePath.set(loc);
         setupSettlement(FileManager.openSettlement(loc));
-        this.updateStyleList();
     }
 
     public boolean getWindowFocus() {
@@ -254,41 +263,69 @@ public class RuntimeManager {
         return this.settlementName;
     }
 
-    public ImInt getSelectedZone() {
-        return selectedZone;
+    public ImInt getSelectedShape() {
+        return selectedShape;
     }
 
-    public String[] getZonesList() {
-        return zones;
+    public String[] getShapeList(String shapeType) {
+        return shapeListVisuals.get(shapeType);
     }
 
-    public List<Zone> getZones() {
-        return currentSettlement.getZones();
+    public List<EditorShape> getShapes(String shapeType) {
+        return currentSettlement.getShapes(shapeType);
     }
 
-    public void addZone(Zone zone, ImBoolean menu) {
-        useAction(new CombinedAction(new AlterListAction(currentSettlement.getZones(), zone, false), new MethodRunAction(() -> updateZonesList()), new ImBooleanChangeAction(menu, true)));
+    public void addShape(EditorShape shape, String shapeType) {
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, false), new MethodRunAction(() -> updateShapeList())));
     }
 
-    public void updateZonesList() {
-        zones = currentSettlement.getZones().stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
-        if (zones.length <= this.selectedZone.get()) {
-            this.selectedZone.set(zones.length - 1);
-        }
+    public void removeShape(int selectedShape, String shapeType) {
+        EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList())));
+    }
+
+    public void addPoint(EditorShape addTo) {
+        Point newPoint = new Point(0, 0);
+        useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false)));
+        this.setEditPoint(newPoint);
+        this.setEditShape(addTo);
     }
     
+    public void removePoint(EditorShape removeFrom, Point point) {
+        useAction(new AlterListAction(removeFrom.getPointList(), point, true));
+    }
+
+    public ImString getSelectedDrawingType() {
+        return this.selectedDrawingType;
+    }
+
+    public void updateShapeList() {
+        //zones = currentSettlement.getZones().stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
+        //if (zones.length <= this.selectedZone.get()) {
+        //    this.selectedZone.set(zones.length - 1);
+        //}
+        String[] shapeTypes = Constants.CITY_SHAPE_TYPES;
+        for (int i = 0; i < shapeTypes.length; i++) {
+            String[] sPut = this.currentSettlement.getShapes(shapeTypes[i]).stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
+            if (sPut == null) {
+                sPut = new String[0];
+            }
+            this.shapeListVisuals.put(shapeTypes[i], sPut);
+        }
+    }
+
     public String[] getStyles() {
         return this.styles;
     }
-    
+
     public void updateStyleList() {
         this.styles = currentSettlement.getCityStyles().stream().map(s -> s).toArray(sz -> new String[sz]);
-        String[] styleHold = new String[this.styles.length+1];
-        for(int i = 0; i < styleHold.length; i++) {
+        String[] styleHold = new String[this.styles.length + 1];
+        for (int i = 0; i < styleHold.length; i++) {
             if (i == 0) {
                 styleHold[i] = "default";
             } else {
-                styleHold[i] = styles[i-1];
+                styleHold[i] = styles[i - 1];
             }
         }
         styles = styleHold;

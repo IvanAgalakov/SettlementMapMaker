@@ -5,6 +5,8 @@
 package com.wiz.settlementmapmaker;
 
 
+import Shape.Shape;
+import Shape.Point;
 import imgui.app.Color;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
@@ -140,7 +142,7 @@ public class WindowVisualizer {
     }
     
     public static void drawPoints(Shape[] shapes, float pointSize, DrawColor color) {
-        
+        //System.out.println(color.toString());
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
         
         int amount = 0;

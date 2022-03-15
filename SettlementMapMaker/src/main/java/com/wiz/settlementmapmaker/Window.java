@@ -5,6 +5,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.Shape;
+import Shape.Point;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;

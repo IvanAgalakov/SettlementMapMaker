@@ -10,24 +10,12 @@ package com.wiz.settlementmapmaker;
  */
 public class DrawColor {
     private float[] color = new float[4];
-    public final float r;
-    public final float g;
-    public final float b;
-    public final float a;
     
     public DrawColor(float[] color) {
         this.color = color;
-        r = this.color[0];
-        g = this.color[1];
-        b = this.color[2];
-        a = this.color[3];
     }
     
     public DrawColor(float r, float g, float b, float a) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
         color[0] = r;
         color[1] = g;
         color[2] = b;
@@ -39,15 +27,20 @@ public class DrawColor {
     }
     
     public float getRed() {
-        return r;
+        return color[0];
     }
     
     public float getGreen() {
-        return g;
+        return color[1];
     }
     
     public float getBlue() {
-        return b;
+        return color[2];
+    }
+    
+    @Override
+    public String toString() {
+        return "(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + color[3] + ")" ;
     }
     
 }
