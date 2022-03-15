@@ -18,9 +18,7 @@ import org.lwjgl.opengl.GL33C;
  * @author Ivan
  */
 public class DataDisplayer {
-    
-    
-    
+
     private boolean lastMiddleState = false;
     private float initMouseX = 0f, initMouseY = 0f;
     private float initCameraX = 0f, initCameraY = 0f;
@@ -31,11 +29,11 @@ public class DataDisplayer {
 
     private Point editPoint = null;
     private EditorShape editShape = null;
-    
+
     private ImGuiIO io;
     private RuntimeManager runMan;
     private Window window;
-    
+
     private HashMap<String, ArrayList<Shape>> shapesByStyle = new HashMap<>();
 
     public DataDisplayer(RuntimeManager runMan, ImGuiIO io, Window window) {
@@ -43,7 +41,7 @@ public class DataDisplayer {
         this.io = io;
         this.window = window;
     }
-    
+
     public void display() {
         GL33C.glUseProgram(window.getProgram());
 
@@ -77,7 +75,7 @@ public class DataDisplayer {
         if (editPoint != null) {
             editPoint.setX(realMouseX);
             editPoint.setY(realMouseY);
-            
+
             WindowVisualizer.drawPoints(new Shape[]{new Shape(new Point[]{editPoint})}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
                 editPoint = null;
@@ -87,25 +85,43 @@ public class DataDisplayer {
                 WindowVisualizer.drawPoints(new Shape[]{editShape}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             }
         }
+
+        if (runMan.getCurrentSettlement() != null) {
+            drawStyleGroups();
+        }
     }
-    
+
+    public void drawStyleGroups() {
+        ArrayList<String> styles = runMan.getCurrentSettlement().getCityStyles();
+        for (int i = 0; i < styles.size(); i++) {
+            if (this.shapesByStyle.containsKey(styles.get(i))) {
+                Shape[] shapes = new Shape[this.shapesByStyle.get(styles.get(i)).size()];
+                shapes = this.shapesByStyle.get(styles.get(i)).toArray(shapes);
+                WindowVisualizer.drawEnclosedLines(shapes, 5, runMan.getCurrentSettlement().getStyle(styles.get(i)).getColor());
+            }
+        }
+    }
+
     public void updateShapeStyleGroupings() {
         this.shapesByStyle = new HashMap<>();
         String[] styles = runMan.getStyles();
         for (int i = 0; i < styles.length; i++) {
             shapesByStyle.put(styles[i], new ArrayList<>());
         }
-        
-        //Shape[] shapes = runMan.currentSettlement.get
+
+        EditorShape[] shapes = runMan.currentSettlement.getRawEditorShapes();
+
+        for (int i = 0; i < shapes.length; i++) {
+            this.shapesByStyle.get(runMan.getCurrentSettlement().getCityStyles().get(shapes[i].getStyle().get())).add(shapes[i]);
+        }
     }
-    
-    
+
     public void setEditPoint(Point editPoint) {
         this.editPoint = editPoint;
     }
-    
+
     public void setEditShape(EditorShape shape) {
         this.editShape = shape;
     }
-    
+
 }

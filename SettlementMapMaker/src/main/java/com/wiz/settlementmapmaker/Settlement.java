@@ -11,6 +11,7 @@ import Shape.Building;
 import Shape.Shape;
 import imgui.ImColor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,10 +81,16 @@ public class Settlement {
         return cityShapes.get(shapeType);
     }
     
-//    public Shape[] getRawShapes() {
-//        ArrayList<Shape> shapes = new ArrayList();
-//        List<ArrayList<EditorShape>> ciShape = cityShapes.values();
-//    }
+    public EditorShape[] getRawEditorShapes() {
+        ArrayList<EditorShape> shapes = new ArrayList();
+        List<ArrayList<EditorShape>> ciShape = new ArrayList<>(cityShapes.values());
+        for(int i = 0; i < ciShape.size(); i++) {
+            shapes.addAll(ciShape.get(i));
+        }
+        EditorShape[] shapeArray = shapes.stream().map(s -> s).toArray(sz -> new EditorShape[sz]);
+        
+        return shapeArray;
+    }
 
     public void addShapes(EditorShape shape, String shapeType) {
         cityShapes.get(shapeType).add(shape);

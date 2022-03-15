@@ -239,6 +239,8 @@ public class RuntimeManager {
         useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false)));
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
+        
+        dataDis.updateShapeStyleGroupings();
     }
 
     public void removePoint(EditorShape removeFrom, Point point) {
