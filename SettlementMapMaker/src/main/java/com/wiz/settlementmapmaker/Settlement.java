@@ -8,9 +8,10 @@ import Shape.EditorShape;
 import Shape.Zone;
 import Shape.Obstacle;
 import Shape.Building;
+import Shape.Shape;
 import imgui.ImColor;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,10 +21,10 @@ import java.util.List;
 public class Settlement {
 
     private String name = "";
-    private Hashtable<String, ArrayList<EditorShape>> cityShapes = new Hashtable<>();
+    private HashMap<String, ArrayList<EditorShape>> cityShapes = new HashMap<>();
 
     private Style defaultStyle = new Style(new DrawColor(0,0,0,1), 0);
-    private Hashtable<String, Style> style = new Hashtable<>();
+    private HashMap<String, Style> style = new HashMap<>();
     
 
     private ArrayList<String> cityStyles = new ArrayList<>();
@@ -69,15 +70,20 @@ public class Settlement {
         return name;
     }
     
-    public void fillHash(Hashtable<String, String[]> hash) {
-        ArrayList<Zone> zones = new ArrayList<>();
-        ArrayList<Building> buildings = new ArrayList<>();
-        ArrayList<Obstacle> Obstacles = new ArrayList<>();
-    }
+//    public void fillHash(HashMap<String, String[]> hash) {
+//        ArrayList<Zone> zones = new ArrayList<>();
+//        ArrayList<Building> buildings = new ArrayList<>();
+//        ArrayList<Obstacle> Obstacles = new ArrayList<>();
+//    }
 
     public List<EditorShape> getShapes(String shapeType) {
         return cityShapes.get(shapeType);
     }
+    
+//    public Shape[] getRawShapes() {
+//        ArrayList<Shape> shapes = new ArrayList();
+//        List<ArrayList<EditorShape>> ciShape = cityShapes.values();
+//    }
 
     public void addShapes(EditorShape shape, String shapeType) {
         cityShapes.get(shapeType).add(shape);

@@ -14,16 +14,22 @@ public class ImStringChangeAction implements Action {
 
     ImString toChange;
     String changedFrom;
-    
+
     public ImStringChangeAction(ImString change, String changeTo) {
         toChange = change;
         changedFrom = change.get();
         change.set(changeTo, true);
     }
-    
+
+    public ImStringChangeAction(ImString change, String changeTo, String original) {
+        toChange = change;
+        changedFrom = original;
+        change.set(changeTo, true);
+    }
+
     @Override
     public Action revert() {
         return new ImStringChangeAction(toChange, changedFrom);
     }
-    
+
 }

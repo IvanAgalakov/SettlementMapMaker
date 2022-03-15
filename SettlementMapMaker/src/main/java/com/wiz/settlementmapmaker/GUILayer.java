@@ -116,7 +116,7 @@ public class GUILayer {
         ImGui.begin("Shape Drawing Menu");
 
         ImGui.textColored(Constants.CALM_GREEN, "Drawing: " + editorType + "s");
-        
+
         // start of tab bar
         ImGui.beginTabBar("Edit Type");
         for (int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {
@@ -127,17 +127,16 @@ public class GUILayer {
         }
         ImGui.endTabBar();
         // end of tab bar
-        
-        
+
         // makes sure the selected shape stays within the possible range of selected shapes
-        if(runMan.getSelectedShape().get() >= runMan.getShapeList(editorType.get()).length) {
-            runMan.getSelectedShape().set(runMan.getShapeList(editorType.get()).length-1);
+        if (runMan.getSelectedShape().get() >= runMan.getShapeList(editorType.get()).length) {
+            runMan.getSelectedShape().set(runMan.getShapeList(editorType.get()).length - 1);
         }
-        if(runMan.getSelectedShape().get() < 0) {
+        if (runMan.getSelectedShape().get() < 0) {
             runMan.getSelectedShape().set(0);
         }
         // -----------------------------------------------------------------------------------
-        
+
         ImGui.listBox(editorType.get(), runMan.getSelectedShape(), runMan.getShapeList(editorType.get()), 4);
 
         if (runMan.getShapeList(editorType.get()).length != 0) {
@@ -176,6 +175,9 @@ public class GUILayer {
     ImInt selectedStyleForShape = new ImInt();
     EditorShape shapeToEdit = null;
 
+    boolean shapeNameBeingChanged = false;
+    String oldName = "";
+
     public void shapeEdit(ImVec2 pos) {
         ImGui.setNextWindowSize(400, 350, ImGuiCond.Once);
         ImGui.setNextWindowPos(pos.x - 500, pos.y - 400, ImGuiCond.Once);
@@ -186,9 +188,19 @@ public class GUILayer {
                 ImGui.text("zone edit");
             }
 
-            if (ImGui.inputText("name", shapeToEdit.getName())) {
-                runMan.updateShapeList();
+            // Input Text for Shape Name ---------------------------
+            ImGui.inputText("name", shapeToEdit.getName());
+            if (!ImGui.isItemActive() && shapeNameBeingChanged) {
+                if (!oldName.equals(shapeToEdit.getName().get())) {
+                    runMan.updateShapeName(shapeToEdit, oldName);
+                }
+            } else if (!ImGui.isItemActive()) {
+                oldName = shapeToEdit.getName().get();
             }
+            // checks the state of the inputText, allows for the undoing of changes to the text and better updating
+            shapeNameBeingChanged = ImGui.isItemActive();
+            // -----------------------------------------------------
+
             ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray(), 3);
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);

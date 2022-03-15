@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.wiz.settlementmapmaker;
+package com.wiz.settlementmapmaker.Utilities;
 
 /**
  *
@@ -21,7 +21,8 @@ public class FixedStack<T> {
     }
 
     Node start, end;
-    int length, maxLength;
+    public int length;
+    int maxLength;
 
     public FixedStack(int maxLength) {
         this.maxLength = maxLength;
