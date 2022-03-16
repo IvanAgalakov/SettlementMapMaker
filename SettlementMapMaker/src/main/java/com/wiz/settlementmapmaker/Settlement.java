@@ -24,9 +24,8 @@ public class Settlement {
     private String name = "";
     private HashMap<String, ArrayList<EditorShape>> cityShapes = new HashMap<>();
 
-    private Style defaultStyle = new Style(new DrawColor(0,0,0,1), 0);
+    private Style defaultStyle = new Style(new DrawColor(0, 0, 0, 1), 0);
     private HashMap<String, Style> style = new HashMap<>();
-    
 
     private ArrayList<String> cityStyles = new ArrayList<>();
 
@@ -39,26 +38,30 @@ public class Settlement {
         cityStyles.add("Generated Building Color");
         style.put("Obstacle Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Obstacle Color");
-        
-        for(int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {
+
+        for (int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {
             cityShapes.put(Constants.CITY_SHAPE_TYPES[i], new ArrayList());
         }
 
         this.name = name;
     }
-    
+
     public float[] getColor(String key) {
         return style.get(key).getColor().getFloatOfColor();
     }
-    
+
     public Style getStyle(String key) {
-        return style.get(key);
+        if (!key.equals("default")) {
+            return style.get(key);
+        } else {
+            return this.defaultStyle;
+        }
     }
-    
+
     public Style getDefaultStyle() {
         return this.defaultStyle;
     }
-    
+
     public ArrayList<String> getCityStyles() {
         return this.cityStyles;
     }
@@ -70,41 +73,40 @@ public class Settlement {
     public String getName() {
         return name;
     }
-    
+
 //    public void fillHash(HashMap<String, String[]> hash) {
 //        ArrayList<Zone> zones = new ArrayList<>();
 //        ArrayList<Building> buildings = new ArrayList<>();
 //        ArrayList<Obstacle> Obstacles = new ArrayList<>();
 //    }
-
     public List<EditorShape> getShapes(String shapeType) {
         return cityShapes.get(shapeType);
     }
-    
+
     public EditorShape[] getRawEditorShapes() {
         ArrayList<EditorShape> shapes = new ArrayList();
         List<ArrayList<EditorShape>> ciShape = new ArrayList<>(cityShapes.values());
-        for(int i = 0; i < ciShape.size(); i++) {
+        for (int i = 0; i < ciShape.size(); i++) {
             shapes.addAll(ciShape.get(i));
         }
         EditorShape[] shapeArray = shapes.stream().map(s -> s).toArray(sz -> new EditorShape[sz]);
-        
+
         return shapeArray;
     }
 
     public void addShapes(EditorShape shape, String shapeType) {
         cityShapes.get(shapeType).add(shape);
     }
-    
+
     public void addStyle(String s) {
-        if(!cityStyles.contains(s)) {
+        if (!cityStyles.contains(s)) {
             cityStyles.add(s);
-            style.put(s, new Style(new DrawColor(1,1,1,1), 0));
+            style.put(s, new Style(new DrawColor(1, 1, 1, 1), 0));
         }
     }
-    
+
     public void removeStyle(String s) {
-        if(cityStyles.contains(s)) {
+        if (cityStyles.contains(s)) {
             cityStyles.remove(s);
             style.remove(s);
         }

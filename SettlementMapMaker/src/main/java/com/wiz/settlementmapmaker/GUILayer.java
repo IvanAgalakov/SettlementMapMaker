@@ -47,10 +47,6 @@ public class GUILayer {
     public void initLayer(Window window, RuntimeManager runMan) {
         this.myWindow = window;
         this.runMan = runMan;
-
-//        ImGuiStyle style = ImGui.getStyle();
-//        style.setColor(ImGuiCol.Button, warmParchment);
-//        style.setColor(ImGuiCol.WindowBg, parchment);
     }
 
     public void imgui() {
@@ -201,11 +197,13 @@ public class GUILayer {
             shapeNameBeingChanged = ImGui.isItemActive();
             // -----------------------------------------------------
 
-            ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray(), 3);
+            ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray());
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
             }
-            ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles());
+            if(ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles())) {
+                runMan.updateDataDisplay();
+            }
 
         } else {
             ImGui.text("No shape selected, please select a shape!");
@@ -344,18 +342,13 @@ public class GUILayer {
                 ImGui.separator();
                 ImGui.dummy(0, 5f);
 
-                String styleRemove = "";
+                int remove = -1;
 
                 ImGui.beginChild("styles", ImGui.getWindowContentRegionMaxX() - 20f, 300);
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
 
                     if (ImGui.button("remove##" + i)) {
-                        if (!ImGui.isPopupOpen("StyleRemovePopup")) {
-                            System.out.println("active");
-                            styleRemove = runMan.getCityStyles().get(i);
-                            this.stringPopupString = "remove " + styleRemove;
-                            ImGui.openPopup("StyleRemovePopup");
-                        }
+                        remove = i;
                     }
                     ImGui.sameLine();
                     ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getColor(runMan.getCityStyles().get(i)));
@@ -366,7 +359,9 @@ public class GUILayer {
                 }
                 ImGui.endChild();
 
-                this.confirmationStringPopup("StyleRemovePopup", s -> runMan.removeStyle(s));
+                if (remove != -1) {
+                    runMan.removeStyle(runMan.getCityStyles().get(remove));
+                }
 
                 ImGui.separator();
                 if (ImGui.button("Add Style") && !newStyle.get().equals("")) {
@@ -424,26 +419,4 @@ public class GUILayer {
         return runMan.getCurrentSettlement() != null;
     }
 
-    private String stringPopupString = "";
-
-    private void confirmationStringPopup(String confirmationName, I myMethodInterface) {
-        if (ImGui.beginPopup(confirmationName)) {
-            ImGui.text("Are you sure you want to " + stringPopupString + "?");
-            if (ImGui.button("yes", 40, 20)) {
-                myMethodInterface.myMethod(stringPopupString.replace("remove ", ""));
-                ImGui.closeCurrentPopup();
-            }
-            ImGui.sameLine();
-            if (ImGui.button("no", 40, 20)) {
-                ImGui.closeCurrentPopup();
-            }
-            ImGui.endPopup();
-        }
-    }
-
-}
-
-interface I {
-
-    public void myMethod(String s);
 }

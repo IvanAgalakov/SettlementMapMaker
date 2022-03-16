@@ -150,6 +150,7 @@ public class RuntimeManager {
         // the location for the initial updating of lists for gui visualization
         this.updateStyleList();
         this.updateShapeList();
+        this.updateDataDisplay();
     }
 
     public Settlement getCurrentSettlement() {
@@ -334,10 +335,16 @@ public class RuntimeManager {
 
     public void addStyle(String style) {
         this.currentSettlement.addStyle(style);
+        this.updateStyleList();
     }
 
     public void removeStyle(String style) {
         this.currentSettlement.removeStyle(style);
+        this.updateStyleList();
+    }
+    
+    public void updateDataDisplay() {
+        dataDis.updateShapeStyleGroupings();
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

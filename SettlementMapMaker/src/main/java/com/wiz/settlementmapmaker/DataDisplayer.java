@@ -92,19 +92,21 @@ public class DataDisplayer {
     }
 
     public void drawStyleGroups() {
-        ArrayList<String> styles = runMan.getCurrentSettlement().getCityStyles();
-        for (int i = 0; i < styles.size(); i++) {
-            if (this.shapesByStyle.containsKey(styles.get(i))) {
-                Shape[] shapes = new Shape[this.shapesByStyle.get(styles.get(i)).size()];
-                shapes = this.shapesByStyle.get(styles.get(i)).toArray(shapes);
-                WindowVisualizer.drawEnclosedLines(shapes, 5, runMan.getCurrentSettlement().getStyle(styles.get(i)).getColor());
+        String[] styles = runMan.getStyles();
+        for (int i = 0; i < styles.length; i++) {
+            if (this.shapesByStyle.containsKey(styles[i])) {
+                Shape[] shapes = new Shape[this.shapesByStyle.get(styles[i]).size()];
+                shapes = this.shapesByStyle.get(styles[i]).toArray(shapes);
+                WindowVisualizer.drawEnclosedLines(shapes, 5, runMan.getCurrentSettlement().getStyle(styles[i]).getColor());
             }
+
         }
     }
 
     public void updateShapeStyleGroupings() {
         this.shapesByStyle = new HashMap<>();
         String[] styles = runMan.getStyles();
+        System.out.println(styles[0]);
         for (int i = 0; i < styles.length; i++) {
             shapesByStyle.put(styles[i], new ArrayList<>());
         }
@@ -112,7 +114,7 @@ public class DataDisplayer {
         EditorShape[] shapes = runMan.currentSettlement.getRawEditorShapes();
 
         for (int i = 0; i < shapes.length; i++) {
-            this.shapesByStyle.get(runMan.getCurrentSettlement().getCityStyles().get(shapes[i].getStyle().get())).add(shapes[i]);
+            this.shapesByStyle.get(styles[shapes[i].getStyle().get()]).add(shapes[i]);
         }
     }
 
