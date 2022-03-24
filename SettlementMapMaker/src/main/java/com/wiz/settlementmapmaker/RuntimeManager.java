@@ -4,11 +4,17 @@
  */
 package com.wiz.settlementmapmaker;
 
+import com.wiz.settlementmapmaker.Utilities.FixedStack;
+import Shape.EditorShape;
+import Shape.Shape;
+import Shape.Point;
 import com.wiz.settlementmapmaker.Actions.Action;
 import com.wiz.settlementmapmaker.Actions.AlterListAction;
 import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
+import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import com.wiz.settlementmapmaker.Actions.Method1ArgAction;
 import imgui.ImGuiIO;
 import imgui.app.Color;
 
@@ -20,6 +26,7 @@ import imgui.type.ImString;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,9 +62,10 @@ public class RuntimeManager {
 
     private ImString selectedDrawMenu = new ImString();
 
-    private ImInt selectedZone = new ImInt();
-    
-    private String[] zones = new String[]{};
+    private ImInt selectedShape = new ImInt();
+    private ImString selectedDrawingType = new ImString();
+    private Hashtable<String, String[]> shapeListVisuals = new Hashtable<>();
+
     private String[] styles = new String[]{};
 
     // Settlement Value Alterations
@@ -65,7 +73,9 @@ public class RuntimeManager {
 
     private FixedStack<Action> undoHistory = new FixedStack<>(20);
     private FixedStack<Action> redoHistory = new FixedStack<>(20);
-    
+
+    private ImGuiIO io;
+    private DataDisplayer dataDis;
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -74,8 +84,10 @@ public class RuntimeManager {
 
     public void init() {
         GLFW.glfwSetWindowFocusCallback(window.getWindowPointer(), new WindowFocus());
+        dataDis = new DataDisplayer(this, io, window);
     }
 
+    // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
     }
@@ -83,7 +95,7 @@ public class RuntimeManager {
     public void update() {
         GLFW.glfwGetWindowSize(window.getWindowPointer(), windowWidth, windowHeight);
         this.controls();
-        this.displayData();
+        dataDis.display();
     }
 
     boolean lastSPress = false;
@@ -109,68 +121,12 @@ public class RuntimeManager {
 
     }
 
-    private boolean lastMiddleState = false;
-    private float initMouseX = 0f, initMouseY = 0f;
-    private float initCameraX = 0f, initCameraY = 0f;
-    private float cameraX = 0f, cameraY = 0f;
-    private ImGuiIO io;
-
-    private float realMouseX = 0f;
-    private float realMouseY = 0f;
-
-    private Point editPoint = null;
-    private EditorShape editShape = null;
-
-    public void displayData() {
-        GL33C.glUseProgram(window.getProgram());
-
-        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && io.getKeyCtrl()) {
-
-            if (lastMiddleState == false) {
-                initMouseX = io.getMousePosX();
-                initMouseY = io.getMousePosY();
-                initCameraX = cameraX;
-                initCameraY = cameraY;
-            }
-            cameraX = initCameraX + (io.getMousePosX() - initMouseX);
-            cameraY = initCameraY + (io.getMousePosY() - initMouseY);
-            lastMiddleState = true;
-        } else {
-            lastMiddleState = false;
-        }
-
-        float normx = cameraX / windowWidth[0],
-                normy = 1 - cameraY / (float) windowHeight[0];
-        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "offset"), normx * 2 - 1, normy * 2 - 1);
-
-        realMouseX = (((io.getMousePosX() / windowWidth[0]) * 2) - (normx * 2));
-        realMouseY = -(((io.getMousePosY() / windowHeight[0]) * 2) + (normy * 2 - 2));
-
-        //System.out.println(realMouseX + ", " + realMouseY);
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(realMouseX,realMouseY), new Point(0,-2)})}, new Color(realMouseX/2f,0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(realMouseX,realMouseY), new Point(2,0)})}, new Color(-realMouseY/2f,0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,-2), new Point(realMouseX,realMouseY), new Point(2,-2)})}, new Color(1+(realMouseY/2f),0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(2,-2), new Point(realMouseX,realMouseY), new Point(2,0)})}, new Color(1-(realMouseX/2f),0f,0f,1f));
-        if (editPoint != null) {
-            editPoint.setX(realMouseX);
-            editPoint.setY(realMouseY);
-            WindowVisualizer.drawPoints(new Shape[]{new Shape(new Point[]{editPoint})}, 5, this.currentSettlement.getDefaultStyle().getColor());
-            if(io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
-                editPoint = null;
-                editShape = null;
-            }
-            if(editShape != null) {
-                WindowVisualizer.drawPoints(new Shape[]{editShape}, 5, this.currentSettlement.getDefaultStyle().getColor());
-            }
-        }
-    }
-    
     public void setEditPoint(Point editPoint) {
-        this.editPoint = editPoint;
+        dataDis.setEditPoint(editPoint);
     }
-    
+
     public void setEditShape(EditorShape editShape) {
-        this.editShape = editShape;
+        dataDis.setEditShape(editShape);
     }
 
     public void createNewSettlement(String name, String path) {
@@ -190,6 +146,11 @@ public class RuntimeManager {
     public void setupSettlement(Settlement s) { // allows the setup of additional valeus which will be altered later by gui interaction
         currentSettlement = s;
         settlementName.set(currentSettlement.getName());
+
+        // the location for the initial updating of lists for gui visualization
+        this.updateStyleList();
+        this.updateShapeList();
+        this.updateDataDisplay();
     }
 
     public Settlement getCurrentSettlement() {
@@ -243,7 +204,6 @@ public class RuntimeManager {
     public void openSettlementFile(String loc) {
         settlementFilePath.set(loc);
         setupSettlement(FileManager.openSettlement(loc));
-        this.updateStyleList();
     }
 
     public boolean getWindowFocus() {
@@ -254,41 +214,75 @@ public class RuntimeManager {
         return this.settlementName;
     }
 
-    public ImInt getSelectedZone() {
-        return selectedZone;
+    public ImInt getSelectedShape() {
+        return selectedShape;
     }
 
-    public String[] getZonesList() {
-        return zones;
+    public String[] getShapeList(String shapeType) {
+        return shapeListVisuals.get(shapeType);
     }
 
-    public List<Zone> getZones() {
-        return currentSettlement.getZones();
+    public List<EditorShape> getShapes(String shapeType) {
+        return currentSettlement.getShapes(shapeType);
     }
 
-    public void addZone(Zone zone, ImBoolean menu) {
-        useAction(new CombinedAction(new AlterListAction(currentSettlement.getZones(), zone, false), new MethodRunAction(() -> updateZonesList()), new ImBooleanChangeAction(menu, true)));
+    public void addShape(EditorShape shape, String shapeType) {
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, false), new MethodRunAction(() -> updateShapeList())));
     }
 
-    public void updateZonesList() {
-        zones = currentSettlement.getZones().stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
-        if (zones.length <= this.selectedZone.get()) {
-            this.selectedZone.set(zones.length - 1);
+    public void removeShape(int selectedShape, String shapeType) {
+        EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList())));
+    }
+
+    public void addPoint(EditorShape addTo) {
+        Point newPoint = new Point(0, 0);
+        useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false)));
+        this.setEditPoint(newPoint);
+        this.setEditShape(addTo);
+        
+        
+    }
+
+    public void removePoint(EditorShape removeFrom, Point point) {
+        useAction(new AlterListAction(removeFrom.getPointList(), point, true));
+    }
+
+    public ImString getSelectedDrawingType() {
+        return this.selectedDrawingType;
+    }
+
+    public void updateShapeList() {
+        //zones = currentSettlement.getZones().stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
+        //if (zones.length <= this.selectedZone.get()) {
+        //    this.selectedZone.set(zones.length - 1);
+        //}
+        String[] shapeTypes = Constants.CITY_SHAPE_TYPES;
+        for (int i = 0; i < shapeTypes.length; i++) {
+            String[] sPut = this.currentSettlement.getShapes(shapeTypes[i]).stream().map(s -> s.getName().get()).toArray(sz -> new String[sz]);
+            if (sPut == null) {
+                sPut = new String[0];
+            }
+            this.shapeListVisuals.put(shapeTypes[i], sPut);
         }
     }
-    
+
+    public void updateShapeName(EditorShape shapeToEdit, String oldName) {
+        this.useAction(new CombinedAction(new ImStringChangeAction(shapeToEdit.getName(), shapeToEdit.getName().get(), oldName), new MethodRunAction(() -> updateShapeList())));
+    }
+
     public String[] getStyles() {
         return this.styles;
     }
-    
+
     public void updateStyleList() {
         this.styles = currentSettlement.getCityStyles().stream().map(s -> s).toArray(sz -> new String[sz]);
-        String[] styleHold = new String[this.styles.length+1];
-        for(int i = 0; i < styleHold.length; i++) {
+        String[] styleHold = new String[this.styles.length + 1];
+        for (int i = 0; i < styleHold.length; i++) {
             if (i == 0) {
                 styleHold[i] = "default";
             } else {
-                styleHold[i] = styles[i-1];
+                styleHold[i] = styles[i - 1];
             }
         }
         styles = styleHold;
@@ -341,10 +335,16 @@ public class RuntimeManager {
 
     public void addStyle(String style) {
         this.currentSettlement.addStyle(style);
+        this.updateStyleList();
     }
 
     public void removeStyle(String style) {
         this.currentSettlement.removeStyle(style);
+        this.updateStyleList();
+    }
+    
+    public void updateDataDisplay() {
+        dataDis.updateShapeStyleGroupings();
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

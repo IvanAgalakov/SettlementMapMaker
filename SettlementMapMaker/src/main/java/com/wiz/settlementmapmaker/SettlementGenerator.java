@@ -4,8 +4,12 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.Shape;
+import Shape.Point;
+import de.alsclo.voronoi.Voronoi;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 /**
  *
@@ -34,18 +38,26 @@ public class SettlementGenerator {
     }
 
     public Shape[] convertToBlock(Shape blockBase, float minSize, float maxSize) {
+        
+        blockBase = new Shape(blockBase);
+        blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
+        
         Random ran = new Random();
         ran.setSeed(1);
 
-        ArrayList<Shape> block = new ArrayList<Shape>();
+        ArrayList<Shape> block = new ArrayList<>();
         Point[] segments = blockBase.getPoints();
+        
 
         float startDistance = 0f;
 
+        
+        
         for (int i = 1; i < segments.length; i++) {
 
             Point startSeg = segments[i - 1];
             Point endSeg = segments[i];
+            
             float run = endSeg.x - startSeg.x;
             float rise = endSeg.y - startSeg.y;
             float hypo = startSeg.getDistanceToPoint(endSeg);
@@ -71,9 +83,9 @@ public class SettlementGenerator {
 
                 Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
 
-                Point endInset = this.normalPointToPoint(end, rise, run, -deviate);
+                Point endInset = this.normalPointToPoint(end, rise, run, deviate);
 
-                Point beginInset = this.normalPointToPoint(begin, rise, run, -deviate);
+                Point beginInset = this.normalPointToPoint(begin, rise, run, deviate);
 
                 Shape newBuilding = new Shape(new Point[]{begin, end, endInset, beginInset});
                 //Shape newBuilding = new Shape(new Point[]{begin, end, end, endInset, endInset, beginInset, beginInset, begin});
@@ -90,18 +102,33 @@ public class SettlementGenerator {
                     }
                 }
 
-                if (i - 1 == 0 && count == 0) {
-                    segments[segments.length - 1] = beginInset;
-                }
+//                if (i - 1 == 0 && count == 0) {
+//                    segments[segments.length - 1] = beginInset;
+//                }
 
                 count++;
             }
 
         }
+        
 
         Shape[] blockArray = new Shape[block.size()];
         blockArray = block.toArray(blockArray);
         return blockArray;
+    }
+    
+    public Shape generateVoronoi(Shape v) {
+        Voronoi voronoi = new Voronoi(v.getVoronoiPoints());
+        Set<de.alsclo.voronoi.graph.Point> setPoints = voronoi.getGraph().getSitePoints();
+        de.alsclo.voronoi.graph.Point[] points = new de.alsclo.voronoi.graph.Point[setPoints.size()];
+        points = setPoints.toArray(points);
+        
+        Point[] shapePoints = new Point[points.length];
+        for(int i = 0; i < shapePoints.length; i++) {
+            shapePoints[i] = new Point(points[i]);
+        }
+        
+        return new Shape(shapePoints);
     }
 
     public Point normalPointToPoint(Point p, float rise, float run, float deviate) {

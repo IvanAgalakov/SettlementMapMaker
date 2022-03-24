@@ -8,7 +8,7 @@ package com.wiz.settlementmapmaker;
  *
  * @author 904187003
  */
-public class Zone extends EditorShape {
+public class Zone extends com.wiz.settlementmapmaker.EditorShape {
 
     private String type;
 
