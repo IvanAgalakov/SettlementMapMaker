@@ -22,7 +22,7 @@ public class Shape {
     private float width;
     private float height;
     
-    public Shape(Point[] points) {
+    public Shape(Point... points) {
         this.points.addAll(Arrays.asList(points));
         this.CalculateCenter();
     }

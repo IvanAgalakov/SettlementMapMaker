@@ -73,12 +73,7 @@ public class DataDisplayer {
 
         realMouseX = (((io.getMousePosX() / runMan.getWidth()) * 2) - (normx * 2));
         realMouseY = -(((io.getMousePosY() / runMan.getHeight()) * 2) + (normy * 2 - 2));
-
-        //System.out.println(realMouseX + ", " + realMouseY);
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(realMouseX,realMouseY), new Point(0,-2)})}, new Color(realMouseX/2f,0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(realMouseX,realMouseY), new Point(2,0)})}, new Color(-realMouseY/2f,0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(0,-2), new Point(realMouseX,realMouseY), new Point(2,-2)})}, new Color(1+(realMouseY/2f),0f,0f,1f));
-//        WindowVisualizer.drawTriangles(new Shape[]{new Shape(new Point[]{new Point(2,-2), new Point(realMouseX,realMouseY), new Point(2,0)})}, new Color(1-(realMouseX/2f),0f,0f,1f));
+        
         if (editPoint != null) {
             editMode = true;
             editPoint.setX(realMouseX);
@@ -112,6 +107,8 @@ public class DataDisplayer {
                 Shape[] shapes = new Shape[shapeList.size()];
                 shapes = this.shapesByStyle.get(styles[i]).toArray(shapes);
                 WindowVisualizer.drawEnclosedLines(shapes, 5, runMan.getCurrentSettlement().getStyle(styles[i]).getColor());
+               
+                //WindowVisualizer.drawPoints(shapes, 5, runMan.getCurrentSettlement().getStyle(styles[i]).getColor());
             }
 
         }
@@ -141,8 +138,8 @@ public class DataDisplayer {
             if (shapes.get(x) instanceof Zone) {
                 Zone zone = (Zone) shapes.get(x);
                 if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
-                    currentStyleShapes.remove(shapes.get(x));
-                    currentStyleShapes.add(settleGen.generateVoronoi(zone));
+                    //currentStyleShapes.remove(shapes.get(x));
+                    //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
                     //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
                 }
             }

@@ -9,11 +9,6 @@ import Shape.Point;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Set;
-import kn.uni.voronoitreemap.datastructure.OpenList;
-import kn.uni.voronoitreemap.diagram.PowerDiagram;
-import kn.uni.voronoitreemap.j2d.PolygonSimple;
-import kn.uni.voronoitreemap.j2d.Site;
 
 /**
  *
@@ -116,68 +111,15 @@ public class SettlementGenerator {
         return blockArray;
     }
 
-    public Shape generateVoronoi(Shape v) {
-        PowerDiagram diagram = new PowerDiagram();
-        OpenList sites = new OpenList();
+    public ArrayList<Shape> generateVoronoi(Shape v) {
 
-        ArrayList<Point> points = v.getPointList();
-        if (points.size() <= 2) {
-            return new Shape(points);
+        if (v.getPointList().size() <= 2) {
+            return new ArrayList();
         }
 
-        PolygonSimple rootPolygon = new PolygonSimple();
-        for (int i = 0; i < points.size(); i++) {
-            rootPolygon.add(points.get(i).x, points.get(i).y);
-        }
+        //Voronoi voronoi = new Voronoi();
 
-        Random rand = new Random(100);
-        for (int i = 0; i < 20; i++) {
-            if (v.getWidth() != 0 && v.getHeight() != 0) {
-                Site site = new Site(v.getBottomLeft().x + rand.nextFloat(v.getWidth()), v.getBottomLeft().y + rand.nextFloat(v.getHeight()));
-                sites.add(site);
-            } else {
-                return new Shape();
-            }
-            // we could also set a different weighting to some sites
-            // site.setWeight(30)
-        }
-
-        diagram.setSites(sites);
-
-        diagram.setClipPoly(rootPolygon);
-
-        diagram.computeDiagram();
-
-        ArrayList<Point> generatedShapePoints = new ArrayList();
-        for (int i = 0; i < sites.size; i++) {
-            Site site = sites.array[i];
-            PolygonSimple polygon = site.getPolygon();
-
-            // for each site we can no get the resulting polygon of its cell. 
-            // note that the cell can also be empty, in this case there is no polygon for the corresponding site.
-            if (polygon != null) {
-                double[] xPoints = polygon.getXPoints();
-                double[] yPoints = polygon.getYPoints();
-                Point first = null;
-                for (int a = 0; a < xPoints.length; a++) {
-                    if (xPoints[a] != 0 || yPoints[a] != 0) {
-                        generatedShapePoints.add(new Point((float) xPoints[a], (float) yPoints[a]));
-                        if(first == null) {
-                            first = new Point((float) xPoints[a], (float) yPoints[a]);
-                        }
-                    } else {
-                        if(first != null) {
-                            generatedShapePoints.add(first);
-                        }
-                    }
-                }
-            }
-        }
-
-//        for (Point p : generatedShapePoints) {
-//            System.out.println(p.toString());
-//        }
-        return new Shape(generatedShapePoints);
+        return new ArrayList();
     }
 
     public Point normalPointToPoint(Point p, float rise, float run, float deviate) {
