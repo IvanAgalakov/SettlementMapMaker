@@ -25,11 +25,6 @@ public class Point {
         this.y = p.y;
     }
 
-    public Point(de.alsclo.voronoi.graph.Point p) {
-        this.x = (float) p.x;
-        this.y = (float) p.y;
-    }
-
     public void setX(float x) {
         this.x = x;
     }

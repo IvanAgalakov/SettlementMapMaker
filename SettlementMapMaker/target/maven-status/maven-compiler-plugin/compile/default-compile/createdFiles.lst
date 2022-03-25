@@ -8,8 +8,6 @@ com\wiz\settlementmapmaker\Actions\CombinedAction.class
 com\wiz\settlementmapmaker\Actions\ImStringChangeAction.class
 Shape\Obstacle.class
 com\wiz\settlementmapmaker\Constants$CityShapeTypes.class
-com\wiz\settlementmapmaker\FixedStack.class
-com\wiz\settlementmapmaker\FixedStack$Node.class
 Shape\Zone.class
 com\wiz\settlementmapmaker\DataDisplayer.class
 com\wiz\settlementmapmaker\Actions\ImBooleanChangeAction.class

@@ -238,6 +238,7 @@ public class RuntimeManager {
     public void addPoint(EditorShape addTo) {
         Point newPoint = new Point(0, 0);
         useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false)));
+        addTo.CalculateCenter();
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
         

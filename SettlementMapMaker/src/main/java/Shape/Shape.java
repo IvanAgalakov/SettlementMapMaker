@@ -19,8 +19,16 @@ public class Shape {
     private Point topRight;
     private Point bottomLeft;
     
+    private float width;
+    private float height;
+    
     public Shape(Point[] points) {
         this.points.addAll(Arrays.asList(points));
+        this.CalculateCenter();
+    }
+    
+    public Shape(ArrayList<Point> points) {
+        this.points.addAll(points);
         this.CalculateCenter();
     }
     
@@ -45,13 +53,6 @@ public class Shape {
         return points;
     }
     
-    public ArrayList<de.alsclo.voronoi.graph.Point> getVoronoiPoints() {
-        ArrayList<de.alsclo.voronoi.graph.Point> voronPoints = new ArrayList<>();
-        for(int i = 0; i < points.size(); i++) {
-            voronPoints.add(new de.alsclo.voronoi.graph.Point(points.get(i).x, points.get(i).y));
-        }
-        return voronPoints;
-    }
     
     public Point[] getEnclosedLinesFromPoints() {
         Point[] lines = new Point[points.size()*2];
@@ -75,19 +76,48 @@ public class Shape {
         for(int i = 0; i < addedPoints.length; i++) {
             points.add(addedPoints[i]);
         }
+        this.CalculateCenter();
     }
     
     public void removePoints() {
         
     }
     
-    private void CalculateCenter() {
+    public void CalculateCenter() {
         float averageX = 0, averageY = 0;
+        Float bigX = null, bigY = null, smallX = null, smallY = null;
         for(int i = 0; i < points.size(); i++) {
             averageX += points.get(i).x;
             averageY += points.get(i).y;
+            
+            if(i == 0) {
+               bigX = points.get(i).x;
+               bigY = points.get(i).y;
+               smallX = points.get(i).x;
+               smallY = points.get(i).y;
+            }
+            
+            if(points.get(i).x > bigX)
+                bigX = points.get(i).x;
+            if(points.get(i).y > bigY)
+                bigY = points.get(i).y;
+            
+            if(points.get(i).x < smallX)
+                smallX = points.get(i).x;
+            if(points.get(i).y < smallY)
+                smallY = points.get(i).y;
         }
         center = new Point(averageX/(points.size()), averageY/(points.size()));
+        if(bigX != null) {
+            topRight = new Point(bigX, bigY);
+            bottomLeft = new Point(smallX, smallY);
+        } else {
+            topRight = new Point(center);
+            bottomLeft = new Point(center);
+        }
+        
+        width = Math.abs(bottomLeft.x) + Math.abs(topRight.x);
+        height = Math.abs(bottomLeft.y) + Math.abs(topRight.y);
     }
     
     public Point getTopRight() {
@@ -96,6 +126,14 @@ public class Shape {
     
     public Point getBottomLeft() {
         return bottomLeft;
+    }
+    
+    public float getWidth() {
+        return this.width;
+    }
+    
+    public float getHeight() {
+        return this.height;
     }
     
     public Point getCenter() {
