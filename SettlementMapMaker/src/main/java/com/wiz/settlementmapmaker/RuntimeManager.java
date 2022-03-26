@@ -152,14 +152,7 @@ public class RuntimeManager {
         this.setSettlementFileDirectory(fileDir);
     }
     
-//    public boolean
-//    public void wantToSave() {
-//        
-//    }
-//    
-//    public void saveImage() {
-//        FileManager.saveScreen(this.windowWidth[0], this.windowHeight[0]);
-//    }
+    public boolean savePlease = false;
 
     public void saveCurrentSettlement() {
         currentSettlement.setName(settlementName.get());

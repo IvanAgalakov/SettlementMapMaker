@@ -64,7 +64,7 @@ public class GUILayer {
         ImGui.begin("management");
 
 //        if(ImGui.button("save image")) {
-//            FileManager.saveScreen(runMan.getWidth(), runMan.getHeight());
+//            runMan.savePlease = true;
 //        }
         
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());

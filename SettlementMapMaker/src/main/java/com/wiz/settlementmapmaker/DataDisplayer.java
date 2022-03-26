@@ -100,6 +100,7 @@ public class DataDisplayer {
     }
 
     public void drawStyleGroups() {
+        //WindowVisualizer.drawEnclosedLines(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(1,0)})}, 5, new DrawColor(0,0,0,0));
         String[] styles = runMan.getStyles();
         for (int i = 0; i < styles.length; i++) {
             if (this.shapesByStyle.containsKey(styles[i])) {

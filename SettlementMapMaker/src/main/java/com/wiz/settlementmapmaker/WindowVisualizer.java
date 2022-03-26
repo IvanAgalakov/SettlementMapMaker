@@ -34,6 +34,12 @@ public class WindowVisualizer {
     public static void WindowVisualizerInit(Window win) {
     
         window = win;
+        
+        vertexArray = GL33C.glGenVertexArrays(); // keep these up here and not running every fram, this creates a memory leak if this persistes
+        buffer = GL33C.glGenBuffers();
+        
+        
+        
         //GL33C.glVertexAttribPointer(1, 2, GL33C.GL_FLOAT, false, stride, 2 * Float.BYTES);
 
 //        GL33C.glBindVertexArray(0);
@@ -65,7 +71,7 @@ public class WindowVisualizer {
         
         
         
-        vertexArray = GL33C.glGenVertexArrays();
+        
         GL33C.glBindVertexArray(vertexArray);
         
         
@@ -73,7 +79,7 @@ public class WindowVisualizer {
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vert.length);
         verticesBuffer.put(vert).flip();
         
-        buffer = GL33C.glGenBuffers();
+        
         GL33C.glBindBuffer(GL33C.GL_ARRAY_BUFFER, buffer);
         GL33C.glBufferData(GL33C.GL_ARRAY_BUFFER, verticesBuffer, GL33C.GL_STATIC_DRAW);
 

@@ -16,7 +16,6 @@ com\wiz\settlementmapmaker\SettlementGenerator.class
 com\wiz\settlementmapmaker\DrawColor.class
 com\wiz\settlementmapmaker\ShaderManager.class
 Shape\EditorShape.class
-com\wiz\settlementmapmaker\Actions\Method1ArgAction.class
 com\wiz\settlementmapmaker\Actions\AlterListAction.class
 com\wiz\settlementmapmaker\Actions\MethodRunAction.class
 com\wiz\settlementmapmaker\Main.class

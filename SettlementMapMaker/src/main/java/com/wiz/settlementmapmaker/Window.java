@@ -45,7 +45,7 @@ public class Window {
     private final RuntimeManager runMan;
 
     private SettlementGenerator setGen;
-    
+
     private ArrayList<Point> currentShape = new ArrayList<Point>();
 
     private Shape[] draw;
@@ -145,16 +145,21 @@ public class Window {
             }
 
             GLFW.glfwSwapBuffers(windowPtr);
+
+            if (runMan.savePlease) {
+                FileManager.saveScreen(runMan.getWidth(), runMan.getHeight());
+                runMan.savePlease = false;
+            }
+
             GLFW.glfwPollEvents();
-            
-            
+
         }
     }
-    
+
     public long getWindowPointer() {
         return this.windowPtr;
     }
-    
+
     public int getProgram() {
         return this.program;
     }
