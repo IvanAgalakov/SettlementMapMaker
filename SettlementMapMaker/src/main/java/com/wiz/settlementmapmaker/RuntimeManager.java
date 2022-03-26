@@ -14,7 +14,6 @@ import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
-import com.wiz.settlementmapmaker.Actions.Method1ArgAction;
 import imgui.ImGuiIO;
 import imgui.app.Color;
 
@@ -33,6 +32,9 @@ import java.util.logging.Logger;
 import javax.swing.filechooser.FileSystemView;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
+import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL33C;
 
 /**
@@ -84,6 +86,7 @@ public class RuntimeManager {
 
     public void init() {
         GLFW.glfwSetWindowFocusCallback(window.getWindowPointer(), new WindowFocus());
+        GLFW.glfwSetWindowSizeCallback(window.getWindowPointer(), new WindowResizeHandler());
         dataDis = new DataDisplayer(this, io, window);
     }
 
@@ -94,6 +97,7 @@ public class RuntimeManager {
 
     public void update() {
         GLFW.glfwGetWindowSize(window.getWindowPointer(), windowWidth, windowHeight);
+        
         this.controls();
         dataDis.display();
     }
@@ -116,6 +120,16 @@ public class RuntimeManager {
         if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
             this.saveCurrentSettlement();
         }
+        
+        if (io.getMouseWheel() != 0) {
+            this.zoom[0] += io.getMouseWheel()*Constants.MOUSE_WHEEL_SENSITIVITY;
+            if(this.zoom[0] > Constants.MAX_ZOOM) {
+                this.zoom[0] = Constants.MAX_ZOOM;
+            }
+            if(this.zoom[0] < Constants.MIN_ZOOM) {
+                this.zoom[0] = Constants.MIN_ZOOM;
+            }
+        }
 
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
 
@@ -137,6 +151,15 @@ public class RuntimeManager {
         FileManager.saveSettlement(currentSettlement, fileDir);
         this.setSettlementFileDirectory(fileDir);
     }
+    
+//    public boolean
+//    public void wantToSave() {
+//        
+//    }
+//    
+//    public void saveImage() {
+//        FileManager.saveScreen(this.windowWidth[0], this.windowHeight[0]);
+//    }
 
     public void saveCurrentSettlement() {
         currentSettlement.setName(settlementName.get());
@@ -357,6 +380,16 @@ public class RuntimeManager {
             }
         }
 
+    }
+    
+    
+    private class WindowResizeHandler implements GLFWWindowSizeCallbackI {
+
+        @Override
+        public void invoke(long window, int width, int height) {
+            GL.createCapabilities();
+            GL30C.glViewport(0, 0, width, height);
+        }
     }
 
 }

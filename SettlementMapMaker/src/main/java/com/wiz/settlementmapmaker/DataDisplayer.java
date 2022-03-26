@@ -67,12 +67,14 @@ public class DataDisplayer {
             lastMiddleState = false;
         }
 
-        float normx = cameraX / runMan.getWidth(),
+        float normx = cameraX / (float) runMan.getWidth(),
                 normy = 1 - cameraY / (float) runMan.getHeight();
         GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "offset"), normx * 2 - 1, normy * 2 - 1);
 
-        realMouseX = (((io.getMousePosX() / runMan.getWidth()) * 2) - (normx * 2));
-        realMouseY = -(((io.getMousePosY() / runMan.getHeight()) * 2) + (normy * 2 - 2));
+        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
+        
+        realMouseX = -(-1+1f/runMan.getZoom()[0]) + (((io.getMousePosX() / runMan.getWidth()) * 2)/ runMan.getZoom()[0] - (normx * 2)) ;
+        realMouseY = (-1+1f/runMan.getZoom()[0]) - (((io.getMousePosY() / runMan.getHeight()) * 2)/ runMan.getZoom()[0] + (normy * 2 - 2));
         
         if (editPoint != null) {
             editMode = true;

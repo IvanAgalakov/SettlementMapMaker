@@ -7,6 +7,7 @@ com\wiz\settlementmapmaker\Shader$shaderTypes.class
 com\wiz\settlementmapmaker\Actions\CombinedAction.class
 com\wiz\settlementmapmaker\Actions\ImStringChangeAction.class
 Shape\Obstacle.class
+com\wiz\settlementmapmaker\RuntimeManager$WindowResizeHandler.class
 com\wiz\settlementmapmaker\Constants$CityShapeTypes.class
 Shape\Zone.class
 com\wiz\settlementmapmaker\DataDisplayer.class

@@ -146,6 +146,8 @@ public class Window {
 
             GLFW.glfwSwapBuffers(windowPtr);
             GLFW.glfwPollEvents();
+            
+            
         }
     }
     

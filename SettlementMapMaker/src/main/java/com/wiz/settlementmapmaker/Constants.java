@@ -43,4 +43,10 @@ public class Constants {
     }
     
     public static final String[] ZONE_TYPES = new String[]{"Generate Buildings", "Block Building Generation"};
+    
+    
+    public static final float MOUSE_WHEEL_SENSITIVITY = 0.05f;
+    
+    public static final float MAX_ZOOM = 2f;
+    public static final float MIN_ZOOM = 0.1f;
 }
