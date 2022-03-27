@@ -63,9 +63,9 @@ public class GUILayer {
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("management");
 
-//        if(ImGui.button("save image")) {
-//            runMan.savePlease = true;
-//        }
+        if(ImGui.button("save image")) {
+            runMan.savePlease = true;
+        }
         
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);

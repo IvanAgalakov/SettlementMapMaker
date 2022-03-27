@@ -134,6 +134,7 @@ public class Window {
             imGuiGlfw.newFrame();
             ImGui.newFrame();
             imGuiLayer.imgui();
+            
             ImGui.render();
             imGuiGl3.renderDrawData(ImGui.getDrawData());
 

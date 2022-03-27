@@ -5,6 +5,7 @@
 package com.wiz.settlementmapmaker;
 
 import com.google.gson.Gson;
+import imgui.ImColor;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -48,13 +49,26 @@ public class FileManager {
     }
 
     public static void saveScreen(int width, int height) {
-        int[] pixels = new int[width * height * 3];
+        float[] pixels = new float[width * height * 3];
 
-        GL33C.glReadPixels(0, 0, width, height, GL33C.GL_RGB, GL33C.GL_UNSIGNED_BYTE, pixels);
+        GL33C.glReadPixels(0, 0, width, height, GL33C.GL_RGB, GL33C.GL_FLOAT, pixels);
 
         try {
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            img.setRGB(0, 0, width, height, pixels, 0, width);
+            
+            int x = width-1;
+            int y = 0;
+            for(int i = pixels.length-1; i > 2; i-=3) {
+                int col = ImColor.floatToColor(pixels[i], pixels[i-1], pixels[i-2]);
+                img.setRGB(x, y, col);
+                x--;
+                if(x < 0) {
+                    y++;
+                    x=width-1;
+                }
+            }
+            
+            
             if (img != null) {
                 File outputFile = new File("D:\\image.jpg");
                 ImageIO.write(img, "jpg", outputFile);
