@@ -37,9 +37,9 @@ public class WindowVisualizer {
         buffer = GL33C.glGenBuffers();
 
         GL33C.glEnable(GL33C.GL_LINE_SMOOTH);
-        GL33C.glEnable(GL33C.GL_POLYGON_SMOOTH);
+        //GL33C.glEnable(GL33C.GL_POLYGON_SMOOTH);
         GL33C.glHint(GL33C.GL_LINE_SMOOTH_HINT, GL33C.GL_NICEST);
-        GL33C.glHint(GL33C.GL_POLYGON_SMOOTH_HINT, GL33C.GL_NICEST);
+        //GL33C.glHint(GL33C.GL_POLYGON_SMOOTH_HINT, GL33C.GL_NICEST);
         GL33C.glEnable(GL33C.GL_BLEND);
         GL33C.glBlendFunc(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE_MINUS_SRC_ALPHA);
 

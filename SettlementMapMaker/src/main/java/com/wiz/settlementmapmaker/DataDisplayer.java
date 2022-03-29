@@ -52,6 +52,9 @@ public class DataDisplayer {
 
     private boolean editMode = false;
 
+    private float normx;
+    private float normy;
+    
     public void display() {
         GL33C.glUseProgram(window.getProgram());
 
@@ -70,15 +73,23 @@ public class DataDisplayer {
             lastMiddleState = false;
         }
 
-        float normx = cameraX / (float) runMan.getWidth(),
-                normy = 1 - cameraY / (float) runMan.getHeight();
+        normx = cameraX / (float) runMan.getWidth();
+        normy = 1 - cameraY / (float) runMan.getHeight();
         GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "offset"), normx * 2 - 1, normy * 2 - 1);
 
         GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
 
-        realMouseX = -(-1 + 1f / runMan.getZoom()[0]) + (((io.getMousePosX() / runMan.getWidth()) * 2) / runMan.getZoom()[0] - (normx * 2));
-        realMouseY = (-1 + 1f / runMan.getZoom()[0]) - (((io.getMousePosY() / runMan.getHeight()) * 2) / runMan.getZoom()[0] + (normy * 2 - 2));
-
+        
+        Point mouse = this.screenPointToWorldPoint(new Point(io.getMousePosX(),io.getMousePosY()));
+        realMouseX = mouse.x;
+        realMouseY = mouse.y;
+        Point p = this.worldPointToScreenPoint(new Point(1,-1));
+        //System.out.println(io.getMousePos() + " : " + p.toString());
+        //gui.textPopup("test", p.x, p.y);
+        
+        
+        
+        
         if (editPoint != null) {
             editMode = true;
             editPoint.setX(realMouseX);
@@ -100,6 +111,16 @@ public class DataDisplayer {
         if (runMan.getCurrentSettlement() != null) {
             drawStyleGroups();
         }
+    }
+    
+    private Point screenPointToWorldPoint(Point screen) {
+        Point world = new Point(-(-1 + 1f / runMan.getZoom()[0]) + (((screen.x / runMan.getWidth()) * 2f) / runMan.getZoom()[0] - (normx * 2)), (-1 + 1f / runMan.getZoom()[0]) - (((screen.y / runMan.getHeight()) * 2f) / runMan.getZoom()[0] + (normy * 2 - 2)));
+        return world;
+    }
+    
+    private Point worldPointToScreenPoint(Point world) {
+        Point screen = new Point((((world.x + (-1 + 1f / runMan.getZoom()[0]) + (normx * 2))*runMan.getZoom()[0])/2f)*runMan.getWidth(), -((((world.y + (-1 + 1f / runMan.getZoom()[0]) + (normy * 2 - 2))*runMan.getZoom()[0])/2f)*runMan.getHeight()));
+        return screen;
     }
     
     
@@ -128,9 +149,11 @@ public class DataDisplayer {
                     WindowVisualizer.drawEnclosedLines(shapes, 5, style.getColor());
                 }
                 
-//                for(int x = 0; x < shapes.length; x++) {
-//                    gui.textPopup(((EditorShape)shapes[i]).getName().get(), shapes[x].getCenter().x*(io.getMousePosX()/this.realMouseX), shapes[x].getCenter().y*(io.getMousePosY()/this.realMouseY));
-//                }
+                for(int x = 0; x < shapes.length; x++) {
+                    //System.out.println(shapes[x].getCenter());
+                    Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter());
+                    gui.textPopup(((EditorShape)shapes[i]).getName().get(), textPoint.x, textPoint.y);
+                }
                 
             }
 
