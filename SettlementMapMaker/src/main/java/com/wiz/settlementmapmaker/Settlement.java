@@ -25,6 +25,7 @@ public class Settlement {
     private HashMap<String, ArrayList<EditorShape>> cityShapes = new HashMap<>();
 
     private Style defaultStyle = new Style(new DrawColor(0, 0, 0, 1), 0);
+    private Style backdropStyle = new Style(new DrawColor(0.9216f, 0.8353f, 0.702f, 1f), 0);
     private HashMap<String, Style> style = new HashMap<>();
 
     private ArrayList<String> cityStyles = new ArrayList<>();
@@ -60,6 +61,10 @@ public class Settlement {
 
     public Style getDefaultStyle() {
         return this.defaultStyle;
+    }
+    
+    public Style getBackdropStyle() {
+        return this.backdropStyle;
     }
 
     public ArrayList<String> getCityStyles() {

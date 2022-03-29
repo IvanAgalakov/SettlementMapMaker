@@ -351,6 +351,7 @@ public class GUILayer {
 
             if (selectedTab == 1) {
                 ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor().getFloatOfColor());
+                ImGui.colorEdit4("backdrop", runMan.getBackdropStyle().getColor().getFloatOfColor());
                 ImGui.dummy(0, 5f);
                 ImGui.separator();
                 ImGui.dummy(0, 5f);

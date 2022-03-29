@@ -156,7 +156,12 @@ public class Window {
                 runMan.savePlease = 2;
             }
             
-            glClearColor(0.92f, 0.83f, 0.7f, 1.0f);
+            if(runMan.getCurrentSettlement() == null) {
+                glClearColor(0.92f, 0.83f, 0.7f, 1.0f);
+            } else {
+                DrawColor back = runMan.getBackdropStyle().getColor();
+                glClearColor(back.getRed(), back.getGreen(), back.getBlue(), 1.0f);
+            }
             glClear(GL_COLOR_BUFFER_BIT);
             
             runMan.update();

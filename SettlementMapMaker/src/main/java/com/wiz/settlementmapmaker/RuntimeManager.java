@@ -349,6 +349,10 @@ public class RuntimeManager {
     public Style getDefaultStyle() {
         return this.currentSettlement.getDefaultStyle();
     }
+    
+    public Style getBackdropStyle() {
+        return this.currentSettlement.getBackdropStyle();
+    }
 
     public void addStyle(String style) {
         this.currentSettlement.addStyle(style);
