@@ -64,7 +64,7 @@ public class GUILayer {
         ImGui.begin("management");
 
         if(ImGui.button("save image")) {
-            runMan.savePlease = true;
+            runMan.savePlease = 1;
         }
         
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());

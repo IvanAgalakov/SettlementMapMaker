@@ -68,7 +68,29 @@ public class Shape {
     }
     
     public Point[] getTrianglesFromPoints() {
-        return null;
+        
+        if(points.size() < 3) {
+            return new Point[0];
+        }
+        
+        ArrayList<Point> triangles = new ArrayList();
+        
+        int count = 0;
+        for(int i = 0; i < points.size(); i++) {
+            triangles.add(points.get(i));
+            if(count == 2) {
+                triangles.add(points.get(i));
+                count = -1;
+            }
+            count++;
+        }
+        triangles.add(points.get(0));
+        
+        Point[] triArray = new Point[triangles.size()];
+        triArray = triangles.toArray(triArray);
+        
+        return triArray;
+        
     }
     
     public void addPoints(Point... addedPoints) {

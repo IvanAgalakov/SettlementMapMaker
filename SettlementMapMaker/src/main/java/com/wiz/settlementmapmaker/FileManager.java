@@ -70,8 +70,8 @@ public class FileManager {
             
             
             if (img != null) {
-                File outputFile = new File("D:\\image.jpg");
-                ImageIO.write(img, "jpg", outputFile);
+                File outputFile = new File("D:\\image.png");
+                ImageIO.write(img, "png", outputFile);
             }
         } catch (IOException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);

@@ -9,4 +9,6 @@ void main() {
 // * texture(tex, UV).rgba
 color = vec4(col.x, col.y, col.z, 1.0);
 //color = vec4(UV,0.0,1.0);
+
+
 }

@@ -72,10 +72,10 @@ public class DataDisplayer {
         GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "offset"), normx * 2 - 1, normy * 2 - 1);
 
         GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
-        
-        realMouseX = -(-1+1f/runMan.getZoom()[0]) + (((io.getMousePosX() / runMan.getWidth()) * 2)/ runMan.getZoom()[0] - (normx * 2)) ;
-        realMouseY = (-1+1f/runMan.getZoom()[0]) - (((io.getMousePosY() / runMan.getHeight()) * 2)/ runMan.getZoom()[0] + (normy * 2 - 2));
-        
+
+        realMouseX = -(-1 + 1f / runMan.getZoom()[0]) + (((io.getMousePosX() / runMan.getWidth()) * 2) / runMan.getZoom()[0] - (normx * 2));
+        realMouseY = (-1 + 1f / runMan.getZoom()[0]) - (((io.getMousePosY() / runMan.getHeight()) * 2) / runMan.getZoom()[0] + (normy * 2 - 2));
+
         if (editPoint != null) {
             editMode = true;
             editPoint.setX(realMouseX);
@@ -109,9 +109,20 @@ public class DataDisplayer {
 
                 Shape[] shapes = new Shape[shapeList.size()];
                 shapes = this.shapesByStyle.get(styles[i]).toArray(shapes);
-                WindowVisualizer.drawEnclosedLines(shapes, 5, runMan.getCurrentSettlement().getStyle(styles[i]).getColor());
-               
-                //WindowVisualizer.drawPoints(shapes, 5, runMan.getCurrentSettlement().getStyle(styles[i]).getColor());
+                
+                
+                // chooses the drawing type based on the style you have selected
+                Style style = runMan.getStyle(styles[i]);
+                if(Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
+                    WindowVisualizer.drawPoints(shapes, 8, style.getColor());
+                }
+                else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
+                    WindowVisualizer.drawTriangles(shapes, style.getColor());
+                }
+                else {
+                    WindowVisualizer.drawEnclosedLines(shapes, 5, style.getColor());
+                }
+                
             }
 
         }
@@ -119,7 +130,6 @@ public class DataDisplayer {
 
     // updates the style groups to be rendered, this changes when a change is made to a shape such as a when a new shape is made, and a style is changed
     // optimize later (:
-    
     // make a EditorShape that holds the shape to be updated, to just update that shape and no other shapes to be effected.
     public void updateShapeStyleGroupings() {
         this.shapesByStyle = new HashMap<>();
@@ -129,15 +139,12 @@ public class DataDisplayer {
         }
 
         ArrayList<EditorShape> shapes = runMan.currentSettlement.getRawEditorShapes();
-        
-        
-        
-        
+
         for (int x = 0; x < shapes.size(); x++) {
             ArrayList currentStyleShapes = new ArrayList<Shape>();
-            
+
             currentStyleShapes.add(shapes.get(x));
-            
+
             if (shapes.get(x) instanceof Zone) {
                 Zone zone = (Zone) shapes.get(x);
                 if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
@@ -146,11 +153,10 @@ public class DataDisplayer {
                     //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
                 }
             }
-            
+
             this.shapesByStyle.get(styles[shapes.get(x).getStyle().get()]).addAll(currentStyleShapes);
         }
 
-        
     }
 
     public void setEditPoint(Point editPoint) {

@@ -152,7 +152,7 @@ public class RuntimeManager {
         this.setSettlementFileDirectory(fileDir);
     }
     
-    public boolean savePlease = false;
+    public int savePlease = 0;
 
     public void saveCurrentSettlement() {
         currentSettlement.setName(settlementName.get());
