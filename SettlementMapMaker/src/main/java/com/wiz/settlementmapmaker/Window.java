@@ -31,34 +31,34 @@ import static org.lwjgl.opengl.GL33C.*;
  * @author Ivan
  */
 public class Window {
-    
+
     private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
-    
+
     private String glslVersion = null;
     private long windowPtr;
     private int program;
     private int frameBuffer;
     private int renderBuffer;
-    
+
     private Texture tex;
-    
+
     private final GUILayer imGuiLayer;
     private final RuntimeManager runMan;
-    
+
     private SettlementGenerator setGen;
-    
+
     private ArrayList<Point> currentShape = new ArrayList<Point>();
-    
+
     private Shape[] draw;
-    
+
     public Window(GUILayer layer) {
         this.imGuiLayer = layer;
         runMan = new RuntimeManager(this, this.imGuiLayer);
-        
+
         this.setGen = new SettlementGenerator();
     }
-    
+
     public void init() {
         this.initWindow();
         WindowVisualizer.WindowVisualizerInit(this);
@@ -69,11 +69,11 @@ public class Window {
         this.shadersInit();
         runMan.init();
     }
-    
+
     public void destroy() {
         GL33C.glDeleteFramebuffers(this.frameBuffer);
         GL33C.glDeleteRenderbuffers(this.renderBuffer);
-        
+
         imGuiGl3.dispose();
         imGuiGlfw.dispose();
         ImGui.destroyContext();
@@ -81,7 +81,7 @@ public class Window {
         glfwDestroyWindow(windowPtr);
         glfwTerminate();
     }
-    
+
     private void initWindow() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -92,48 +92,48 @@ public class Window {
             System.out.println("Unable to initialize GLFW");
             System.exit(-1);
         }
-        
+
         glslVersion = "#version 330 core";
-        
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        
+
         windowPtr = glfwCreateWindow(1920, 1070, "Settlement Map Maker", 0, 0);
-        
+
         if (windowPtr == 0) {
             System.out.println("Unable to create window");
             System.exit(-1);
         }
-        
+
         glfwMakeContextCurrent(windowPtr);
         glfwSwapInterval(1);
         glfwShowWindow(windowPtr);
-        
+
         GL.createCapabilities();
-        
+
         renderBuffer = GL33C.glGenRenderbuffers();
         GL33C.glBindRenderbuffer(GL_RENDERBUFFER, this.renderBuffer);
         GL33C.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, 4000, 4000);
         GL33C.glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        
+
         frameBuffer = GL33C.glGenFramebuffers();
         GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
         GL33C.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL33C.GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, this.renderBuffer);
-        
+
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
             System.out.println("all good!");
         }
-        
+
         GL33C.glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        
+
     }
-    
+
     private void initImGui() {
         ImGui.createContext();
         runMan.initIO(imgui.internal.ImGui.getIO());
     }
-    
+
     private void shadersInit() {
         Shader basicVertexShader = ShaderManager.ShaderNames.BASIC_VERTEX.SHADER;
         Shader basicFragmentShader = ShaderManager.ShaderNames.BASIC_FRAGMENT.SHADER;
@@ -146,35 +146,37 @@ public class Window {
 //            System.err.println("Unsuccessful");
 //        }
     }
-    
+
     public void run() {
         while (!glfwWindowShouldClose(windowPtr)) {
-            
+
             if (runMan.savePlease == 1) {
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-                
+
                 runMan.savePlease = 2;
             }
-            
-            if(runMan.getCurrentSettlement() == null) {
+
+            if (runMan.getCurrentSettlement() == null) {
                 glClearColor(0.92f, 0.83f, 0.7f, 1.0f);
             } else {
                 DrawColor back = runMan.getBackdropStyle().getColor();
                 glClearColor(back.getRed(), back.getGreen(), back.getBlue(), 1.0f);
             }
             glClear(GL_COLOR_BUFFER_BIT);
+
+            
+
+            imGuiGlfw.newFrame();
+            ImGui.newFrame();
             
             runMan.update();
-            
+
             if (runMan.savePlease == 0) {
-                imGuiGlfw.newFrame();
-                ImGui.newFrame();
-                
                 imGuiLayer.imgui();
-                
-                ImGui.render();
-                imGuiGl3.renderDrawData(ImGui.getDrawData());
             }
+
+            ImGui.render();
+            imGuiGl3.renderDrawData(ImGui.getDrawData());
 
 //                if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
 //                    final long backupWindowPtr = GLFW.glfwGetCurrentContext();
@@ -184,23 +186,23 @@ public class Window {
 //                }
             GLFW.glfwSwapBuffers(windowPtr);
             GLFW.glfwPollEvents();
-            
+
             if (runMan.savePlease == 2) {
                 GL33C.glReadBuffer(GL33C.GL_COLOR_ATTACHMENT0);
                 FileManager.saveScreen(4000, 4000);
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 runMan.savePlease = 0;
             }
-            
+
         }
     }
-    
+
     public long getWindowPointer() {
         return this.windowPtr;
     }
-    
+
     public int getProgram() {
         return this.program;
     }
-    
+
 }

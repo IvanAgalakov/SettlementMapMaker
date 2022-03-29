@@ -39,11 +39,14 @@ public class DataDisplayer {
     private HashMap<String, ArrayList<Shape>> shapesByStyle = new HashMap<>();
 
     private SettlementGenerator settleGen;
+    
+    private GUILayer gui;
 
-    public DataDisplayer(RuntimeManager runMan, ImGuiIO io, Window window) {
+    public DataDisplayer(RuntimeManager runMan, ImGuiIO io, Window window, GUILayer gui) {
         this.runMan = runMan;
         this.io = io;
         this.window = window;
+        this.gui = gui;
         this.settleGen = new SettlementGenerator();
     }
 
@@ -98,6 +101,8 @@ public class DataDisplayer {
             drawStyleGroups();
         }
     }
+    
+    
 
     public void drawStyleGroups() {
         //WindowVisualizer.drawEnclosedLines(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(1,0)})}, 5, new DrawColor(0,0,0,0));
@@ -122,6 +127,10 @@ public class DataDisplayer {
                 else {
                     WindowVisualizer.drawEnclosedLines(shapes, 5, style.getColor());
                 }
+                
+//                for(int x = 0; x < shapes.length; x++) {
+//                    gui.textPopup(((EditorShape)shapes[i]).getName().get(), shapes[x].getCenter().x*(io.getMousePosX()/this.realMouseX), shapes[x].getCenter().y*(io.getMousePosY()/this.realMouseY));
+//                }
                 
             }
 

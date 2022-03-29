@@ -54,6 +54,15 @@ public class GUILayer {
         if (!runMan.getSettlementFileDirectory().get().equals("")) {
             settlementManagement();
         }
+        
+    }
+    
+    public void textPopup(String text, float x, float y) {
+        ImGui.setNextWindowPos(x, y);
+        ImGui.setNextWindowSize(0, 0);
+        ImGui.begin(text, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize);
+        ImGui.text(text);
+        ImGui.end();
     }
 
     private boolean showDrawMenu = false;

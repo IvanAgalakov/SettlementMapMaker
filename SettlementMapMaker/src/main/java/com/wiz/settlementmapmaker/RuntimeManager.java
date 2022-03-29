@@ -87,7 +87,7 @@ public class RuntimeManager {
     public void init() {
         GLFW.glfwSetWindowFocusCallback(window.getWindowPointer(), new WindowFocus());
         GLFW.glfwSetWindowSizeCallback(window.getWindowPointer(), new WindowResizeHandler());
-        dataDis = new DataDisplayer(this, io, window);
+        dataDis = new DataDisplayer(this, io, window, gui);
     }
 
     // runs before init
