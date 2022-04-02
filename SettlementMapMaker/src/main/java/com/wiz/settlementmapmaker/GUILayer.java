@@ -5,6 +5,7 @@
 package com.wiz.settlementmapmaker;
 
 import Shape.EditorShape;
+import Shape.Point;
 import Shape.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
@@ -54,13 +55,13 @@ public class GUILayer {
         if (!runMan.getSettlementFileDirectory().get().equals("")) {
             settlementManagement();
         }
-        
+
     }
-    
-    public void textPopup(String text, float x, float y) {
+
+    public void textPopup(String text, float x, float y, int number) {
         ImGui.setNextWindowPos(x, y);
         ImGui.setNextWindowSize(0, 0);
-        ImGui.begin(text, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize);
+        ImGui.begin(text+"##"+number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
         ImGui.text(text);
         ImGui.end();
     }
@@ -72,10 +73,10 @@ public class GUILayer {
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("management");
 
-        if(ImGui.button("save image")) {
+        if (ImGui.button("save image")) {
             runMan.savePlease = 1;
         }
-        
+
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
         if (ImGui.button("toggle draw menu")) {
@@ -211,10 +212,19 @@ public class GUILayer {
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
             }
-            if(ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles())) {
+            if (selectedPoint.get() < shapeToEdit.getPointList().size() && shapeToEdit.getPointList().size() > 0) {
+                if (ImGui.button("Delete Point")) {
+                    runMan.removePoint(shapeToEdit, shapeToEdit.getPointList().get(selectedPoint.get()));
+                }
+            } else {
+                ImGui.beginDisabled();
+                ImGui.button("Delete Point");
+                ImGui.endDisabled();
+            }
+            if (ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles())) {
                 runMan.updateDataDisplay();
             }
-            
+
             if (shapeToEdit instanceof Zone) {
                 zoneShapeEditOptions(shapeToEdit);
             }
@@ -225,12 +235,11 @@ public class GUILayer {
         ImGui.end();
 
     }
-    
-    
+
     void zoneShapeEditOptions(EditorShape toParse) {
         Zone zone = (Zone) toParse;
-        if(ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
-            
+        if (ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
+
         }
     }
 

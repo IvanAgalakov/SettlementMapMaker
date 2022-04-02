@@ -78,6 +78,9 @@ public class RuntimeManager {
 
     private ImGuiIO io;
     private DataDisplayer dataDis;
+    
+    private int imageXRes = 4000;
+    private int imageYRes = 4000;
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -93,6 +96,12 @@ public class RuntimeManager {
     // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
+        
+        
+    }
+    
+    public ImGuiIO getIO() {
+        return this.io;
     }
 
     public void update() {
@@ -257,8 +266,6 @@ public class RuntimeManager {
         addTo.CalculateCenter();
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
-        
-        
     }
 
     public void removePoint(EditorShape removeFrom, Point point) {
@@ -367,6 +374,15 @@ public class RuntimeManager {
     public void updateDataDisplay() {
         dataDis.updateShapeStyleGroupings();
     }
+    
+    public int getImageResX() {
+        return this.imageXRes;
+    }
+    
+    public int getImageResY() {
+        return this.imageYRes;
+    }
+    
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
 

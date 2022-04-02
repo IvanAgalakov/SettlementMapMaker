@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileSystemView;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33C;
 
@@ -70,7 +71,7 @@ public class FileManager {
             
             
             if (img != null) {
-                File outputFile = new File("D:\\image.png");
+                File outputFile = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"\\image.png");
                 ImageIO.write(img, "png", outputFile);
             }
         } catch (IOException ex) {
