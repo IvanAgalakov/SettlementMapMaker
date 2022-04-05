@@ -46,6 +46,8 @@ public class GUILayer {
     private boolean fileChooserOpen = false;
 
     Texture test = null;
+    
+    TextureLibrary textureLib = new TextureLibrary();
 
     public GUILayer() {
 
@@ -61,6 +63,8 @@ public class GUILayer {
         } catch (Exception e) {
             System.err.println("Unsuccessful");
         }
+        
+        textureLib.loadAllTextures();
     }
 
     public void imgui() {
