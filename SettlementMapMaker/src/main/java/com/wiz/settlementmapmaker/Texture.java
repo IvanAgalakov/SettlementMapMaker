@@ -39,6 +39,8 @@ public class Texture {
 
         GL30C.glTexParameteri(GL30C.GL_TEXTURE_2D, GL30C.GL_TEXTURE_MIN_FILTER, GL30C.GL_NEAREST);
         //GL30C.glGenerateMipmap(GL30C.GL_TEXTURE_2D);
+        
+        unBind();
     }
 
     public void bind() {

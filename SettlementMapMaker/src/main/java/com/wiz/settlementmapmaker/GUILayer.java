@@ -44,21 +44,23 @@ public class GUILayer {
     private RuntimeManager runMan;
 
     private boolean fileChooserOpen = false;
-    
+
     Texture test = null;
 
     public GUILayer() {
-//        try {
-//            BufferedImage i = ImageIO.read(new File("C:\\Users\\Ivan\\Downloads\\house.png"));
-//            test = new Texture(((DataBufferByte) i.getRaster().getDataBuffer()).getData(), 0, i.getWidth(), i.getHeight(), i);
-//        } catch (Exception e) {
-//            System.err.println("Unsuccessful");
-//        }
+
     }
 
     public void initLayer(Window window, RuntimeManager runMan) {
         this.myWindow = window;
         this.runMan = runMan;
+
+        try {
+            BufferedImage i = ImageIO.read(new File("C:\\Users\\Ivan\\Downloads\\folder.png"));
+            test = new Texture(((DataBufferByte) i.getRaster().getDataBuffer()).getData(), 0, i.getWidth(), i.getHeight(), i);
+        } catch (Exception e) {
+            System.err.println("Unsuccessful");
+        }
     }
 
     public void imgui() {
@@ -83,8 +85,9 @@ public class GUILayer {
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("management");
+
         
-        //ImGui.image(test.texture, 500, 500);
+        ImGui.image(test.texture, 11, 10);
         
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
