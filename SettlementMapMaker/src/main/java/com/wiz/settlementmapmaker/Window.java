@@ -64,8 +64,6 @@ public class Window {
         WindowVisualizer.WindowVisualizerInit(this);
         this.initImGui();
         this.imGuiLayer.initLayer(this, runMan);
-        imGuiGlfw.init(windowPtr, true);
-        imGuiGl3.init();
         this.shadersInit();
         runMan.init();
     }
@@ -74,12 +72,16 @@ public class Window {
         GL33C.glDeleteFramebuffers(this.frameBuffer);
         GL33C.glDeleteRenderbuffers(this.renderBuffer);
 
-        imGuiGl3.dispose();
-        imGuiGlfw.dispose();
-        ImGui.destroyContext();
+        this.destroyImGui();
         Callbacks.glfwFreeCallbacks(windowPtr);
         glfwDestroyWindow(windowPtr);
         glfwTerminate();
+    }
+
+    public void destroyImGui() {
+        imGuiGl3.dispose();
+        imGuiGlfw.dispose();
+        ImGui.destroyContext();
     }
 
     private void initWindow() {
@@ -114,7 +116,7 @@ public class Window {
 
         renderBuffer = GL33C.glGenRenderbuffers();
         GL33C.glBindRenderbuffer(GL_RENDERBUFFER, this.renderBuffer);
-        GL33C.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, 4000, 4000);
+        GL33C.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, runMan.getImageResX(), runMan.getImageResY());
         GL33C.glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         frameBuffer = GL33C.glGenFramebuffers();
@@ -132,6 +134,8 @@ public class Window {
     private void initImGui() {
         ImGui.createContext();
         runMan.initIO(imgui.internal.ImGui.getIO());
+        imGuiGlfw.init(windowPtr, true);
+        imGuiGl3.init();
     }
 
     private void shadersInit() {
@@ -147,12 +151,22 @@ public class Window {
 //        }
     }
 
+    int displayX = 1920;
+    int displayY = 1080;
+
     public void run() {
         while (!glfwWindowShouldClose(windowPtr)) {
 
+            int[] windowView = new int[4];
             if (runMan.savePlease == 1) {
+                GL33C.glGetIntegerv(GL_VIEWPORT, windowView);
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
+                GL33C.glViewport(0, 0, runMan.getImageResX(), runMan.getImageResY());
+                //System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
+                displayX = runMan.getImageResX();
+                displayY = runMan.getImageResY();
+                //runMan.getIO().setDisplayFramebufferScale(2f, 2f);
                 runMan.savePlease = 2;
             }
 
@@ -162,35 +176,45 @@ public class Window {
                 DrawColor back = runMan.getBackdropStyle().getColor();
                 glClearColor(back.getRed(), back.getGreen(), back.getBlue(), 1.0f);
             }
+
             glClear(GL_COLOR_BUFFER_BIT);
 
-            
-
             imGuiGlfw.newFrame();
-            ImGui.newFrame();
+
             
+            if (runMan.savePlease == 2) {
+                runMan.getIO().setDisplaySize(displayX, displayY);
+            }
+
+            ImGui.newFrame();
+
             runMan.update();
 
-            if (runMan.savePlease == 0) {
+            if (runMan.savePlease <= 0) {
                 imGuiLayer.imgui();
             }
 
             ImGui.render();
+
             imGuiGl3.renderDrawData(ImGui.getDrawData());
 
-//                if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-//                    final long backupWindowPtr = GLFW.glfwGetCurrentContext();
-//                    ImGui.updatePlatformWindows();
-//                    ImGui.renderPlatformWindowsDefault();
-//                    GLFW.glfwMakeContextCurrent(backupWindowPtr);
-//                }
+//            if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+//                final long backupWindowPtr = GLFW.glfwGetCurrentContext();
+//                ImGui.updatePlatformWindows();
+//                ImGui.renderPlatformWindowsDefault();
+//                GLFW.glfwMakeContextCurrent(backupWindowPtr);
+//            }
             GLFW.glfwSwapBuffers(windowPtr);
             GLFW.glfwPollEvents();
 
             if (runMan.savePlease == 2) {
                 GL33C.glReadBuffer(GL33C.GL_COLOR_ATTACHMENT0);
-                FileManager.saveScreen(4000, 4000);
+                FileManager.saveScreen(runMan.getImageResX(), runMan.getImageResY());
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                GL33C.glViewport(windowView[0], windowView[1], windowView[2], windowView[3]);
+                displayX = windowView[2];
+                displayY = windowView[3];
+
                 runMan.savePlease = 0;
             }
 
