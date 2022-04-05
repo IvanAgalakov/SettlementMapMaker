@@ -79,8 +79,8 @@ public class RuntimeManager {
     private ImGuiIO io;
     private DataDisplayer dataDis;
 
-    private int[] imageXRes = {5000};
-    private int[] imageYRes = {4500};
+    private ImInt imageXRes = new ImInt(8000);
+    private ImInt imageYRes = new ImInt(8000);
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -375,18 +375,18 @@ public class RuntimeManager {
     }
 
     public int getImageResX() {
-        return this.imageXRes[0];
+        return this.imageXRes.get();
     }
 
-    public int[] getImageResXArray() {
+    public ImInt getImageResXArray() {
         return this.imageXRes;
     }
 
     public int getImageResY() {
-        return this.imageYRes[0];
+        return this.imageYRes.get();
     }
 
-    public int[] getImageResYArray() {
+    public ImInt getImageResYArray() {
         return this.imageYRes;
     }
 

@@ -4,6 +4,7 @@
  */
 package Shape;
 
+import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 
@@ -15,6 +16,7 @@ public class EditorShape extends Shape {
 
     private ImString name = new ImString();
     private ImInt style = new ImInt(0);
+    private ImBoolean showLabel = new ImBoolean(true);
 
     public EditorShape(String name) {
         super();
@@ -35,6 +37,10 @@ public class EditorShape extends Shape {
     
     public ImInt getStyle() {
         return this.style;
+    }
+    
+    public ImBoolean getShowLabel() {
+        return this.showLabel;
     }
 
 }

@@ -22,7 +22,11 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.util.Arrays;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -40,9 +44,16 @@ public class GUILayer {
     private RuntimeManager runMan;
 
     private boolean fileChooserOpen = false;
+    
+    Texture test = null;
 
     public GUILayer() {
-
+//        try {
+//            BufferedImage i = ImageIO.read(new File("C:\\Users\\Ivan\\Downloads\\house.png"));
+//            test = new Texture(((DataBufferByte) i.getRaster().getDataBuffer()).getData(), 0, i.getWidth(), i.getHeight(), i);
+//        } catch (Exception e) {
+//            System.err.println("Unsuccessful");
+//        }
     }
 
     public void initLayer(Window window, RuntimeManager runMan) {
@@ -61,7 +72,7 @@ public class GUILayer {
     public void textPopup(String text, float x, float y, int number) {
         ImGui.setNextWindowPos(x, y);
         ImGui.setNextWindowSize(0, 0);
-        ImGui.begin(text+"##"+number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
+        ImGui.begin(text + "##" + number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
         ImGui.text(text);
         ImGui.end();
     }
@@ -72,14 +83,9 @@ public class GUILayer {
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("management");
-
-        if (ImGui.button("save image")) {
-            runMan.savePlease = 1;
-        }
         
-        ImGui.sliderInt("Width", runMan.getImageResXArray(), 1, 8000);
-        ImGui.sliderInt("Height", runMan.getImageResYArray(), 1, 8000);
-
+        //ImGui.image(test.texture, 500, 500);
+        
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
         if (ImGui.button("toggle draw menu")) {
@@ -211,6 +217,8 @@ public class GUILayer {
             shapeNameBeingChanged = ImGui.isItemActive();
             // -----------------------------------------------------
 
+            ImGui.checkbox("Show Name", shapeToEdit.getShowLabel());
+
             ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray());
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
@@ -248,6 +256,7 @@ public class GUILayer {
 
     private ImBoolean showNewSetWin = new ImBoolean(false);
     private ImBoolean showPreferencesWin = new ImBoolean(false);
+    ImBoolean showExportWin = new ImBoolean(false);
 
     public void toolBar() { // the gui for the bar at the top of the screen, file, edit, window, etc.
         ImGui.beginMainMenuBar();
@@ -258,6 +267,10 @@ public class GUILayer {
 
         if (showPreferencesWin.get()) {
             preferencesWindow();
+        }
+
+        if (showExportWin.get()) {
+            this.exportWindow();
         }
 
         if (ImGui.beginMenu("file")) {
@@ -282,26 +295,26 @@ public class GUILayer {
     public void editMenu() {
 
         if (runMan.canUndo()) {
-            if (ImGui.menuItem("undo", "Ctrl+Z")) {
+            if (ImGui.menuItem("Undo", "Ctrl+Z")) {
                 runMan.undo();
             }
         } else {
             ImGui.beginDisabled();
-            ImGui.menuItem("undo", "Ctrl+Z");
+            ImGui.menuItem("Undo", "Ctrl+Z");
             ImGui.endDisabled();
         }
 
         if (runMan.canRedo()) {
-            if (ImGui.menuItem("redo", "Ctrl+Y")) {
+            if (ImGui.menuItem("Redo", "Ctrl+Y")) {
                 runMan.redo();
             }
         } else {
             ImGui.beginDisabled();
-            ImGui.menuItem("redo", "Ctrl+Y");
+            ImGui.menuItem("Redo", "Ctrl+Y");
             ImGui.endDisabled();
         }
 
-        if (ImGui.menuItem("preferences")) {
+        if (ImGui.menuItem("Preferences")) {
             showPreferencesWin.set(true);
         }
 
@@ -309,11 +322,11 @@ public class GUILayer {
 
     public void fileMenu() {
 
-        if (ImGui.menuItem("new")) {
+        if (ImGui.menuItem("New")) {
             showNewSetWin.set(true);
         }
 
-        if (ImGui.menuItem("open") && !this.fileChooserOpen) {
+        if (ImGui.menuItem("Open") && !this.fileChooserOpen) {
             SwingUtilities.invokeLater(() -> {
                 JFrame j = new JFrame();
                 j.setAlwaysOnTop(true);
@@ -336,14 +349,33 @@ public class GUILayer {
 
         if (!this.settlementOpen()) {
             ImGui.beginDisabled();
-            ImGui.menuItem("save", "Ctrl+S");
+            ImGui.menuItem("Save", "Ctrl+S");
+            ImGui.menuItem("Export");
             ImGui.endDisabled();
         } else {
-            if (ImGui.menuItem("save", "Ctrl+S")) {
+            if (ImGui.menuItem("Save", "Ctrl+S")) {
                 runMan.saveCurrentSettlement();
+            }
+            if (ImGui.menuItem("Export")) {
+                showExportWin.set(true);
             }
         }
 
+    }
+
+    public void exportWindow() {
+        ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
+        ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
+        if (!ImGui.begin("Export", showExportWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
+            ImGui.end();
+        } else {
+            ImGui.inputInt("Width", runMan.getImageResXArray());
+            ImGui.inputInt("Height", runMan.getImageResYArray());
+            if (ImGui.button("Save Image")) {
+                runMan.savePlease = 1;
+            }
+            ImGui.end();
+        }
     }
 
     int selectedTab = 0;

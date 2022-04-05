@@ -13,7 +13,6 @@ com\wiz\settlementmapmaker\FixedStack.class
 com\wiz\settlementmapmaker\FixedStack$Node.class
 Shape\Zone.class
 com\wiz\settlementmapmaker\DataDisplayer.class
-.netbeans_automatic_build
 com\wiz\settlementmapmaker\Actions\ImBooleanChangeAction.class
 com\wiz\settlementmapmaker\SettlementGenerator.class
 com\wiz\settlementmapmaker\DrawColor.class

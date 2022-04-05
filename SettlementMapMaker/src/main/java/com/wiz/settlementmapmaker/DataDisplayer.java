@@ -86,7 +86,6 @@ public class DataDisplayer {
 
         GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
 
-        
         if (runMan.savePlease == 0) {
             aspect = runMan.getWidth() / (float) runMan.getHeight();
         } else {
@@ -138,7 +137,7 @@ public class DataDisplayer {
     }
 
     public void drawStyleGroups() {
-        
+
         //WindowVisualizer.drawEnclosedLines(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(1,0)})}, 5, new DrawColor(0,0,0,0));
         String[] styles = runMan.getStyles();
         for (int i = 0; i < styles.length; i++) {
@@ -160,14 +159,15 @@ public class DataDisplayer {
                 }
 
                 for (int x = 0; x < shapes.length; x++) {
-                    //System.out.println(shapes[x].getCenter());
-                    if (runMan.savePlease == 0) {
-                        Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getWidth(), runMan.getHeight());
-                        gui.textPopup(((EditorShape) shapes[i]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
-                    } else {
-                        Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getImageResX(), runMan.getImageResY());
-                        //System.out.println(textPoint);
-                        gui.textPopup(((EditorShape) shapes[i]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                    if (((EditorShape) shapes[x]).getShowLabel().get()) {
+                        if (runMan.savePlease == 0) {
+                            Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getWidth(), runMan.getHeight());
+                            gui.textPopup(((EditorShape) shapes[x]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                        } else {
+                            Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getImageResX(), runMan.getImageResY());
+                            //System.out.println(textPoint);
+                            gui.textPopup(((EditorShape) shapes[x]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                        }
                     }
                 }
 

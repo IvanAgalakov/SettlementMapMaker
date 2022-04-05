@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL30C;
  */
 public class Texture {
 
-    private int texture = GL30C.GL_NONE;
+    public int texture = GL30C.GL_NONE;
     private int slot = GL30C.GL_TEXTURE0;
     public int intSlot = GL30C.GL_TEXTURE0 - GL30C.GL_TEXTURE0;
     
@@ -24,6 +24,7 @@ public class Texture {
 
     public Texture(byte[] pixels, int mipMapLevel, int width, int height, BufferedImage b) {
         //bind();
+        
         texture = GL30C.glGenTextures();
         bind();
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * Integer.BYTES);
