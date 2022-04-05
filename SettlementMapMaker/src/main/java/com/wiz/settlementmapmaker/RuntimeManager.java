@@ -79,8 +79,8 @@ public class RuntimeManager {
     private ImGuiIO io;
     private DataDisplayer dataDis;
 
-    private int[] imageXRes = {1920};
-    private int[] imageYRes = {1080};
+    private int[] imageXRes = {5000};
+    private int[] imageYRes = {4500};
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;

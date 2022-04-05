@@ -9,13 +9,17 @@ com\wiz\settlementmapmaker\Actions\ImStringChangeAction.class
 Shape\Obstacle.class
 com\wiz\settlementmapmaker\RuntimeManager$WindowResizeHandler.class
 com\wiz\settlementmapmaker\Constants$CityShapeTypes.class
+com\wiz\settlementmapmaker\FixedStack.class
+com\wiz\settlementmapmaker\FixedStack$Node.class
 Shape\Zone.class
 com\wiz\settlementmapmaker\DataDisplayer.class
+.netbeans_automatic_build
 com\wiz\settlementmapmaker\Actions\ImBooleanChangeAction.class
 com\wiz\settlementmapmaker\SettlementGenerator.class
 com\wiz\settlementmapmaker\DrawColor.class
 com\wiz\settlementmapmaker\ShaderManager.class
 Shape\EditorShape.class
+com\wiz\settlementmapmaker\Actions\Method1ArgAction.class
 com\wiz\settlementmapmaker\Actions\AlterListAction.class
 com\wiz\settlementmapmaker\Actions\MethodRunAction.class
 com\wiz\settlementmapmaker\Main.class

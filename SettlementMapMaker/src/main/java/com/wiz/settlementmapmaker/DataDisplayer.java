@@ -86,6 +86,7 @@ public class DataDisplayer {
 
         GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
 
+        
         if (runMan.savePlease == 0) {
             aspect = runMan.getWidth() / (float) runMan.getHeight();
         } else {

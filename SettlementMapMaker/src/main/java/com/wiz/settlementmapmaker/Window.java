@@ -163,7 +163,7 @@ public class Window {
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
                 GL33C.glViewport(0, 0, runMan.getImageResX(), runMan.getImageResY());
-                System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
+                //System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
                 displayX = runMan.getImageResX();
                 displayY = runMan.getImageResY();
                 //runMan.getIO().setDisplayFramebufferScale(2f, 2f);
@@ -181,15 +181,16 @@ public class Window {
 
             imGuiGlfw.newFrame();
 
-            if (runMan.savePlease == 2) {
-                runMan.getIO().setDisplaySize(runMan.getImageResX(), runMan.getImageResY());
-            }
             
+            if (runMan.savePlease == 2) {
+                runMan.getIO().setDisplaySize(displayX, displayY);
+            }
+
             ImGui.newFrame();
 
             runMan.update();
 
-            if (runMan.savePlease == 0) {
+            if (runMan.savePlease <= 0) {
                 imGuiLayer.imgui();
             }
 
