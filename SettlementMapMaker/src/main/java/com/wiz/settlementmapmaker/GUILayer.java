@@ -45,8 +45,6 @@ public class GUILayer {
 
     private boolean fileChooserOpen = false;
 
-    Texture test = null;
-    
     TextureLibrary textureLib = new TextureLibrary();
 
     public GUILayer() {
@@ -56,13 +54,6 @@ public class GUILayer {
     public void initLayer(Window window, RuntimeManager runMan) {
         this.myWindow = window;
         this.runMan = runMan;
-
-        try {
-            BufferedImage i = ImageIO.read(new File("C:\\Users\\Ivan\\Downloads\\folder.png"));
-            test = new Texture(((DataBufferByte) i.getRaster().getDataBuffer()).getData(), 0, i.getWidth(), i.getHeight(), i);
-        } catch (Exception e) {
-            System.err.println("Unsuccessful");
-        }
         
         textureLib.loadAllTextures();
     }
@@ -88,14 +79,14 @@ public class GUILayer {
     public void settlementManagement() {
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
-        ImGui.begin("management");
+        ImGui.begin("Management");
 
         
-        ImGui.image(test.texture, 11, 10);
+        
         
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
-        ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
-        if (ImGui.button("toggle draw menu")) {
+        ImGui.sliderFloat("Zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
+        if (ImGui.button("Toggle Draw Menu")) {
             showDrawMenu = !showDrawMenu;
         }
         if (showDrawMenu) {
@@ -212,7 +203,7 @@ public class GUILayer {
         if (shapeToEdit != null) {
 
             // Input Text for Shape Name ---------------------------
-            ImGui.inputText("name", shapeToEdit.getName());
+            ImGui.inputText("Name", shapeToEdit.getName());
             if (!ImGui.isItemActive() && shapeNameBeingChanged) {
                 if (!oldName.equals(shapeToEdit.getName().get())) {
                     runMan.updateShapeName(shapeToEdit, oldName);
@@ -226,7 +217,7 @@ public class GUILayer {
 
             ImGui.checkbox("Show Name", shapeToEdit.getShowLabel());
 
-            ImGui.listBox("points", selectedPoint, shapeToEdit.toStringArray());
+            ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray());
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
             }
@@ -280,20 +271,20 @@ public class GUILayer {
             this.exportWindow();
         }
 
-        if (ImGui.beginMenu("file")) {
+        if (ImGui.beginMenu("File")) {
             fileMenu();
             ImGui.endMenu();
         }
 
-        if (ImGui.beginMenu("edit")) {
+        if (ImGui.beginMenu("Edit")) {
             editMenu();
             ImGui.endMenu();
         }
 
         if (!this.settlementOpen()) {
-            ImGui.textColored(Constants.COLOR_PARCHMENT, "no file open");
+            ImGui.textColored(Constants.COLOR_PARCHMENT, "No File Open");
         } else {
-            ImGui.textColored(Constants.COLOR_PARCHMENT, "file opened: " + runMan.getSettlementFileDirectory().get());
+            ImGui.textColored(Constants.COLOR_PARCHMENT, "File Opened: " + runMan.getSettlementFileDirectory().get());
         }
 
         ImGui.endMainMenuBar();
@@ -391,20 +382,20 @@ public class GUILayer {
     public void preferencesWindow() {
         ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
         ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
-        if (!ImGui.begin("preferences", showPreferencesWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
+        if (!ImGui.begin("Preferences", showPreferencesWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
             ImGui.end();
         } else {
-            ImGui.beginTabBar("select");
-            if (ImGui.tabItemButton("test")) {
+            ImGui.beginTabBar("Select");
+            if (ImGui.tabItemButton("Test")) {
                 selectedTab = 0;
             }
             if (this.settlementOpen()) {
-                if (ImGui.tabItemButton("style select")) {
+                if (ImGui.tabItemButton("Style Select")) {
                     selectedTab = 1;
                 }
             } else {
                 ImGui.beginDisabled();
-                ImGui.tabItemButton("style select");
+                ImGui.tabItemButton("Style Select");
                 ImGui.endDisabled();
             }
             ImGui.endTabBar();
@@ -418,10 +409,10 @@ public class GUILayer {
 
                 int remove = -1;
 
-                ImGui.beginChild("styles", ImGui.getWindowContentRegionMaxX() - 20f, 300);
+                ImGui.beginChild("Styles", ImGui.getWindowContentRegionMaxX() - 20f, 300);
                 for (int i = 0; i < runMan.getCityStyles().size(); i++) {
 
-                    if (ImGui.button("remove##" + i)) {
+                    if (ImGui.button("Remove##" + i)) {
                         remove = i;
                     }
                     ImGui.sameLine();
@@ -438,7 +429,7 @@ public class GUILayer {
                 }
 
                 ImGui.separator();
-                if (ImGui.button("Add Style") && !newStyle.get().equals("")) {
+                if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_PLUS), 20, 20) && !newStyle.get().equals("")) {
                     runMan.addStyle(newStyle.get());
                 }
 
@@ -452,7 +443,7 @@ public class GUILayer {
     public void newSettlementWindow() {
         ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
         ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
-        if (!ImGui.begin("settlementCreate", showNewSetWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
+        if (!ImGui.begin("Create Settlement", showNewSetWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
             ImGui.end();
         } else {
 
@@ -461,7 +452,7 @@ public class GUILayer {
             ImGui.inputText("File Location", runMan.getPendingSettlementFolderDirectory());
             ImGui.sameLine();
 
-            if (ImGui.button("choose file location") && !this.fileChooserOpen) {
+            if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_FOLDER), 15, 15) && !this.fileChooserOpen) {
                 SwingUtilities.invokeLater(() -> {
                     JFrame j = new JFrame();
                     j.setAlwaysOnTop(true);

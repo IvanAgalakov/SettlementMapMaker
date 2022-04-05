@@ -14,6 +14,7 @@ import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import imgui.ImFont;
 import imgui.ImGuiIO;
 import imgui.app.Color;
 
@@ -96,7 +97,8 @@ public class RuntimeManager {
     // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
-
+        ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
+        io.setFontDefault(defaultFont);
     }
 
     public ImGuiIO getIO() {

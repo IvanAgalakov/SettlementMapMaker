@@ -49,4 +49,8 @@ public class Constants {
     
     public static final float MAX_ZOOM = 2f;
     public static final float MIN_ZOOM = 0.1f;
+    
+    
+    public static final String TEXTURE_FOLDER = "folder.png";
+    public static final String TEXTURE_PLUS = "plus.png";
 }
