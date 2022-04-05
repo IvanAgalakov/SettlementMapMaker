@@ -159,9 +159,9 @@ public class Window {
 
             int[] windowView = new int[4];
             if (runMan.savePlease == 1) {
-
                 GL33C.glGetIntegerv(GL_VIEWPORT, windowView);
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
                 GL33C.glViewport(0, 0, runMan.getImageResX(), runMan.getImageResY());
                 System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
                 displayX = runMan.getImageResX();
@@ -176,16 +176,14 @@ public class Window {
                 DrawColor back = runMan.getBackdropStyle().getColor();
                 glClearColor(back.getRed(), back.getGreen(), back.getBlue(), 1.0f);
             }
-            
-            
-            
+
             glClear(GL_COLOR_BUFFER_BIT);
 
-            
-            
             imGuiGlfw.newFrame();
-            
-            
+
+            if (runMan.savePlease == 2) {
+                runMan.getIO().setDisplaySize(runMan.getImageResX(), runMan.getImageResY());
+            }
             
             ImGui.newFrame();
 

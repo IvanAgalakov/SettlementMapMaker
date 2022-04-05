@@ -76,6 +76,9 @@ public class GUILayer {
         if (ImGui.button("save image")) {
             runMan.savePlease = 1;
         }
+        
+        ImGui.sliderInt("Width", runMan.getImageResXArray(), 1, 8000);
+        ImGui.sliderInt("Height", runMan.getImageResYArray(), 1, 8000);
 
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);

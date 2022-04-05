@@ -166,7 +166,7 @@ public class DataDisplayer {
                     } else {
                         Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getImageResX(), runMan.getImageResY());
                         //System.out.println(textPoint);
-                        gui.textPopup(((EditorShape) shapes[i]).getName().get(), 1900, 1000, i + x + 1);
+                        gui.textPopup(((EditorShape) shapes[i]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
                     }
                 }
 

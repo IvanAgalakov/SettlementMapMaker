@@ -78,9 +78,9 @@ public class RuntimeManager {
 
     private ImGuiIO io;
     private DataDisplayer dataDis;
-    
-    private int imageXRes = 4000;
-    private int imageYRes = 4000;
+
+    private int[] imageXRes = {1920};
+    private int[] imageYRes = {1080};
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -96,17 +96,16 @@ public class RuntimeManager {
     // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
-        
-        
+
     }
-    
+
     public ImGuiIO getIO() {
         return this.io;
     }
 
     public void update() {
         GLFW.glfwGetWindowSize(window.getWindowPointer(), windowWidth, windowHeight);
-        
+
         this.controls();
         dataDis.display();
     }
@@ -129,13 +128,13 @@ public class RuntimeManager {
         if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
             this.saveCurrentSettlement();
         }
-        
+
         if (io.getMouseWheel() != 0) {
-            this.zoom[0] += io.getMouseWheel()*Constants.MOUSE_WHEEL_SENSITIVITY;
-            if(this.zoom[0] > Constants.MAX_ZOOM) {
+            this.zoom[0] += io.getMouseWheel() * Constants.MOUSE_WHEEL_SENSITIVITY;
+            if (this.zoom[0] > Constants.MAX_ZOOM) {
                 this.zoom[0] = Constants.MAX_ZOOM;
             }
-            if(this.zoom[0] < Constants.MIN_ZOOM) {
+            if (this.zoom[0] < Constants.MIN_ZOOM) {
                 this.zoom[0] = Constants.MIN_ZOOM;
             }
         }
@@ -160,7 +159,7 @@ public class RuntimeManager {
         FileManager.saveSettlement(currentSettlement, fileDir);
         this.setSettlementFileDirectory(fileDir);
     }
-    
+
     public int savePlease = 0;
 
     public void saveCurrentSettlement() {
@@ -356,7 +355,7 @@ public class RuntimeManager {
     public Style getDefaultStyle() {
         return this.currentSettlement.getDefaultStyle();
     }
-    
+
     public Style getBackdropStyle() {
         return this.currentSettlement.getBackdropStyle();
     }
@@ -370,19 +369,26 @@ public class RuntimeManager {
         this.currentSettlement.removeStyle(style);
         this.updateStyleList();
     }
-    
+
     public void updateDataDisplay() {
         dataDis.updateShapeStyleGroupings();
     }
-    
+
     public int getImageResX() {
+        return this.imageXRes[0];
+    }
+
+    public int[] getImageResXArray() {
         return this.imageXRes;
     }
-    
+
     public int getImageResY() {
+        return this.imageYRes[0];
+    }
+
+    public int[] getImageResYArray() {
         return this.imageYRes;
     }
-    
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
 
@@ -394,8 +400,7 @@ public class RuntimeManager {
         }
 
     }
-    
-    
+
     private class WindowResizeHandler implements GLFWWindowSizeCallbackI {
 
         @Override
