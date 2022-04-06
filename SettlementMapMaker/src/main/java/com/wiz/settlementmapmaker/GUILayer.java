@@ -452,7 +452,7 @@ public class GUILayer {
             ImGui.inputText("File Location", runMan.getPendingSettlementFolderDirectory());
             ImGui.sameLine();
 
-            if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_FOLDER), 15, 15) && !this.fileChooserOpen) {
+            if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_FOLDER), 25, 22) && !this.fileChooserOpen) {
                 SwingUtilities.invokeLater(() -> {
                     JFrame j = new JFrame();
                     j.setAlwaysOnTop(true);

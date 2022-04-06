@@ -97,8 +97,8 @@ public class RuntimeManager {
     // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
-        ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
-        io.setFontDefault(defaultFont);
+        //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
+        //io.setFontDefault(defaultFont);
     }
 
     public ImGuiIO getIO() {
