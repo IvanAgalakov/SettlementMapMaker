@@ -4,6 +4,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GUI.Style;
+import GUI.GUILayer;
 import Shape.EditorShape;
 import Shape.Point;
 import Shape.Shape;

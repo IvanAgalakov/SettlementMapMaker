@@ -5,6 +5,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GUI.GUILayer;
+
 /**
  *
  * @author Ivan

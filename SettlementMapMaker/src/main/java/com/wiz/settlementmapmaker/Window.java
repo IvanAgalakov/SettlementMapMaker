@@ -5,6 +5,9 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GUI.DrawColor;
+import GUI.GUILayer;
+import GUI.Texture;
 import Shape.Shape;
 import Shape.Point;
 import imgui.ImGui;

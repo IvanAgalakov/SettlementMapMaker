@@ -4,6 +4,10 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GUI.FontLibrary;
+import GUI.TextureLibrary;
+import GUI.Style;
+import GUI.GUILayer;
 import com.wiz.settlementmapmaker.Utilities.FixedStack;
 import Shape.EditorShape;
 import Shape.Shape;
@@ -96,14 +100,14 @@ public class RuntimeManager {
         GLFW.glfwSetWindowFocusCallback(window.getWindowPointer(), new WindowFocus());
         GLFW.glfwSetWindowSizeCallback(window.getWindowPointer(), new WindowResizeHandler());
         dataDis = new DataDisplayer(this, io, window, gui);
-        initStyle();
     }
     
     public void initStyle() {
+        
         ImGuiStyle style = ImGui.getStyle();
         style.setFrameRounding(2.3f);
         style.setWindowRounding(10f);
-        style.setWindowBorderSize(3);
+        style.setWindowBorderSize(2);
         style.setWindowPadding(5, 5);
         
         
@@ -113,6 +117,8 @@ public class RuntimeManager {
         style.setColor(ImGuiCol.FrameBg, 95, 45, 11, 255);
         style.setColor(ImGuiCol.HeaderHovered, 117, 64, 19, 255);
         style.setColor(ImGuiCol.Header, 101, 62, 28, 255);
+        style.setColor(ImGuiCol.Border, 255, 255, 255, 255);
+        style.setColor(ImGuiCol.WindowBg, 0, 0, 0, 200);
     }
     
 
@@ -123,6 +129,7 @@ public class RuntimeManager {
         FontLibrary.loadAllFonts(io);
         TextureLibrary.loadAllTextures();
         io.setFontDefault(FontLibrary.getFont(0));
+        initStyle();
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
         //io.setFontDefault(defaultFont);
     }

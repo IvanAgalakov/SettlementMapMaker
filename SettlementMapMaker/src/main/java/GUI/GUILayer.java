@@ -2,16 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.wiz.settlementmapmaker;
+package GUI;
 
 import Shape.EditorShape;
 import Shape.Point;
 import Shape.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import com.wiz.settlementmapmaker.Constants;
+import com.wiz.settlementmapmaker.RuntimeManager;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
+import com.wiz.settlementmapmaker.Window;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImColor;
+import imgui.ImFont;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiCond;
@@ -65,8 +69,12 @@ public class GUILayer {
     public void textPopup(String text, float x, float y, int number) {
         ImGui.setNextWindowPos(x, y);
         ImGui.setNextWindowSize(0, 0);
+        
+        
         ImGui.begin(text + "##" + number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
+        
         ImGui.text(text);
+        
         ImGui.end();
     }
 
@@ -97,8 +105,8 @@ public class GUILayer {
         // runs the shape editor
         shapeEdit(new ImVec2(runMan.getWidth(), runMan.getHeight()));
 
-        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
-        ImGui.setNextWindowPos(0, 20, ImGuiCond.Once);
+        ImGui.setNextWindowSize(250, 300, ImGuiCond.Once);
+        ImGui.setNextWindowPos(0, 30, ImGuiCond.Once);
         ImGui.begin("Draw Menu");
 
         if (ImGui.button("Shape Drawing Menu")) {
@@ -125,7 +133,7 @@ public class GUILayer {
 
     public void editorShapeDrawingMenu(ImVec2 pos) {
         // start of editor window
-        ImGui.setNextWindowSize(250, 200, ImGuiCond.Once);
+        ImGui.setNextWindowSize(250, 300, ImGuiCond.Once);
         ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
         ImGui.begin("Shape Drawing Menu");
 
