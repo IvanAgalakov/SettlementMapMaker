@@ -4,10 +4,10 @@
  */
 package com.wiz.settlementmapmaker;
 
-import Shape.EditorShape;
-import Shape.Zone;
-import Shape.Obstacle;
-import Shape.Building;
+import Shapes.EditorShape;
+import Shapes.Zone;
+import Shapes.Obstacle;
+import Shapes.Building;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
 import imgui.ImColor;
 import java.util.function.Function;

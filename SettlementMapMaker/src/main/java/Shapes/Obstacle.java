@@ -2,31 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Shape;
+package Shapes;
 
 /**
  *
  * @author 904187003
  */
-public class Building extends EditorShape {
+public class Obstacle extends EditorShape{
     
-    public Building(String name) {
+    public Obstacle(String name) {
         super(name);
     }
     
-    public void setName() {
+    public enum ObstacleType {
         
     }
     
-    public void generateName() {
-        
-    }
-    
-    public String getType() {
-        return null;
-    }
-    
-    public void setType(String type) {
+    public void SetObstacleType(ObstacleType type) {
         
     }
 }

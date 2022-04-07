@@ -6,11 +6,11 @@ package com.wiz.settlementmapmaker;
 
 import GUI.Style;
 import GUI.DrawColor;
-import Shape.EditorShape;
-import Shape.Zone;
-import Shape.Obstacle;
-import Shape.Building;
-import Shape.Shape;
+import Shapes.EditorShape;
+import Shapes.Zone;
+import Shapes.Obstacle;
+import Shapes.Building;
+import Shapes.Shape;
 import imgui.ImColor;
 import java.util.ArrayList;
 import java.util.Collection;

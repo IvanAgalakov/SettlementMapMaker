@@ -6,10 +6,9 @@ package com.wiz.settlementmapmaker;
 
 import GUI.Style;
 import GUI.GUILayer;
-import Shape.EditorShape;
-import Shape.Point;
-import Shape.Shape;
-import Shape.Zone;
+import Shapes.EditorShape;
+import Shapes.Point;
+import Shapes.Zone;
 import imgui.ImGuiIO;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class DataDisplayer {
     private RuntimeManager runMan;
     private Window window;
 
-    private HashMap<String, ArrayList<Shape>> shapesByStyle = new HashMap<>();
+    private HashMap<String, ArrayList<EditorShape>> shapesByStyle = new HashMap<>();
 
     private SettlementGenerator settleGen;
 
@@ -107,14 +106,14 @@ public class DataDisplayer {
             editPoint.setX(realMouseX);
             editPoint.setY(realMouseY);
 
-            WindowVisualizer.drawPoints(new Shape[]{new Shape(new Point[]{editPoint})}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
+            WindowVisualizer.drawPoints(new EditorShape[]{new EditorShape(new Point[]{editPoint})}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
                 editShape.CalculateCenter();
                 editPoint = null;
                 editShape = null;
             }
             if (editShape != null) {
-                WindowVisualizer.drawPoints(new Shape[]{editShape}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
+                WindowVisualizer.drawPoints(new EditorShape[]{editShape}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             }
         } else if (editMode == true) {
             updateShapeStyleGroupings();
@@ -147,7 +146,7 @@ public class DataDisplayer {
 
                 ArrayList shapeList = this.shapesByStyle.get(styles[i]);
 
-                Shape[] shapes = new Shape[shapeList.size()];
+                EditorShape[] shapes = new EditorShape[shapeList.size()];
                 shapes = this.shapesByStyle.get(styles[i]).toArray(shapes);
 
                 // chooses the drawing type based on the style you have selected
@@ -161,14 +160,14 @@ public class DataDisplayer {
                 }
 
                 for (int x = 0; x < shapes.length; x++) {
-                    if (((EditorShape) shapes[x]).getShowLabel().get() && !((EditorShape) shapes[x]).getName().get().equals("")) {
+                    if (shapes[x].getShowLabel().get() && !shapes[x].getName().get().equals("")) {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getWidth(), runMan.getHeight());
-                            gui.textPopup(((EditorShape) shapes[x]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            gui.textPopup(shapes[x].getName().get(), textPoint.x, textPoint.y, i + x + 1);
                         } else {
                             Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
-                            gui.textPopup(((EditorShape) shapes[x]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            gui.textPopup(shapes[x].getName().get(), textPoint.x, textPoint.y, i + x + 1);
                         }
                     }
                 }
@@ -191,7 +190,7 @@ public class DataDisplayer {
         ArrayList<EditorShape> shapes = runMan.currentSettlement.getRawEditorShapes();
 
         for (int x = 0; x < shapes.size(); x++) {
-            ArrayList currentStyleShapes = new ArrayList<Shape>();
+            ArrayList currentStyleShapes = new ArrayList<EditorShape>();
 
             currentStyleShapes.add(shapes.get(x));
 

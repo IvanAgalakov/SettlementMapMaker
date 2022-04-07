@@ -4,9 +4,9 @@
  */
 package GUI;
 
-import Shape.EditorShape;
-import Shape.Point;
-import Shape.Zone;
+import Shapes.EditorShape;
+import Shapes.Point;
+import Shapes.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
 import com.wiz.settlementmapmaker.Constants;
 import com.wiz.settlementmapmaker.RuntimeManager;

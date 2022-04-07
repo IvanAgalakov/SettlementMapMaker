@@ -8,8 +8,8 @@ package com.wiz.settlementmapmaker;
 import GUI.DrawColor;
 import GUI.GUILayer;
 import GUI.Texture;
-import Shape.Shape;
-import Shape.Point;
+import Shapes.EditorShape;
+import Shapes.Point;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
@@ -53,7 +53,7 @@ public class Window {
 
     private ArrayList<Point> currentShape = new ArrayList<Point>();
 
-    private Shape[] draw;
+    private EditorShape[] draw;
 
     public Window(GUILayer layer) {
         this.imGuiLayer = layer;

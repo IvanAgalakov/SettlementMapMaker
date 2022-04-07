@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Shape;
+package Shapes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,7 @@ import java.util.Arrays;
  */
 public class Shape {
     
-    
-    private ArrayList<Point> points = new ArrayList();
+    protected ArrayList<Point> points = new ArrayList();
     private Point center;
     private Point topRight;
     private Point bottomLeft;
@@ -22,17 +21,17 @@ public class Shape {
     private float width;
     private float height;
     
-    public Shape(Point... points) {
+    protected Shape(Point... points) {
         this.points.addAll(Arrays.asList(points));
         this.CalculateCenter();
     }
     
-    public Shape(ArrayList<Point> points) {
+    protected Shape(ArrayList<Point> points) {
         this.points.addAll(points);
         this.CalculateCenter();
     }
     
-    public Shape() {
+    protected Shape() {
         this.points = new ArrayList<>();
     }
     

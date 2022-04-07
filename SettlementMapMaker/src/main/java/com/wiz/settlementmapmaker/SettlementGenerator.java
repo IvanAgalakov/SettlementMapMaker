@@ -4,9 +4,9 @@
  */
 package com.wiz.settlementmapmaker;
 
-import Shape.EditorShape;
-import Shape.Shape;
-import Shape.Point;
+import Shapes.EditorShape;
+
+import Shapes.Point;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,9 +37,9 @@ public class SettlementGenerator {
         return null;
     }
 
-    public Shape[] convertToBlock(Shape blockBase, float minSize, float maxSize) {
+    public EditorShape[] convertToBlock(EditorShape blockBase, float minSize, float maxSize) {
 
-        blockBase = new Shape(blockBase);
+        blockBase = new EditorShape(blockBase);
         blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
 
         Random ran = new Random();
@@ -107,12 +107,12 @@ public class SettlementGenerator {
 
         }
 
-        Shape[] blockArray = new Shape[block.size()];
+        EditorShape[] blockArray = new EditorShape[block.size()];
         blockArray = block.toArray(blockArray);
         return blockArray;
     }
 
-    public ArrayList<Shape> generateVoronoi(Shape v) {
+    public ArrayList<EditorShape> generateVoronoi(EditorShape v) {
 
         if (v.getPointList().size() <= 2) {
             return new ArrayList();
@@ -151,7 +151,7 @@ public class SettlementGenerator {
         return c;
     }
 
-    public Shape[] toShapeArray(Shape[][] ar) {
+    public EditorShape[] toShapeArray(EditorShape[][] ar) {
         int count = 0;
         for (int x = 0; x < ar.length; x++) {
             for (int y = 0; y < ar[x].length; y++) {
@@ -159,7 +159,7 @@ public class SettlementGenerator {
             }
         }
 
-        Shape[] s = new Shape[count];
+        EditorShape[] s = new EditorShape[count];
         count = 0;
         for (int x = 0; x < ar.length; x++) {
             for (int y = 0; y < ar[x].length; y++) {

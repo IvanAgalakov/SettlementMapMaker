@@ -5,8 +5,8 @@
 package com.wiz.settlementmapmaker;
 
 import GUI.DrawColor;
-import Shape.Shape;
-import Shape.Point;
+import Shapes.EditorShape;
+import Shapes.Point;
 import imgui.app.Color;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
@@ -55,7 +55,7 @@ public class WindowVisualizer {
 //        GL33C.glDisableVertexAttribArray(1);
     }
 
-    public static void drawEnclosedLines(Shape[] shapes, int lineWidth, DrawColor color) {
+    public static void drawEnclosedLines(EditorShape[] shapes, int lineWidth, DrawColor color) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
@@ -97,7 +97,7 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
 
-    public static void drawTriangles(Shape[] shapes, DrawColor color) {
+    public static void drawTriangles(EditorShape[] shapes, DrawColor color) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
@@ -137,7 +137,7 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
 
-    public static void drawPoints(Shape[] shapes, float pointSize, DrawColor color) {
+    public static void drawPoints(EditorShape[] shapes, float pointSize, DrawColor color) {
         //System.out.println(color.toString());
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
