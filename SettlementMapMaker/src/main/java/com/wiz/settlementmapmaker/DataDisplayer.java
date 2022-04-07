@@ -159,7 +159,7 @@ public class DataDisplayer {
                 }
 
                 for (int x = 0; x < shapes.length; x++) {
-                    if (((EditorShape) shapes[x]).getShowLabel().get()) {
+                    if (((EditorShape) shapes[x]).getShowLabel().get() && !((EditorShape) shapes[x]).getName().get().equals("")) {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getWidth(), runMan.getHeight());
                             gui.textPopup(((EditorShape) shapes[x]).getName().get(), textPoint.x, textPoint.y, i + x + 1);
@@ -196,9 +196,9 @@ public class DataDisplayer {
             if (shapes.get(x) instanceof Zone) {
                 Zone zone = (Zone) shapes.get(x);
                 if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
-                    //currentStyleShapes.remove(shapes.get(x));
+                    currentStyleShapes.remove(shapes.get(x));
                     //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
-                    //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
+                    currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
                 }
             }
 

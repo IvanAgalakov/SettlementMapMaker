@@ -23,6 +23,10 @@ public class EditorShape extends Shape {
         this.name.set(name);
     }
     
+    public EditorShape(Point[] points) {
+        super(points);
+    }
+    
     public ImString getName() {
         return name;
     }

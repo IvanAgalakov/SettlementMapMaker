@@ -4,6 +4,7 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shape.EditorShape;
 import Shape.Shape;
 import Shape.Point;
 
@@ -44,7 +45,7 @@ public class SettlementGenerator {
         Random ran = new Random();
         ran.setSeed(1);
 
-        ArrayList<Shape> block = new ArrayList<>();
+        ArrayList<EditorShape> block = new ArrayList<>();
         Point[] segments = blockBase.getPoints();
 
         float startDistance = 0f;
@@ -83,7 +84,7 @@ public class SettlementGenerator {
 
                 Point beginInset = this.normalPointToPoint(begin, rise, run, deviate);
 
-                Shape newBuilding = new Shape(new Point[]{begin, end, endInset, beginInset});
+                EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
                 //Shape newBuilding = new Shape(new Point[]{begin, end, end, endInset, endInset, beginInset, beginInset, begin});
                 //Shape newBuilding = new Shape(new Point[]{beginInset, endInset, begin, endInset, end, begin});
                 //System.out.println(deviate + " : " + newBuilding.getCenter());

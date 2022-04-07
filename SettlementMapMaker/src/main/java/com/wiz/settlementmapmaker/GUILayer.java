@@ -45,8 +45,6 @@ public class GUILayer {
 
     private boolean fileChooserOpen = false;
 
-    TextureLibrary textureLib = new TextureLibrary();
-
     public GUILayer() {
 
     }
@@ -54,8 +52,6 @@ public class GUILayer {
     public void initLayer(Window window, RuntimeManager runMan) {
         this.myWindow = window;
         this.runMan = runMan;
-        
-        textureLib.loadAllTextures();
     }
 
     public void imgui() {
@@ -399,6 +395,10 @@ public class GUILayer {
                 ImGui.endDisabled();
             }
             ImGui.endTabBar();
+            
+            if (selectedTab == 0) {
+                
+            }
 
             if (selectedTab == 1) {
                 ImGui.colorEdit4("default", runMan.getDefaultStyle().getColor().getFloatOfColor());
@@ -429,7 +429,7 @@ public class GUILayer {
                 }
 
                 ImGui.separator();
-                if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_PLUS), 20, 20) && !newStyle.get().equals("")) {
+                if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_PLUS), 20, 20) && !newStyle.get().equals("")) {
                     runMan.addStyle(newStyle.get());
                 }
 
@@ -452,7 +452,7 @@ public class GUILayer {
             ImGui.inputText("File Location", runMan.getPendingSettlementFolderDirectory());
             ImGui.sameLine();
 
-            if (ImGui.imageButton(this.textureLib.getTexture(Constants.TEXTURE_FOLDER), 25, 22) && !this.fileChooserOpen) {
+            if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_FOLDER), 25, 22) && !this.fileChooserOpen) {
                 SwingUtilities.invokeLater(() -> {
                     JFrame j = new JFrame();
                     j.setAlwaysOnTop(true);

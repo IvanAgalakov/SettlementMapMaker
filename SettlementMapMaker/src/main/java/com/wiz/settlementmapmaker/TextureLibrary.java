@@ -33,8 +33,8 @@ import javax.imageio.ImageIO;
  */
 public class TextureLibrary {
 
-    public static ArrayList<String> textureLocations = new ArrayList<>();
-    public static HashMap<String, Texture> textures = new HashMap<>();
+    private static ArrayList<String> textureLocations = new ArrayList<>();
+    private static HashMap<String, Texture> textures = new HashMap<>();
 
     public static void loadAllTextures() {
         try {
@@ -65,7 +65,7 @@ public class TextureLibrary {
 
     }
     
-    public int getTexture(String texture) {
+    public static int getTexture(String texture) {
         return textures.get(texture).texture;
     }
 }

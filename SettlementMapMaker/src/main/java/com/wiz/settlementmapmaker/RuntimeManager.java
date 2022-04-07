@@ -14,9 +14,13 @@ import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImFont;
 import imgui.ImGuiIO;
+import imgui.ImGuiStyle;
+import imgui.ImVec4;
 import imgui.app.Color;
+import imgui.flag.ImGuiCol;
 
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGui;
@@ -92,11 +96,33 @@ public class RuntimeManager {
         GLFW.glfwSetWindowFocusCallback(window.getWindowPointer(), new WindowFocus());
         GLFW.glfwSetWindowSizeCallback(window.getWindowPointer(), new WindowResizeHandler());
         dataDis = new DataDisplayer(this, io, window, gui);
+        initStyle();
     }
+    
+    public void initStyle() {
+        ImGuiStyle style = ImGui.getStyle();
+        style.setFrameRounding(2.3f);
+        style.setWindowRounding(10f);
+        style.setWindowBorderSize(3);
+        style.setWindowPadding(5, 5);
+        
+        
+        style.setColor(ImGuiCol.TitleBg, 75, 54, 11, 255);
+        style.setColor(ImGuiCol.TitleBgActive, 95, 60, 20, 255);
+        style.setColor(ImGuiCol.TitleBgCollapsed, 95, 47, 20, 255);
+        style.setColor(ImGuiCol.FrameBg, 95, 45, 11, 255);
+        style.setColor(ImGuiCol.HeaderHovered, 117, 64, 19, 255);
+        style.setColor(ImGuiCol.Header, 101, 62, 28, 255);
+    }
+    
+
 
     // runs before init
     public void initIO(ImGuiIO io) {
         this.io = io;
+        FontLibrary.loadAllFonts(io);
+        TextureLibrary.loadAllTextures();
+        io.setFontDefault(FontLibrary.getFont(0));
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
         //io.setFontDefault(defaultFont);
     }

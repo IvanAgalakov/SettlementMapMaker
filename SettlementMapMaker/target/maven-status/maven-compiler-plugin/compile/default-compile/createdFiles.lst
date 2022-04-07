@@ -39,3 +39,4 @@ Shape\Obstacle$ObstacleType.class
 com\wiz\settlementmapmaker\Settlement.class
 Shape\Point.class
 com\wiz\settlementmapmaker\FileManager.class
+com\wiz\settlementmapmaker\TextureLibrary.class
