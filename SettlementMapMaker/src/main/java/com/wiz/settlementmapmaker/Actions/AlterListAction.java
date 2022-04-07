@@ -14,26 +14,34 @@ import java.util.List;
 public class AlterListAction<E> implements Action {
 
     private E change;
-    List<E> list;
-    boolean remove;
+    private List<E> list;
+    private boolean remove;
+    private int index;
 
-    public AlterListAction(List<E> list, E change, boolean remove) {
+    private AlterListAction(List<E> list, E change, boolean remove, int index) {
         this.change = change;
 
         this.list = list;
         this.remove = remove;
+        this.index = index;
+        
         if (remove == false) {
-            list.add(this.change);
+            list.add(index, this.change);
         } else {
-            
-            System.out.println(list.remove(this.change));
+            index = list.indexOf(this.change);
+            this.index = index;
+            list.remove(this.change);
         }
+    }
+    
+    public AlterListAction(List<E> list, E change, boolean remove) {
+        this(list, change, remove, list.size());
     }
 
     @Override
     public Action revert() {
         System.out.println("reverted list");
-        return new AlterListAction<E>(list, change, !remove);
+        return new AlterListAction<>(list, change, !remove, index);
     }
 
 }

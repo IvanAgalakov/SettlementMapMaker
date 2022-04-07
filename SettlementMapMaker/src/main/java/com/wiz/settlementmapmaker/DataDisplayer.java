@@ -199,7 +199,9 @@ public class DataDisplayer {
                 if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
                     currentStyleShapes.remove(shapes.get(x));
                     //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
-                    currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
+                    if (zone.getPointList().size() > 0) {
+                        currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
+                    }
                 }
             }
 
