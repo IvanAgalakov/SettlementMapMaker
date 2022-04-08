@@ -69,12 +69,11 @@ public class GUILayer {
     public void textPopup(String text, float x, float y, int number) {
         ImGui.setNextWindowPos(x, y);
         ImGui.setNextWindowSize(0, 0);
-        
-        
+
         ImGui.begin(text + "##" + number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
-        
+
         ImGui.text(text);
-        
+
         ImGui.end();
     }
 
@@ -85,9 +84,6 @@ public class GUILayer {
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("Management");
 
-        
-        
-        
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("Zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
         if (ImGui.button("Toggle Draw Menu")) {
@@ -179,11 +175,24 @@ public class GUILayer {
         }
 
         if (runMan.getShapeList(editorType.get()).length != 0) {
+            // moving of shapes
+            if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20)) {
+                runMan.moveShape(-1, runMan.getShapes(editorType.get()), runMan.getSelectedShape());
+            }
+            ImGui.sameLine();
+            if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20)) {
+                runMan.moveShape(1, runMan.getShapes(editorType.get()), runMan.getSelectedShape());
+            }
+            // moving of shapes end
+            
             if (ImGui.button("Delete Selected " + editorType)) {
                 runMan.removeShape(runMan.getSelectedShape().get(), editorType.get());
             }
         } else {
             ImGui.beginDisabled();
+            ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20);
+            ImGui.sameLine();
+            ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20);
             ImGui.button("Delete Selected " + editorType);
             ImGui.endDisabled();
         }
@@ -220,17 +229,27 @@ public class GUILayer {
             // -----------------------------------------------------
 
             ImGui.checkbox("Show Name", shapeToEdit.getShowLabel());
-
+            
             ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray());
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
             }
-            if (selectedPoint.get() < shapeToEdit.getPointList().size() && shapeToEdit.getPointList().size() > 0) {
+            if (selectedPoint.get() < shapeToEdit.getPointList().size() && !shapeToEdit.getPointList().isEmpty()) {
+                if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20)) {
+                    runMan.movePoint(-1, shapeToEdit, selectedPoint);
+                }
+                ImGui.sameLine();
+                if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20)) {
+                    runMan.movePoint(1, shapeToEdit, selectedPoint);
+                }
                 if (ImGui.button("Delete Point")) {
                     runMan.removePoint(shapeToEdit, shapeToEdit.getPointList().get(selectedPoint.get()));
                 }
             } else {
                 ImGui.beginDisabled();
+                ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20);
+                ImGui.sameLine();
+                ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20);
                 ImGui.button("Delete Point");
                 ImGui.endDisabled();
             }
@@ -403,9 +422,9 @@ public class GUILayer {
                 ImGui.endDisabled();
             }
             ImGui.endTabBar();
-            
+
             if (selectedTab == 0) {
-                
+
             }
 
             if (selectedTab == 1) {

@@ -53,5 +53,13 @@ public class EditorShape extends Shape {
     public ImBoolean getShowLabel() {
         return this.showLabel;
     }
+    
+    public int size() {
+        return this.points.size();
+    }
+    
+    public Point getPoint(int i) {
+        return this.points.get(i);
+    }
 
 }

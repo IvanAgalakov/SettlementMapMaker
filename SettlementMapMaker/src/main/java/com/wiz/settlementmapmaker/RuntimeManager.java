@@ -16,7 +16,9 @@ import com.wiz.settlementmapmaker.Actions.AlterListAction;
 import com.wiz.settlementmapmaker.Actions.CombinedAction;
 import com.wiz.settlementmapmaker.Actions.MethodRunAction;
 import com.wiz.settlementmapmaker.Actions.ImBooleanChangeAction;
+import com.wiz.settlementmapmaker.Actions.ImIntChangeAction;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
+import com.wiz.settlementmapmaker.Actions.SetListAction;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImFont;
 import imgui.ImGuiIO;
@@ -287,6 +289,23 @@ public class RuntimeManager {
     public void addShape(EditorShape shape, String shapeType) {
         useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, false), new MethodRunAction(() -> updateShapeList())));
     }
+    
+    public void moveShape(int dir, List<EditorShape> moveIn, ImInt toMove) {
+        int swapWith = -1;
+        if(toMove.get() + dir > moveIn.size()-1 || toMove.get() + dir < 0) {
+            return;
+        }
+        
+        swapWith = toMove.get()+dir;
+        
+        EditorShape temp = moveIn.get(swapWith);
+        
+        System.out.println(toMove.get() + " -- " + swapWith);
+        this.useAction(new CombinedAction(new SetListAction(moveIn, swapWith, moveIn.get(toMove.get())),
+                new SetListAction(moveIn, toMove.get(), temp),
+        new ImIntChangeAction(toMove, toMove.get()+dir), 
+                new MethodRunAction(() -> updateShapeList())));
+    }
 
     public void removeShape(int selectedShape, String shapeType) {
         EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
@@ -299,6 +318,22 @@ public class RuntimeManager {
         addTo.CalculateCenter();
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
+    }
+    
+    public void movePoint(int dir, EditorShape moveIn, ImInt toMove) {
+        int swapWith = -1;
+        if(toMove.get() + dir > moveIn.size()-1 || toMove.get() + dir < 0) {
+            return;
+        }
+        
+        swapWith = toMove.get()+dir;
+        
+        Point temp = moveIn.getPoint(swapWith);
+        
+        System.out.println(toMove.get() + " -- " + swapWith);
+        this.useAction(new CombinedAction(new SetListAction(moveIn.getPointList(), swapWith, moveIn.getPoint(toMove.get())),
+                new SetListAction(moveIn.getPointList(), toMove.get(), temp),
+        new ImIntChangeAction(toMove, toMove.get()+dir)));
     }
 
     public void removePoint(EditorShape removeFrom, Point point) {
