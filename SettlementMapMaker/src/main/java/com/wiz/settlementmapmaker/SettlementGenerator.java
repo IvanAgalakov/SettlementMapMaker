@@ -112,6 +112,96 @@ public class SettlementGenerator {
         return blockArray;
     }
 
+    public ArrayList<EditorShape> generateSettlementBlock(EditorShape blockBase, float minSize, float maxSize) {
+        if (blockBase.size() < 2) {
+            return new ArrayList<>();
+        }
+        
+        blockBase = new EditorShape(blockBase);
+        blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
+
+        Random ran = new Random();
+        ran.setSeed(1);
+
+        ArrayList<EditorShape> block = new ArrayList<>();
+        Point[] segments = blockBase.getPoints();
+
+        float startDistance = 0f;
+        float firstSegmentDistance = ran.nextFloat(minSize, maxSize);
+        Point firstSegment = new Point(segments[0]);
+
+        for (int i = 1; i < segments.length; i++) {
+
+            Point startSeg = segments[i - 1];
+            Point endSeg = segments[i];
+
+            float run = endSeg.x - startSeg.x;
+            float rise = endSeg.y - startSeg.y;
+            float hypo = startSeg.getDistanceToPoint(endSeg);
+
+            if (i == 1) {
+                startSeg = this.getPointAlongLine(startSeg, rise, run, hypo, firstSegmentDistance);
+                firstSegment = startSeg;
+                run = endSeg.x - startSeg.x;
+                rise = endSeg.y - startSeg.y;
+                hypo = startSeg.getDistanceToPoint(endSeg);
+            }
+            
+            boolean doneSegment = false;
+            float distanceDownSegment = startDistance;
+
+            int count = 0;
+            while (!doneSegment) {
+                // Shape newBuilding = new Shape(new Point[]{startSeg, endSeg, this.normalPointToPoint(endSeg, rise, run, 0.1f), this.normalPointToPoint(startSeg, rise, run, 0.1f), startSeg, endSeg});
+                float deviate = minSize + (ran.nextFloat() * (maxSize - minSize));
+
+                if (hypo - (deviate + distanceDownSegment) < minSize) {
+                    deviate = hypo;
+                }
+                if (deviate + distanceDownSegment >= hypo) {
+                    deviate = hypo - distanceDownSegment;
+
+                    Point begin = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment);
+                    Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
+                    Point beginInset = this.normalPointToPoint(begin, rise, run, -deviate);
+
+                    Point endInset;
+                    if (i != segments.length - 1) {
+                        run = segments[i + 1].x - segments[i].x;
+                        rise = segments[i + 1].y - segments[i].y;
+                        hypo = segments[i].getDistanceToPoint(segments[i + 1]);
+                        endInset = this.getPointAlongLine(end, rise, run, hypo, deviate);
+                        startDistance = deviate;
+                    } else {
+                        endInset = firstSegment;
+                        beginInset = this.normalPointToPoint(begin, rise, run, -firstSegmentDistance);
+                    }
+
+                    EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
+                    block.add(newBuilding);
+
+                    break;
+                }
+
+                Point begin = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment);
+                Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
+                Point endInset = this.normalPointToPoint(end, rise, run, -deviate);
+                Point beginInset = this.normalPointToPoint(begin, rise, run, -deviate);
+
+                EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
+
+                block.add(newBuilding);
+
+                distanceDownSegment += deviate;
+
+                count++;
+            }
+
+        }
+
+        return block;
+    }
+
     public ArrayList<EditorShape> generateVoronoi(EditorShape v) {
 
         if (v.getPointList().size() <= 2) {
@@ -119,7 +209,6 @@ public class SettlementGenerator {
         }
 
         //Voronoi voronoi = new Voronoi();
-
         return new ArrayList();
     }
 
