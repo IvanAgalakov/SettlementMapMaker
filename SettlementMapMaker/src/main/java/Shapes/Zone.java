@@ -14,7 +14,7 @@ import imgui.type.ImLong;
 public class Zone extends EditorShape {
 
     private ImInt zoneType;
-    private ImLong seed;
+    private ImLong seed = new ImLong(0);
 
     public Zone(String name, int zoneType) {
         super(name);
