@@ -5,6 +5,7 @@
 package com.wiz.settlementmapmaker;
 
 import Shapes.EditorShape;
+import Shapes.Line;
 
 import Shapes.Point;
 
@@ -16,6 +17,12 @@ import java.util.Random;
  * @author Ivan
  */
 public class SettlementGenerator {
+    
+    private Random rand = new Random();
+    
+    public SettlementGenerator() {
+        
+    }
 
     public void runGeneration(Settlement settlement) {
 
@@ -116,7 +123,7 @@ public class SettlementGenerator {
         if (blockBase.size() < 2) {
             return new ArrayList<>();
         }
-        
+
         blockBase = new EditorShape(blockBase);
         blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
 
@@ -146,7 +153,7 @@ public class SettlementGenerator {
                 rise = endSeg.y - startSeg.y;
                 hypo = startSeg.getDistanceToPoint(endSeg);
             }
-            
+
             boolean doneSegment = false;
             float distanceDownSegment = startDistance;
 
@@ -210,6 +217,133 @@ public class SettlementGenerator {
 
         //Voronoi voronoi = new Voronoi();
         return new ArrayList();
+    }
+
+    public ArrayList<EditorShape> generateBlockThroughCutting(EditorShape v) {
+        if (v.size() < 3) {
+            ArrayList<EditorShape> base = new ArrayList<>();
+            base.add(v);
+            return base;
+        }
+        EditorShape copy = new EditorShape(v);
+        ArrayList<Point> cutPoints = copy.getPointList();
+
+        ArrayList<Line> lines = new ArrayList<>();
+        for (int i = 1; i <= cutPoints.size(); i++) {
+            if (i < cutPoints.size()) {
+                lines.add(new Line(cutPoints.get(i - 1), cutPoints.get(i)));
+            } else {
+                lines.add(new Line(cutPoints.get(i - 1), cutPoints.get(0)));
+            }
+        }
+
+        // connects the lines together
+        for (int i = 0; i < lines.size(); i++) {
+            if (i + 1 != lines.size()) {
+                lines.get(i).setNextLine(lines.get(i + 1));
+            } else {
+                lines.get(i).setNextLine(lines.get(0));
+            }
+        }
+
+        
+        //rand.setSeed(0);
+        
+        int ranLine = rand.nextInt(lines.size());
+        
+        Line wL = lines.get(ranLine);
+        Point tempStart = getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / 2f);
+
+        Point end = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), v.getPerimeter());
+        Point start = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), -v.getPerimeter());
+
+        Line cutLine = new Line(start, end);
+        
+        
+
+        ArrayList<Point> interPoints = new ArrayList<>();
+        
+        for (int i = 0; i < lines.size(); i++) {
+            Point intersect = lines.get(i).getIntersection(cutLine);
+            
+
+            if (intersect != null) {
+                Line insert = new Line(intersect, lines.get(i).getEnd());
+                insert.setNextLine(lines.get(i).getNextLine());
+
+                lines.add(i + 1, insert);
+                lines.get(i).setEnd(intersect);
+                lines.get(i).setNextLine(insert);
+                i++;
+
+                interPoints.add(intersect);
+            }
+
+        }
+        
+        
+        
+        
+        
+        ArrayList<EditorShape> blockShapes = new ArrayList<>();
+        int intersectCount = 0;
+        Point firstIntersection = null;
+        ArrayList<Point> shapeProgress = new ArrayList<>();
+        boolean done = false;
+
+        Line currentLine = lines.get(0);
+        while (!done) {
+            
+           // System.out.println("lines: " + currentLine);
+            
+            if (interPoints.contains(currentLine.getStart())) {
+                if (intersectCount == 0) {
+                    firstIntersection = currentLine.getStart();
+                    shapeProgress.add(new Point(currentLine.getStart()));
+                }
+                intersectCount++;
+            }
+
+            if (intersectCount == 2) {
+                //System.out.println(shapeProgress.size());
+                blockShapes.add(new EditorShape(shapeProgress));
+                shapeProgress.clear();
+                
+                shapeProgress.add(new Point(currentLine.getStart()));
+                intersectCount = 1;
+                
+                if (firstIntersection == currentLine.getStart()) {
+                    intersectCount = 0;
+                    done = true;
+                }
+            }
+
+            if (intersectCount == 1) {
+                shapeProgress.add(new Point(currentLine.getEnd()));
+            }
+
+            currentLine = currentLine.getNextLine();
+        }
+
+        for (int i = 0; i < blockShapes.size(); i++) {
+            blockShapes.get(i).ScaleShape(0.99f, 0.99f);
+        }
+       
+
+        return blockShapes;
+    }
+    
+    public ArrayList<EditorShape> cutUpShape(ArrayList<EditorShape> v, int times) {
+        if (times <= 0) {
+            return v;
+        }
+        ArrayList<EditorShape> cutup = new ArrayList<>();
+        for (int i = 0; i < v.size(); i++) {
+            cutup.addAll(this.generateBlockThroughCutting(v.get(i)));
+        }
+        ArrayList<EditorShape> ret = cutUpShape(cutup, times-1);
+        
+        return ret;
     }
 
     public Point normalPointToPoint(Point p, float rise, float run, float deviate) {

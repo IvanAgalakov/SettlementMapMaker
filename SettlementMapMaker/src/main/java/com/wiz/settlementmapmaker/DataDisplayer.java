@@ -201,7 +201,10 @@ public class DataDisplayer {
                     //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
                     if (!zone.getPointList().isEmpty()) {
                         //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
-                        currentStyleShapes.addAll(settleGen.generateSettlementBlock(zone, 0.01f, 0.02f));
+                        //currentStyleShapes.addAll(settleGen.generateSettlementBlock(zone, 0.01f, 0.02f));
+                        ArrayList<EditorShape> v = new ArrayList<>();
+                        v.add(zone);
+                        currentStyleShapes.addAll(settleGen.cutUpShape(v, 5));
                     }
                 }
             }

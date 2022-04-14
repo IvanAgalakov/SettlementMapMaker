@@ -214,6 +214,42 @@ public class Shape {
       return result;
     }
     
+    public float getPerimeter() {
+        Point last = null;
+        float perimeter = 0;
+        for (Point p : points) {
+            if (last != null) {
+                perimeter += p.getDistanceToPoint(last);
+            } else {
+                perimeter += p.getDistanceToPoint(points.get(points.size()-1));
+            }
+            last = p;
+        }
+        return perimeter;
+    }
+    
+    public boolean isPointInside(Point p) {
+        ArrayList<Line> lines = new ArrayList<>();
+        for (int i = 1; i <= points.size(); i++) {
+            if (i < points.size()) {
+                lines.add(new Line(points.get(i - 1), points.get(i)));
+            } else {
+                lines.add(new Line(points.get(i-1), points.get(0)));
+            }
+        }
+        
+        Line testLine = new Line(p, new Point(p.x + this.getPerimeter(), p.y));
+        
+        int numberOfIntersections = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).getIntersection(testLine) != null) {
+                numberOfIntersections++;
+            }
+        }
+        
+        return numberOfIntersections < 1;
+    }
+    
     
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ package Shapes;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import imgui.type.ImString;
+import java.util.ArrayList;
 
 /**
  *
@@ -30,7 +31,11 @@ public class EditorShape extends Shape {
         CalculateCenter();
     }
 
-    public EditorShape(Point[] points) {
+    public EditorShape(Point... points) {
+        super(points);
+    }
+    
+    public EditorShape (ArrayList<Point> points) {
         super(points);
     }
 
