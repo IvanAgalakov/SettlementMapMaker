@@ -230,7 +230,7 @@ public class GUILayer {
 
             ImGui.checkbox("Show Name", shapeToEdit.getShowLabel());
             
-            ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray());
+            ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray(), 4);
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
             }
@@ -273,6 +273,8 @@ public class GUILayer {
         if (ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
 
         }
+        
+        ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15);
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);

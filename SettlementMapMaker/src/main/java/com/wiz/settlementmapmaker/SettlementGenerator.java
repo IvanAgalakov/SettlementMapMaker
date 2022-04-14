@@ -249,7 +249,7 @@ public class SettlementGenerator {
         
         //rand.setSeed(0);
         
-        int ranLine = 1;//rand.nextInt(lines.size());
+        int ranLine = lines.size()-1;//rand.nextInt(lines.size());
         if (ranLine >= lines.size()) {
             ranLine = 0;
         }

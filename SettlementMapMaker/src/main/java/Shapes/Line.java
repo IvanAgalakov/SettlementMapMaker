@@ -123,7 +123,7 @@ public class Line {
     }
     
     public boolean isPointOnLine(Point p) {
-        return Math.abs(p.getDistanceToPoint(start) + p.getDistanceToPoint(end) - this.getLength()) < 0.000001f;
+        return Math.abs(p.getDistanceToPoint(start) + p.getDistanceToPoint(end) - this.getLength()) < 0.0001f;
     }
     
     public Boolean isPointAbove (Point point) {

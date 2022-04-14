@@ -14,7 +14,7 @@ import imgui.type.ImLong;
 public class Zone extends EditorShape {
 
     private ImInt zoneType;
-    private ImLong seed = new ImLong(0);
+    private ImInt divisions = new ImInt(1);
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -29,7 +29,11 @@ public class Zone extends EditorShape {
         return zoneType;
     }
     
-    public ImLong getSeed() {
-        return seed;
+    public int getDivisions() {
+        return divisions.get();
+    }
+    
+    public int[] getDivisionData() {
+        return divisions.getData();
     }
 }
