@@ -5,6 +5,7 @@
 package Shapes;
 
 import imgui.type.ImInt;
+import imgui.type.ImLong;
 
 /**
  *
@@ -13,6 +14,7 @@ import imgui.type.ImInt;
 public class Zone extends EditorShape {
 
     private ImInt zoneType;
+    private ImLong seed;
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -25,5 +27,9 @@ public class Zone extends EditorShape {
 
     public ImInt getZoneType() {
         return zoneType;
+    }
+    
+    public ImLong getSeed() {
+        return seed;
     }
 }

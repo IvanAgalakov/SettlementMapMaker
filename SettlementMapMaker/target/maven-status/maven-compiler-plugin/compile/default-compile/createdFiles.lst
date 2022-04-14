@@ -31,6 +31,7 @@ GUI\TextureLibrary.class
 GUI\DrawColor.class
 com\wiz\settlementmapmaker\Actions\ImBooleanChangeAction.class
 com\wiz\settlementmapmaker\SettlementGenerator.class
+Shapes\Line.class
 com\wiz\settlementmapmaker\ShaderManager.class
 Shapes\Obstacle$ObstacleType.class
 com\wiz\settlementmapmaker\Actions\AlterListAction.class

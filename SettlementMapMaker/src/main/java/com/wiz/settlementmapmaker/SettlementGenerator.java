@@ -292,7 +292,9 @@ public class SettlementGenerator {
         boolean done = false;
 
         Line currentLine = lines.get(0);
-        while (!done) {
+        
+        int safety = 0;
+        while (!done || safety > 1000) {
             
            // System.out.println("lines: " + currentLine);
             
@@ -323,6 +325,11 @@ public class SettlementGenerator {
             }
 
             currentLine = currentLine.getNextLine();
+            safety++;
+        }
+        
+        if(safety > 1000) {
+            System.err.println("While loop has kept running for way too long");
         }
 
         for (int i = 0; i < blockShapes.size(); i++) {

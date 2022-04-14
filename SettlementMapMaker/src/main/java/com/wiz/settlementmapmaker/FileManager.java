@@ -4,7 +4,13 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GsonExtras.RuntimeTypeAdapterFactory;
+import Shapes.Building;
+import Shapes.EditorShape;
+import Shapes.Obstacle;
+import Shapes.Zone;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import imgui.ImColor;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -27,8 +33,13 @@ import org.lwjgl.opengl.GL33C;
  */
 public class FileManager {
 
+    private static RuntimeTypeAdapterFactory<EditorShape> shapeAdaptorFactory = RuntimeTypeAdapterFactory.of(EditorShape.class, "type")
+            .registerSubtype(Zone.class, "Zone")
+            .registerSubtype(Building.class, "Building")
+            .registerSubtype(Obstacle.class, "Obstacle");
+
     public static void saveSettlement(Settlement settle, String path) {
-        Gson settleGson = new Gson();
+        Gson settleGson = new GsonBuilder().registerTypeAdapterFactory(shapeAdaptorFactory).create();
         String save = settleGson.toJson(settle);
         try {
             Files.writeString(Path.of(path), save);
@@ -40,7 +51,7 @@ public class FileManager {
     public static Settlement openSettlement(String path) {
         try {
             String save = Files.readString(Path.of(path));
-            Gson settleGson = new Gson();
+            Gson settleGson = new GsonBuilder().registerTypeAdapterFactory(shapeAdaptorFactory).create();
             Settlement settle = settleGson.fromJson(save, Settlement.class);
             return settle;
         } catch (IOException ex) {
@@ -56,22 +67,21 @@ public class FileManager {
 
         try {
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            
-            int x = width-1;
+
+            int x = width - 1;
             int y = 0;
-            for(int i = pixels.length-1; i > 2; i-=3) {
-                int col = ImColor.floatToColor(pixels[i], pixels[i-1], pixels[i-2]);
+            for (int i = pixels.length - 1; i > 2; i -= 3) {
+                int col = ImColor.floatToColor(pixels[i], pixels[i - 1], pixels[i - 2]);
                 img.setRGB(x, y, col);
                 x--;
-                if(x < 0) {
+                if (x < 0) {
                     y++;
-                    x=width-1;
+                    x = width - 1;
                 }
             }
-            
-            
+
             if (img != null) {
-                File outputFile = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"\\image.png");
+                File outputFile = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\image.png");
                 ImageIO.write(img, "png", outputFile);
             }
         } catch (IOException ex) {
