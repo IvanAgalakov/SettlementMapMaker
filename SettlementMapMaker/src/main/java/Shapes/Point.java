@@ -65,4 +65,11 @@ public class Point {
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
+    
+    public boolean equals(Point p) {
+        if (p.x == this.x && p.y == this.y) {
+            return true;
+        }
+        return false;
+    }
 }

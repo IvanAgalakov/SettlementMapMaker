@@ -9,6 +9,7 @@ import Shapes.EditorShape;
 import Shapes.Point;
 import imgui.app.Color;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL33C;
@@ -55,21 +56,21 @@ public class WindowVisualizer {
 //        GL33C.glDisableVertexAttribArray(1);
     }
 
-    public static void drawEnclosedLines(EditorShape[] shapes, int lineWidth, DrawColor color) {
+    public static void drawEnclosedLines(ArrayList<EditorShape> shapes, int lineWidth, DrawColor color) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            amount += calculateVertices(shapes[i].getEnclosedLinesFromPoints()).length;
+        for (int i = 0; i < shapes.size(); i++) {
+            amount += calculateVertices(shapes.get(i).getEnclosedLinesFromPoints()).length;
 
         }
 
         vert = new float[amount];
         int count = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            for (int i2 = 0; i2 < calculateVertices(shapes[i].getEnclosedLinesFromPoints()).length; i2++) {
-                vert[count] = calculateVertices(shapes[i].getEnclosedLinesFromPoints())[i2];
+        for (int i = 0; i < shapes.size(); i++) {
+            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getEnclosedLinesFromPoints()).length; i2++) {
+                vert[count] = calculateVertices(shapes.get(i).getEnclosedLinesFromPoints())[i2];
                 count++;
             }
         }
@@ -97,20 +98,20 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
 
-    public static void drawTriangles(EditorShape[] shapes, DrawColor color) {
+    public static void drawTriangles(ArrayList<EditorShape> shapes, DrawColor color) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            amount += calculateVertices(shapes[i].getTrianglesFromPoints()).length;
+        for (int i = 0; i < shapes.size(); i++) {
+            amount += calculateVertices(shapes.get(i).getTrianglesFromPoints()).length;
         }
 
         vert = new float[amount];
         int count = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            for (int i2 = 0; i2 < calculateVertices(shapes[i].getTrianglesFromPoints()).length; i2++) {
-                vert[count] = calculateVertices(shapes[i].getTrianglesFromPoints())[i2];
+        for (int i = 0; i < shapes.size(); i++) {
+            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getTrianglesFromPoints()).length; i2++) {
+                vert[count] = calculateVertices(shapes.get(i).getTrianglesFromPoints())[i2];
                 count++;
             }
         }
@@ -137,20 +138,20 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
 
-    public static void drawPoints(EditorShape[] shapes, float pointSize, DrawColor color) {
+    public static void drawPoints(ArrayList<EditorShape> shapes, float pointSize, DrawColor color) {
         //System.out.println(color.toString());
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            amount += calculateVertices(shapes[i].getPoints()).length;
+        for (int i = 0; i < shapes.size(); i++) {
+            amount += calculateVertices(shapes.get(i).getPoints()).length;
         }
 
         vert = new float[amount];
         int count = 0;
-        for (int i = 0; i < shapes.length; i++) {
-            for (int i2 = 0; i2 < calculateVertices(shapes[i].getPoints()).length; i2++) {
-                vert[count] = calculateVertices(shapes[i].getPoints())[i2];
+        for (int i = 0; i < shapes.size(); i++) {
+            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getPoints()).length; i2++) {
+                vert[count] = calculateVertices(shapes.get(i).getPoints())[i2];
                 count++;
             }
         }

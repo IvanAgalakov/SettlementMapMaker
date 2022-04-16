@@ -4,6 +4,7 @@
  */
 package com.wiz.settlementmapmaker;
 
+import Shapes.Building;
 import Shapes.EditorShape;
 import Shapes.Line;
 
@@ -17,199 +18,10 @@ import java.util.Random;
  * @author Ivan
  */
 public class SettlementGenerator {
-    
-    private Random rand = new Random();
-    
-    public SettlementGenerator() {
-        
-    }
 
-    public void runGeneration(Settlement settlement) {
+    private static Random rand = new Random();
 
-    }
-
-    public void alterGeneration(String property) {
-
-    }
-
-    public String generateBuildingName() {
-        return null;
-    }
-
-    public String generateRiverName() {
-        return null;
-    }
-
-    public String generateSettlementName() {
-        return null;
-    }
-
-//    public EditorShape[] convertToBlock(EditorShape blockBase, float minSize, float maxSize) {
-//
-//        blockBase = new EditorShape(blockBase);
-//        blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
-//
-//        Random ran = new Random();
-//        ran.setSeed(1);
-//
-//        ArrayList<EditorShape> block = new ArrayList<>();
-//        Point[] segments = blockBase.getPoints();
-//
-//        float startDistance = 0f;
-//
-//        for (int i = 1; i < segments.length; i++) {
-//
-//            Point startSeg = segments[i - 1];
-//            Point endSeg = segments[i];
-//
-//            float run = endSeg.x - startSeg.x;
-//            float rise = endSeg.y - startSeg.y;
-//            float hypo = startSeg.getDistanceToPoint(endSeg);
-//
-//            boolean doneSegment = false;
-//            float distanceDownSegment = startDistance;
-//
-//            int count = 0;
-//            while (!doneSegment) {
-//                // Shape newBuilding = new Shape(new Point[]{startSeg, endSeg, this.normalPointToPoint(endSeg, rise, run, 0.1f), this.normalPointToPoint(startSeg, rise, run, 0.1f), startSeg, endSeg});
-//                float deviate = minSize + (ran.nextFloat() * (maxSize - minSize));
-//
-//                if (hypo - (deviate + distanceDownSegment) < minSize) {
-//                    deviate = hypo;
-//                }
-//                if (deviate + distanceDownSegment >= hypo) {
-//                    deviate = hypo - distanceDownSegment;
-//                    doneSegment = true;
-//                }
-//
-//                Point begin;
-//                begin = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment);
-//
-//                Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
-//
-//                Point endInset = this.normalPointToPoint(end, rise, run, deviate);
-//
-//                Point beginInset = this.normalPointToPoint(begin, rise, run, deviate);
-//
-//                EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
-//                //Shape newBuilding = new Shape(new Point[]{begin, end, end, endInset, endInset, beginInset, beginInset, begin});
-//                //Shape newBuilding = new Shape(new Point[]{beginInset, endInset, begin, endInset, end, begin});
-//                //System.out.println(deviate + " : " + newBuilding.getCenter());
-//                //newBuilding.ScaleShape(0.9f, 0.9f);
-//                block.add(newBuilding);
-//
-//                distanceDownSegment += deviate;
-//
-//                if (doneSegment) {
-//                    if (i + 1 < segments.length) {
-//                        segments[i] = end;
-//                    }
-//                }
-//
-////                if (i - 1 == 0 && count == 0) {
-////                    segments[segments.length - 1] = beginInset;
-////                }
-//                count++;
-//            }
-//
-//        }
-//
-//        EditorShape[] blockArray = new EditorShape[block.size()];
-//        blockArray = block.toArray(blockArray);
-//        return blockArray;
-//    }
-
-//    public ArrayList<EditorShape> generateSettlementBlock(EditorShape blockBase, float minSize, float maxSize) {
-//        if (blockBase.size() < 2) {
-//            return new ArrayList<>();
-//        }
-//
-//        blockBase = new EditorShape(blockBase);
-//        blockBase.addPoints(new Point(blockBase.getPointList().get(0)));
-//
-//        Random ran = new Random();
-//        ran.setSeed(1);
-//
-//        ArrayList<EditorShape> block = new ArrayList<>();
-//        Point[] segments = blockBase.getPoints();
-//
-//        float startDistance = 0f;
-//        float firstSegmentDistance = ran.nextFloat(minSize, maxSize);
-//        Point firstSegment = new Point(segments[0]);
-//
-//        for (int i = 1; i < segments.length; i++) {
-//
-//            Point startSeg = segments[i - 1];
-//            Point endSeg = segments[i];
-//
-//            float run = endSeg.x - startSeg.x;
-//            float rise = endSeg.y - startSeg.y;
-//            float hypo = startSeg.getDistanceToPoint(endSeg);
-//
-//            if (i == 1) {
-//                startSeg = this.getPointAlongLine(startSeg, rise, run, hypo, firstSegmentDistance);
-//                firstSegment = startSeg;
-//                run = endSeg.x - startSeg.x;
-//                rise = endSeg.y - startSeg.y;
-//                hypo = startSeg.getDistanceToPoint(endSeg);
-//            }
-//
-//            boolean doneSegment = false;
-//            float distanceDownSegment = startDistance;
-//
-//            int count = 0;
-//            while (!doneSegment) {
-//                // Shape newBuilding = new Shape(new Point[]{startSeg, endSeg, this.normalPointToPoint(endSeg, rise, run, 0.1f), this.normalPointToPoint(startSeg, rise, run, 0.1f), startSeg, endSeg});
-//                float deviate = minSize + (ran.nextFloat() * (maxSize - minSize));
-//
-//                if (hypo - (deviate + distanceDownSegment) < minSize) {
-//                    deviate = hypo;
-//                }
-//                if (deviate + distanceDownSegment >= hypo) {
-//                    deviate = hypo - distanceDownSegment;
-//
-//                    Point begin = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment);
-//                    Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
-//                    Point beginInset = this.normalPointToPoint(begin, rise, run, -deviate);
-//
-//                    Point endInset;
-//                    if (i != segments.length - 1) {
-//                        run = segments[i + 1].x - segments[i].x;
-//                        rise = segments[i + 1].y - segments[i].y;
-//                        hypo = segments[i].getDistanceToPoint(segments[i + 1]);
-//                        endInset = this.getPointAlongLine(end, rise, run, hypo, deviate);
-//                        startDistance = deviate;
-//                    } else {
-//                        endInset = firstSegment;
-//                        beginInset = this.normalPointToPoint(begin, rise, run, -firstSegmentDistance);
-//                    }
-//
-//                    EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
-//                    block.add(newBuilding);
-//
-//                    break;
-//                }
-//
-//                Point begin = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment);
-//                Point end = this.getPointAlongLine(startSeg, rise, run, hypo, distanceDownSegment + deviate);
-//                Point endInset = this.normalPointToPoint(end, rise, run, -deviate);
-//                Point beginInset = this.normalPointToPoint(begin, rise, run, -deviate);
-//
-//                EditorShape newBuilding = new EditorShape(new Point[]{begin, end, endInset, beginInset});
-//
-//                block.add(newBuilding);
-//
-//                distanceDownSegment += deviate;
-//
-//                count++;
-//            }
-//
-//        }
-//
-//        return block;
-//    }
-
-    public ArrayList<EditorShape> generateVoronoi(EditorShape v) {
+    public static ArrayList<EditorShape> generateVoronoi(EditorShape v) {
 
         if (v.getPointList().size() <= 2) {
             return new ArrayList();
@@ -219,9 +31,9 @@ public class SettlementGenerator {
         return new ArrayList();
     }
 
-    public ArrayList<EditorShape> generateBlockThroughCutting(EditorShape v) {
+    public static ArrayList<Building> generateBlockThroughCutting(Building v) {
         if (v.size() < 3) {
-            ArrayList<EditorShape> base = new ArrayList<>();
+            ArrayList<Building> base = new ArrayList<>();
             base.add(v);
             return base;
         }
@@ -246,29 +58,27 @@ public class SettlementGenerator {
             }
         }
 
-        
         //rand.setSeed(0);
-        
-        int ranLine = lines.size()-1;//rand.nextInt(lines.size());
+        int ranLine = lines.size() - 1;//rand.nextInt(lines.size());
         if (ranLine >= lines.size()) {
             ranLine = 0;
         }
-        
+
+        // noise so that buildings are not perfectly uniform
+        float noise = rand.nextFloat(-0.2f, 0.2f);
+
         Line wL = lines.get(ranLine);
-        Point tempStart = getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / 2f);
+        Point tempStart = getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / (2f + noise));
 
         Point end = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), v.getPerimeter());
         Point start = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), -v.getPerimeter());
 
         Line cutLine = new Line(start, end);
-        
-        
 
         ArrayList<Point> interPoints = new ArrayList<>();
-        
+
         for (int i = 0; i < lines.size(); i++) {
             Point intersect = lines.get(i).getIntersection(cutLine);
-            
 
             if (intersect != null) {
                 Line insert = new Line(intersect, lines.get(i).getEnd());
@@ -283,32 +93,26 @@ public class SettlementGenerator {
             }
 
         }
-        
-        
+
         // makes sure that any strange occurences are caught and not let out into the system
         if (interPoints.isEmpty()) {
-            ArrayList<EditorShape> base = new ArrayList<>();
-            base.add(v);
+            ArrayList<Building> base = new ArrayList<>();
+            base.add(new Building(v));
             return base;
         }
-        
-        
-        
-        
-        
-        ArrayList<EditorShape> blockShapes = new ArrayList<>();
+
+        ArrayList<Building> blockShapes = new ArrayList<>();
         int intersectCount = 0;
         Point firstIntersection = null;
         ArrayList<Point> shapeProgress = new ArrayList<>();
         boolean done = false;
 
         Line currentLine = lines.get(0);
-        
+
         int safety = 0;
         while (!done) {
-            
-           // System.out.println("lines: " + currentLine);
-            
+
+            // System.out.println("lines: " + currentLine);
             if (interPoints.contains(currentLine.getStart())) {
                 if (intersectCount == 0) {
                     firstIntersection = currentLine.getStart();
@@ -319,12 +123,12 @@ public class SettlementGenerator {
 
             if (intersectCount == 2) {
                 //System.out.println(shapeProgress.size());
-                blockShapes.add(new EditorShape(shapeProgress));
+                blockShapes.add(new Building(shapeProgress));
                 shapeProgress.clear();
-                
+
                 shapeProgress.add(new Point(currentLine.getStart()));
                 intersectCount = 1;
-                
+
                 if (firstIntersection == currentLine.getStart()) {
                     intersectCount = 0;
                     done = true;
@@ -339,35 +143,49 @@ public class SettlementGenerator {
             safety++;
         }
 
+//        for (int i = 0; i < blockShapes.size(); i++) {
+//            ArrayList<Point> blockPoints = blockShapes.get(i).getPointList();
+//            boolean hasPointOnLine = false;
+//            for (int x = 0; x < blockPoints.size(); x++) {
+//                for (int a = 0; a < lines.size(); a++) {
+//                    if (lines.get(a).isPointOnLine(blockPoints.get(x))) {
+//                        hasPointOnLine = true;
+//                    }
+//                }
+//            }
+//            if (!hasPointOnLine) {
+//                blockShapes.remove(i);
+//                i--;
+//            }
+//            //blockShapes.get(i).ScaleShape(0.99f, 0.99f);
+//        }
         for (int i = 0; i < blockShapes.size(); i++) {
             blockShapes.get(i).ScaleShape(0.99f, 0.99f);
         }
-       
-
         return blockShapes;
     }
-    
-    public ArrayList<EditorShape> cutUpShape(ArrayList<EditorShape> v, int times) {
+
+    public static ArrayList<Building> cutUpShape(ArrayList<Building> v, int times) {
         if (times <= 0) {
             return v;
         }
-        ArrayList<EditorShape> cutup = new ArrayList<>();
+        ArrayList<Building> cutup = new ArrayList<>();
         for (int i = 0; i < v.size(); i++) {
-            cutup.addAll(this.generateBlockThroughCutting(v.get(i)));
+            cutup.addAll(generateBlockThroughCutting(v.get(i)));
         }
-        ArrayList<EditorShape> ret = cutUpShape(cutup, times-1);
-        
+        ArrayList<Building> ret = cutUpShape(cutup, times - 1);
+
         return ret;
     }
 
-    public Point normalPointToPoint(Point p, float rise, float run, float deviate) {
+    public static Point normalPointToPoint(Point p, float rise, float run, float deviate) {
         float hypo = (float) Math.sqrt((rise * rise) + (run * run));
         // System.out.println(p.toString() + " | " + -run + " | " + rise + " | " + hypo + " | " + deviate);
 
         return getPointAlongLine(p, -run, rise, hypo, deviate);
     }
 
-    public Point getPointAlongLine(Point start, float rise, float run, float hypo, float deviate) {
+    public static Point getPointAlongLine(Point start, float rise, float run, float hypo, float deviate) {
         float runSq = (float) Math.pow(run, 2);
         float riseSq = (float) Math.pow(rise, 2);
         float formula = (float) (Math.signum(deviate) * Math.sqrt(Math.pow(deviate, 2) / (runSq + riseSq)));
@@ -375,7 +193,7 @@ public class SettlementGenerator {
         return new Point(start.x + run * formula, start.y + rise * formula);
     }
 
-    public Point calculateBorderPoint(Point start, Point middle, Point end) {
+    public static Point calculateBorderPoint(Point start, Point middle, Point end) {
         float hypa = middle.getDistanceToPoint(start);
         Point a = getPointAlongLine(middle, start.y - middle.y, start.x - middle.x, hypa, hypa / 2);
 
@@ -388,7 +206,7 @@ public class SettlementGenerator {
         return c;
     }
 
-    public EditorShape[] toShapeArray(EditorShape[][] ar) {
+    public static EditorShape[] toShapeArray(EditorShape[][] ar) {
         int count = 0;
         for (int x = 0; x < ar.length; x++) {
             for (int y = 0; y < ar[x].length; y++) {

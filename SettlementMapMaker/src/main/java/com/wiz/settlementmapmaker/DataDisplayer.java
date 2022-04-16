@@ -39,8 +39,6 @@ public class DataDisplayer {
 
     private HashMap<String, ArrayList<EditorShape>> shapesByStyle = new HashMap<>();
 
-    private SettlementGenerator settleGen;
-
     private GUILayer gui;
 
     public DataDisplayer(RuntimeManager runMan, ImGuiIO io, Window window, GUILayer gui) {
@@ -48,7 +46,6 @@ public class DataDisplayer {
         this.io = io;
         this.window = window;
         this.gui = gui;
-        this.settleGen = new SettlementGenerator();
     }
 
     private boolean editMode = false;
@@ -106,14 +103,19 @@ public class DataDisplayer {
             editPoint.setX(realMouseX);
             editPoint.setY(realMouseY);
 
-            WindowVisualizer.drawPoints(new EditorShape[]{new EditorShape(new Point[]{editPoint})}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
+            ArrayList<EditorShape> v = new ArrayList<>();
+            v.add(new EditorShape(new Point[]{editPoint}));
+            
+            WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
                 editShape.CalculateCenter();
                 editPoint = null;
                 editShape = null;
             }
             if (editShape != null) {
-                WindowVisualizer.drawPoints(new EditorShape[]{editShape}, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
+                v.clear();
+                v.add(editShape);
+                WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             }
         } else if (editMode == true) {
             updateShapeStyleGroupings();
@@ -144,30 +146,39 @@ public class DataDisplayer {
         for (int i = 0; i < styles.length; i++) {
             if (this.shapesByStyle.containsKey(styles[i])) {
 
-                ArrayList shapeList = this.shapesByStyle.get(styles[i]);
+                ArrayList<EditorShape> shapeList = new ArrayList(this.shapesByStyle.get(styles[i]));
 
-                EditorShape[] shapes = new EditorShape[shapeList.size()];
-                shapes = this.shapesByStyle.get(styles[i]).toArray(shapes);
+                for (int x = 0; x < shapeList.size(); x++) {
+                    if (shapeList.get(x) instanceof Zone) {
+                        Zone zone = (Zone) shapeList.get(x);
+
+                        System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
+                        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings") && zone.getPointList().size() > 2) {
+                            shapeList.remove(shapeList.get(x));
+                            shapeList.addAll(zone.getContainedShapes());
+                        }
+                    }
+                }
 
                 // chooses the drawing type based on the style you have selected
                 Style style = runMan.getStyle(styles[i]);
                 if (Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
-                    WindowVisualizer.drawPoints(shapes, 8, style.getColor());
+                    WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
-                    WindowVisualizer.drawTriangles(shapes, style.getColor());
+                    WindowVisualizer.drawTriangles(shapeList, style.getColor());
                 } else {
-                    WindowVisualizer.drawEnclosedLines(shapes, 5, style.getColor());
+                    WindowVisualizer.drawEnclosedLines(shapeList, 5, style.getColor());
                 }
 
-                for (int x = 0; x < shapes.length; x++) {
-                    if (shapes[x].getShowLabel().get() && !shapes[x].getName().get().equals("")) {
+                for (int x = 0; x < shapeList.size(); x++) {
+                    if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("")) {
                         if (runMan.savePlease == 0) {
-                            Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getWidth(), runMan.getHeight());
-                            gui.textPopup(shapes[x].getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
+                            gui.textPopup(shapeList.get(x).getName().get(), textPoint.x, textPoint.y, i + x + 1);
                         } else {
-                            Point textPoint = this.worldPointToScreenPoint(shapes[x].getCenter(), runMan.getImageResX(), runMan.getImageResY());
+                            Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
-                            gui.textPopup(shapes[x].getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            gui.textPopup(shapeList.get(x).getName().get(), textPoint.x, textPoint.y, i + x + 1);
                         }
                     }
                 }
@@ -194,21 +205,18 @@ public class DataDisplayer {
 
             currentStyleShapes.add(shapes.get(x));
 
-            if (shapes.get(x) instanceof Zone) {
-                Zone zone = (Zone) shapes.get(x);
-                if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
-                    currentStyleShapes.remove(shapes.get(x));
-                    //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
-                    if (!zone.getPointList().isEmpty()) {
-                        //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
-                        //currentStyleShapes.addAll(settleGen.generateSettlementBlock(zone, 0.01f, 0.02f));
-                        ArrayList<EditorShape> v = new ArrayList<>();
-                        v.add(zone);
-                        currentStyleShapes.addAll(settleGen.cutUpShape(v, zone.getDivisions()));
-                    }
-                }
-            }
-
+//            if (shapes.get(x) instanceof Zone) {
+//                Zone zone = (Zone) shapes.get(x);
+//                if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
+//                    currentStyleShapes.remove(shapes.get(x));
+//                    //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
+//                    if (!zone.getPointList().isEmpty()) {
+//                        //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
+//                        //currentStyleShapes.addAll(settleGen.generateSettlementBlock(zone, 0.01f, 0.02f));
+//                        currentStyleShapes.addAll(zone.getContainedShapes());
+//                    }
+//                }
+//            }
             this.shapesByStyle.get(styles[shapes.get(x).getStyle().get()]).addAll(currentStyleShapes);
         }
 

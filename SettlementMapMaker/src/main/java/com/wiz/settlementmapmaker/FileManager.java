@@ -33,7 +33,7 @@ import org.lwjgl.opengl.GL33C;
  */
 public class FileManager {
 
-    private static RuntimeTypeAdapterFactory<EditorShape> shapeAdaptorFactory = RuntimeTypeAdapterFactory.of(EditorShape.class, "type")
+    private static RuntimeTypeAdapterFactory<EditorShape> shapeAdaptorFactory = RuntimeTypeAdapterFactory.of(EditorShape.class, "EditorShape")
             .registerSubtype(Zone.class, "Zone")
             .registerSubtype(Building.class, "Building")
             .registerSubtype(Obstacle.class, "Obstacle");

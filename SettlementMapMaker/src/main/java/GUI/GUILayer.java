@@ -210,8 +210,8 @@ public class GUILayer {
     String oldName = "";
 
     public void shapeEdit(ImVec2 pos) {
-        ImGui.setNextWindowSize(400, 350, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x - 500, pos.y - 400, ImGuiCond.Once);
+        ImGui.setNextWindowSize(400, 400, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x - 500, pos.y - 450, ImGuiCond.Once);
         ImGui.begin("Shape Edit");
         if (shapeToEdit != null) {
 
@@ -275,6 +275,9 @@ public class GUILayer {
         }
         
         ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15);
+        if (ImGui.button("Generate Block")) {
+            runMan.generateBlockInZone(zone);
+        }
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);

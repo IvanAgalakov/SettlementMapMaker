@@ -8,9 +8,11 @@ import GUI.FontLibrary;
 import GUI.TextureLibrary;
 import GUI.Style;
 import GUI.GUILayer;
+import Shapes.Building;
 import com.wiz.settlementmapmaker.Utilities.FixedStack;
 import Shapes.EditorShape;
 import Shapes.Point;
+import Shapes.Zone;
 import com.wiz.settlementmapmaker.Actions.Action;
 import com.wiz.settlementmapmaker.Actions.AlterListAction;
 import com.wiz.settlementmapmaker.Actions.CombinedAction;
@@ -457,6 +459,13 @@ public class RuntimeManager {
 
     public ImInt getImageResYArray() {
         return this.imageYRes;
+    }
+    
+    public void generateBlockInZone(Zone zone) {
+        zone.clearContainedShapes();
+        ArrayList<Building> toCut = new ArrayList();
+        toCut.add(new Building((EditorShape)zone));
+        zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions()));
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

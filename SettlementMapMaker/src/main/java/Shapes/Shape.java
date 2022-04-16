@@ -52,6 +52,22 @@ public class Shape {
         return points;
     }
     
+    public boolean hasSharedPoints(Shape shape, int number) {
+        int count = 0;
+        for (int i = 0; i < shape.getPointList().size(); i++) {
+            for (int x = 0; x < this.points.size(); x++) {
+                if (shape.getPointList().get(i).equals(this.points.get(x))) {
+                    count++;
+                }
+            }
+        }
+        
+        if (count >= number) {
+            return true;
+        }
+        return false;
+    }
+    
     
     public Point[] getEnclosedLinesFromPoints() {
         Point[] lines = new Point[points.size()*2];

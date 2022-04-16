@@ -6,6 +6,7 @@ package Shapes;
 
 import imgui.type.ImInt;
 import imgui.type.ImLong;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,6 +16,7 @@ public class Zone extends EditorShape {
 
     private ImInt zoneType;
     private ImInt divisions = new ImInt(1);
+    private final ArrayList<Building> containedShapes = new ArrayList<Building>();
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -35,5 +37,17 @@ public class Zone extends EditorShape {
     
     public int[] getDivisionData() {
         return divisions.getData();
+    }
+    
+    public ArrayList<Building> getContainedShapes() {
+        return containedShapes;
+    }
+    
+    public void addBuildings(ArrayList<Building> shapes) {
+        containedShapes.addAll(shapes);
+    }
+    
+    public void clearContainedShapes() {
+        containedShapes.clear();
     }
 }
