@@ -115,7 +115,7 @@ public class DataDisplayer {
             if (editShape != null) {
                 v.clear();
                 v.add(editShape);
-                WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
+                WindowVisualizer.drawEnclosedLines(v, 5, runMan.getCurrentSettlement().getEditStyle().getColor());
             }
         } else if (editMode == true) {
             updateShapeStyleGroupings();
@@ -147,13 +147,13 @@ public class DataDisplayer {
             if (this.shapesByStyle.containsKey(styles[i])) {
 
                 ArrayList<EditorShape> shapeList = new ArrayList(this.shapesByStyle.get(styles[i]));
-
+                
                 for (int x = 0; x < shapeList.size(); x++) {
                     if (shapeList.get(x) instanceof Zone) {
                         Zone zone = (Zone) shapeList.get(x);
 
-                        System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
-                        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings") && zone.getPointList().size() > 2) {
+                        //System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
+                        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
                             shapeList.remove(shapeList.get(x));
                             shapeList.addAll(zone.getContainedShapes());
                         }

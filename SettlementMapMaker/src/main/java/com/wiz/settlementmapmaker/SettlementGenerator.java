@@ -9,6 +9,7 @@ import Shapes.EditorShape;
 import Shapes.Line;
 
 import Shapes.Point;
+import com.wiz.settlementmapmaker.Utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -68,10 +69,10 @@ public class SettlementGenerator {
         float noise = rand.nextFloat(-0.2f, 0.2f);
 
         Line wL = lines.get(ranLine);
-        Point tempStart = getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / (2f + noise));
+        Point tempStart = Utils.getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / (2f + noise));
 
-        Point end = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), v.getPerimeter());
-        Point start = normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), -v.getPerimeter());
+        Point end = Utils.normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), v.getPerimeter());
+        Point start = Utils.normalPointToPoint(tempStart, wL.getRise(), wL.getRun(), -v.getPerimeter());
 
         Line cutLine = new Line(start, end);
 
@@ -160,6 +161,7 @@ public class SettlementGenerator {
 //            //blockShapes.get(i).ScaleShape(0.99f, 0.99f);
 //        }
         for (int i = 0; i < blockShapes.size(); i++) {
+            blockShapes.get(i).squarizeShape();
             blockShapes.get(i).ScaleShape(0.99f, 0.99f);
         }
         return blockShapes;
@@ -176,34 +178,6 @@ public class SettlementGenerator {
         ArrayList<Building> ret = cutUpShape(cutup, times - 1);
 
         return ret;
-    }
-
-    public static Point normalPointToPoint(Point p, float rise, float run, float deviate) {
-        float hypo = (float) Math.sqrt((rise * rise) + (run * run));
-        // System.out.println(p.toString() + " | " + -run + " | " + rise + " | " + hypo + " | " + deviate);
-
-        return getPointAlongLine(p, -run, rise, hypo, deviate);
-    }
-
-    public static Point getPointAlongLine(Point start, float rise, float run, float hypo, float deviate) {
-        float runSq = (float) Math.pow(run, 2);
-        float riseSq = (float) Math.pow(rise, 2);
-        float formula = (float) (Math.signum(deviate) * Math.sqrt(Math.pow(deviate, 2) / (runSq + riseSq)));
-
-        return new Point(start.x + run * formula, start.y + rise * formula);
-    }
-
-    public static Point calculateBorderPoint(Point start, Point middle, Point end) {
-        float hypa = middle.getDistanceToPoint(start);
-        Point a = getPointAlongLine(middle, start.y - middle.y, start.x - middle.x, hypa, hypa / 2);
-
-        float hypb = middle.getDistanceToPoint(end);
-        Point b = getPointAlongLine(middle, end.y - middle.y, end.x - middle.x, hypb, hypb / 2);
-
-        float hypc = a.getDistanceToPoint(b);
-        Point c = getPointAlongLine(a, b.y - a.y, b.x - a.x, hypc, hypc / 2);
-
-        return c;
     }
 
     public static EditorShape[] toShapeArray(EditorShape[][] ar) {

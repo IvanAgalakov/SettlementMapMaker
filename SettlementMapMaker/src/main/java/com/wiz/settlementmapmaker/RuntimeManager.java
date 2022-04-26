@@ -430,6 +430,10 @@ public class RuntimeManager {
     public Style getBackdropStyle() {
         return this.currentSettlement.getBackdropStyle();
     }
+    
+    public Style getEditStyle() {
+        return this.currentSettlement.getEditStyle();
+    }
 
     public void addStyle(String style) {
         this.currentSettlement.addStyle(style);

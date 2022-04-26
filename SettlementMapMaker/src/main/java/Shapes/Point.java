@@ -32,6 +32,11 @@ public class Point {
     public void setY(float y) {
         this.y = y;
     }
+    
+    public void set(Point p) {
+        this.y = p.y;
+        this.x = p.x;
+    }
 
     public void minClampX(float cX) {
         if (cX > x) {
