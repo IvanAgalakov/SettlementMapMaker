@@ -167,15 +167,19 @@ public class SettlementGenerator {
         return blockShapes;
     }
 
-    public static ArrayList<Building> cutUpShape(ArrayList<Building> v, int times) {
+    public static ArrayList<Building> cutUpShape(ArrayList<Building> v, int times, float minPerimeter) {
         if (times <= 0) {
             return v;
         }
         ArrayList<Building> cutup = new ArrayList<>();
         for (int i = 0; i < v.size(); i++) {
-            cutup.addAll(generateBlockThroughCutting(v.get(i)));
+            if (v.get(i).getPerimeter() >= minPerimeter) {
+                cutup.addAll(generateBlockThroughCutting(v.get(i)));
+            } else {
+                cutup.add(v.get(i));
+            }
         }
-        ArrayList<Building> ret = cutUpShape(cutup, times - 1);
+        ArrayList<Building> ret = cutUpShape(cutup, times - 1, minPerimeter);
 
         return ret;
     }

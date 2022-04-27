@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author 904187003
  */
 public class Building extends EditorShape {
-
+    
     public Building(String name) {
         super(name);
     }

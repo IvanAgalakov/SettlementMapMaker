@@ -1,3 +1,4 @@
+GsonExtras\RuntimeTypeAdapterFactory$1.class
 com\wiz\settlementmapmaker\WindowVisualizer.class
 com\wiz\settlementmapmaker\Utilities\Utils.class
 com\wiz\settlementmapmaker\Shader$shaderTypes.class
@@ -31,6 +32,7 @@ GUI\TextureLibrary.class
 GUI\DrawColor.class
 com\wiz\settlementmapmaker\Actions\ImBooleanChangeAction.class
 com\wiz\settlementmapmaker\SettlementGenerator.class
+GsonExtras\RuntimeTypeAdapterFactory.class
 Shapes\Line.class
 com\wiz\settlementmapmaker\ShaderManager.class
 Shapes\Obstacle$ObstacleType.class

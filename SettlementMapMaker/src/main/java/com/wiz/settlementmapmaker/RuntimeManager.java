@@ -469,7 +469,7 @@ public class RuntimeManager {
         zone.clearContainedShapes();
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape)zone));
-        zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions()));
+        zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter()));
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

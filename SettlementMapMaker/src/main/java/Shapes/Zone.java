@@ -4,6 +4,7 @@
  */
 package Shapes;
 
+import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import imgui.type.ImLong;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Zone extends EditorShape {
 
     private ImInt zoneType;
     private ImInt divisions = new ImInt(1);
+    private ImFloat minPerimeter = new ImFloat(0.01f);
     private final ArrayList<Building> containedShapes = new ArrayList<Building>();
 
     public Zone(String name, int zoneType) {
@@ -35,8 +37,16 @@ public class Zone extends EditorShape {
         return divisions.get();
     }
     
+    public float getMinPerimeter() {
+        return minPerimeter.get();
+    }
+    
     public int[] getDivisionData() {
         return divisions.getData();
+    }
+    
+    public float[] getMinPerimeterData() {
+        return minPerimeter.getData();
     }
     
     public ArrayList<Building> getContainedShapes() {

@@ -210,8 +210,8 @@ public class GUILayer {
     String oldName = "";
 
     public void shapeEdit(ImVec2 pos) {
-        ImGui.setNextWindowSize(400, 400, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x - 500, pos.y - 450, ImGuiCond.Once);
+        ImGui.setNextWindowSize(400, 500, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x - 500, pos.y - 550, ImGuiCond.Once);
         ImGui.begin("Shape Edit");
         if (shapeToEdit != null) {
 
@@ -273,6 +273,8 @@ public class GUILayer {
         if (ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
 
         }
+        
+        ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f);
         
         ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15);
         if (ImGui.button("Generate Block")) {
