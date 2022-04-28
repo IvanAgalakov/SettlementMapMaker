@@ -19,6 +19,7 @@ public class Zone extends EditorShape {
     private ImInt divisions = new ImInt(1);
     private ImFloat minPerimeter = new ImFloat(0.01f);
     private final ArrayList<Building> containedShapes = new ArrayList<Building>();
+    private ImInt selectedContainedBuilding = new ImInt();
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -59,5 +60,17 @@ public class Zone extends EditorShape {
     
     public void clearContainedShapes() {
         containedShapes.clear();
+    }
+    
+    public ImInt getSelectedContainedBuilding() {
+        return this.selectedContainedBuilding;
+    }
+    
+    public String[] getContainedBuildingNames() {
+        String[] s = new String[this.containedShapes.size()];
+        for (int i = 0; i < this.containedShapes.size(); i++) {
+            s[i] = containedShapes.get(i).getName().get();
+        }
+        return s;
     }
 }

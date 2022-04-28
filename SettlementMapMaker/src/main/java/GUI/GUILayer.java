@@ -78,8 +78,23 @@ public class GUILayer {
     }
 
     private boolean showDrawMenu = false;
+    
+    private boolean showRightClickMenu = false;
+    private ImVec2 rightClickPosition = new ImVec2();
 
     public void settlementManagement() {
+        
+        if (runMan.getRightClickState()) {
+            showRightClickMenu = true;
+            rightClickPosition = new ImVec2(runMan.getIO().getMousePos());
+        } else if (runMan.getLeftClickState()) {
+            showRightClickMenu = false;
+        }
+        
+        if (showRightClickMenu) {
+            rightClick();
+        }
+        
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("Management");
@@ -93,6 +108,18 @@ public class GUILayer {
             drawMenu();
         }
 
+        ImGui.end();
+    }
+    
+    public void rightClick() {
+        ImGui.setNextWindowPos(rightClickPosition.x, rightClickPosition.y);
+        ImGui.begin("Right Click", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove);
+        
+        if (ImGui.menuItem("Draw Point Here")) {
+            
+        }
+
+        ImGui.setWindowSize(60, 100);
         ImGui.end();
     }
 
@@ -184,7 +211,7 @@ public class GUILayer {
                 runMan.moveShape(1, runMan.getShapes(editorType.get()), runMan.getSelectedShape());
             }
             // moving of shapes end
-            
+
             if (ImGui.button("Delete Selected " + editorType)) {
                 runMan.removeShape(runMan.getSelectedShape().get(), editorType.get());
             }
@@ -229,7 +256,7 @@ public class GUILayer {
             // -----------------------------------------------------
 
             ImGui.checkbox("Show Name", shapeToEdit.getShowLabel());
-            
+
             ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray(), 4);
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
@@ -268,18 +295,50 @@ public class GUILayer {
 
     }
 
-    void zoneShapeEditOptions(EditorShape toParse) {
+    public void zoneShapeEditOptions(EditorShape toParse) {
         Zone zone = (Zone) toParse;
         if (ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
 
         }
-        
+
         ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f);
-        
+
         ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15);
         if (ImGui.button("Generate Block")) {
+            for (int i = 0; i < zone.getContainedShapes().size(); i++) {
+                runMan.removeEditingShape(zone.getContainedShapes().get(i));
+            }
             runMan.generateBlockInZone(zone);
         }
+
+        ImVec2 pos = ImGui.getWindowPos();
+        pos.set(pos.x + ImGui.getWindowSizeX(), pos.y);
+        containedZoneList(zone, pos);
+    }
+
+    public void containedZoneList(Zone zone, ImVec2 pos) {
+        ImGui.begin("Contained Buildings List");
+        ImGui.setWindowPos(pos.x, pos.y);
+        ImGui.listBox("Contained Buildings", zone.getSelectedContainedBuilding(), zone.getContainedBuildingNames());
+        
+        if (zone.getSelectedContainedBuilding().get() >= zone.getContainedShapes().size() && !zone.getContainedShapes().isEmpty()) {
+            zone.getSelectedContainedBuilding().set(zone.getContainedShapes().size()-1);
+        }
+        
+        if (!zone.getContainedShapes().isEmpty()) {
+            ImGui.checkbox("Show Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getShowLabel());
+            ImGui.inputText("Building Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getName());
+        }
+        for (int i = 0; i < zone.getContainedShapes().size(); i++) {
+            if (i == zone.getSelectedContainedBuilding().get()) {
+                if (!runMan.containsEditingShape(zone.getContainedShapes().get(i))) {
+                    runMan.addEditingShape(zone.getContainedShapes().get(i));
+                }
+            } else {
+                runMan.removeEditingShape(zone.getContainedShapes().get(i));
+            }
+        }
+        ImGui.end();
     }
 
     private ImBoolean showNewSetWin = new ImBoolean(false);

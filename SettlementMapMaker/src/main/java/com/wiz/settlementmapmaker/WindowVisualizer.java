@@ -47,6 +47,8 @@ public class WindowVisualizer {
         GL33C.glBlendFunc(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE_MINUS_SRC_ALPHA);
         
         GL33C.glDepthMask(false);
+        
+        
 
         //GL33C.glVertexAttribPointer(1, 2, GL33C.GL_FLOAT, false, stride, 2 * Float.BYTES);
 //        GL33C.glBindVertexArray(0);

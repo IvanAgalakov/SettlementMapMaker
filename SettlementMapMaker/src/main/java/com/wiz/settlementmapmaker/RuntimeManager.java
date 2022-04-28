@@ -104,16 +104,15 @@ public class RuntimeManager {
         GLFW.glfwSetWindowSizeCallback(window.getWindowPointer(), new WindowResizeHandler());
         dataDis = new DataDisplayer(this, io, window, gui);
     }
-    
+
     public void initStyle() {
-        
+
         ImGuiStyle style = ImGui.getStyle();
         style.setFrameRounding(2.3f);
         style.setWindowRounding(10f);
         style.setWindowBorderSize(2);
         style.setWindowPadding(5, 5);
-        
-        
+
         style.setColor(ImGuiCol.TitleBg, 75, 54, 11, 255);
         style.setColor(ImGuiCol.TitleBgActive, 95, 60, 20, 255);
         style.setColor(ImGuiCol.TitleBgCollapsed, 95, 47, 20, 255);
@@ -123,8 +122,6 @@ public class RuntimeManager {
         style.setColor(ImGuiCol.Border, 255, 255, 255, 255);
         style.setColor(ImGuiCol.WindowBg, 0, 0, 0, 200);
     }
-    
-
 
     // runs before init
     public void initIO(ImGuiIO io) {
@@ -148,8 +145,10 @@ public class RuntimeManager {
         dataDis.display();
     }
 
-    boolean lastSPress = false;
-
+    private boolean lastSPress = false;
+    private boolean rightClick = false;
+    private boolean leftClick = false;
+    
     public void controls() {
         if (ImGui.isKeyPressed(ImGui.getKeyIndex(ImGuiKey.Z)) && io.getKeyCtrl()) {
             if (this.canUndo()) {
@@ -166,6 +165,18 @@ public class RuntimeManager {
         if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
             this.saveCurrentSettlement();
         }
+        
+        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightClick == false) {
+            rightClick = true;
+        } else if (!io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)){
+            rightClick = false;
+        }
+        
+        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftClick == false) {
+            leftClick = true;
+        } else if (!io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)){
+            leftClick = false;
+        }
 
         if (io.getMouseWheel() != 0) {
             this.zoom[0] += io.getMouseWheel() * Constants.MOUSE_WHEEL_SENSITIVITY;
@@ -180,6 +191,14 @@ public class RuntimeManager {
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
 
     }
+    
+    public boolean getRightClickState() {
+        return rightClick;
+    }
+    
+    public boolean getLeftClickState() {
+        return leftClick;
+    }
 
     public void setEditPoint(Point editPoint) {
         dataDis.setEditPoint(editPoint);
@@ -187,6 +206,18 @@ public class RuntimeManager {
 
     public void setEditShape(EditorShape editShape) {
         dataDis.setEditShape(editShape);
+    }
+
+    public void addEditingShape(EditorShape editShape) {
+        dataDis.addEditingShape(editShape);
+    }
+
+    public void removeEditingShape(EditorShape editShape) {
+        dataDis.removeEditingShape(editShape);
+    }
+    
+    public boolean containsEditingShape(EditorShape editShape) {
+        return dataDis.containsEditingShape(editShape);
     }
 
     public void createNewSettlement(String name, String path) {
@@ -291,21 +322,21 @@ public class RuntimeManager {
     public void addShape(EditorShape shape, String shapeType) {
         useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, false), new MethodRunAction(() -> updateShapeList())));
     }
-    
+
     public void moveShape(int dir, List<EditorShape> moveIn, ImInt toMove) {
         int swapWith = -1;
-        if(toMove.get() + dir > moveIn.size()-1 || toMove.get() + dir < 0) {
+        if (toMove.get() + dir > moveIn.size() - 1 || toMove.get() + dir < 0) {
             return;
         }
-        
-        swapWith = toMove.get()+dir;
-        
+
+        swapWith = toMove.get() + dir;
+
         EditorShape temp = moveIn.get(swapWith);
-        
+
         System.out.println(toMove.get() + " -- " + swapWith);
         this.useAction(new CombinedAction(new SetListAction(moveIn, swapWith, moveIn.get(toMove.get())),
                 new SetListAction(moveIn, toMove.get(), temp),
-        new ImIntChangeAction(toMove, toMove.get()+dir), 
+                new ImIntChangeAction(toMove, toMove.get() + dir),
                 new MethodRunAction(() -> updateShapeList())));
     }
 
@@ -321,21 +352,21 @@ public class RuntimeManager {
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
     }
-    
+
     public void movePoint(int dir, EditorShape moveIn, ImInt toMove) {
         int swapWith = -1;
-        if(toMove.get() + dir > moveIn.size()-1 || toMove.get() + dir < 0) {
+        if (toMove.get() + dir > moveIn.size() - 1 || toMove.get() + dir < 0) {
             return;
         }
-        
-        swapWith = toMove.get()+dir;
-        
+
+        swapWith = toMove.get() + dir;
+
         Point temp = moveIn.getPoint(swapWith);
-        
+
         System.out.println(toMove.get() + " -- " + swapWith);
         this.useAction(new CombinedAction(new SetListAction(moveIn.getPointList(), swapWith, moveIn.getPoint(toMove.get())),
                 new SetListAction(moveIn.getPointList(), toMove.get(), temp),
-        new ImIntChangeAction(toMove, toMove.get()+dir)));
+                new ImIntChangeAction(toMove, toMove.get() + dir)));
     }
 
     public void removePoint(EditorShape removeFrom, Point point) {
@@ -430,7 +461,7 @@ public class RuntimeManager {
     public Style getBackdropStyle() {
         return this.currentSettlement.getBackdropStyle();
     }
-    
+
     public Style getEditStyle() {
         return this.currentSettlement.getEditStyle();
     }
@@ -464,11 +495,11 @@ public class RuntimeManager {
     public ImInt getImageResYArray() {
         return this.imageYRes;
     }
-    
+
     public void generateBlockInZone(Zone zone) {
         zone.clearContainedShapes();
         ArrayList<Building> toCut = new ArrayList();
-        toCut.add(new Building((EditorShape)zone));
+        toCut.add(new Building((EditorShape) zone));
         zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter()));
     }
 

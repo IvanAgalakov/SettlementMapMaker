@@ -124,7 +124,10 @@ public class SettlementGenerator {
 
             if (intersectCount == 2) {
                 //System.out.println(shapeProgress.size());
-                blockShapes.add(new Building(shapeProgress));
+                Building build = new Building(shapeProgress);
+                build.setName("building");
+                build.getShowLabel().set(false);
+                blockShapes.add(build);
                 shapeProgress.clear();
 
                 shapeProgress.add(new Point(currentLine.getStart()));

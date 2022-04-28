@@ -32,6 +32,8 @@ public class DataDisplayer {
 
     private Point editPoint = null;
     private EditorShape editShape = null;
+    
+    private ArrayList<EditorShape> editingShapes = new ArrayList<>();
 
     private ImGuiIO io;
     private RuntimeManager runMan;
@@ -188,6 +190,10 @@ public class DataDisplayer {
             }
 
         }
+        
+        
+        WindowVisualizer.drawEnclosedLines(editingShapes, 5, runMan.getEditStyle().getColor());
+        
     }
 
     // updates the style groups to be rendered, this changes when a change is made to a shape such as a when a new shape is made, and a style is changed
@@ -230,6 +236,18 @@ public class DataDisplayer {
 
     public void setEditShape(EditorShape shape) {
         this.editShape = shape;
+    }
+    
+    public void addEditingShape(EditorShape shape) {
+        this.editingShapes.add(shape);
+    }
+    
+    public void removeEditingShape(EditorShape shape) {
+        this.editingShapes.remove(shape);
+    }
+    
+    public boolean containsEditingShape(EditorShape shape) {
+        return this.editingShapes.contains(shape);
     }
 
 }
