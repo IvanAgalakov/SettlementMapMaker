@@ -263,12 +263,19 @@ public class Shape {
 
         int numberOfIntersections = 0;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getIntersection(testLine) != null) {
-                numberOfIntersections++;
+            Point inter = lines.get(i).getIntersection(testLine);
+            if (inter != null) {
+                if (inter.x > p.x) {
+                    numberOfIntersections++;
+                }
             }
         }
 
-        return numberOfIntersections < 1;
+        if (numberOfIntersections != 0) {
+            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
+        }
+
+        return numberOfIntersections == 1;
     }
 
     public ArrayList<Line> getLines() {
@@ -301,23 +308,23 @@ public class Shape {
         for (Line l : lines) {
             if (longest == null) {
                 longest = l;
-            } else if(l.getLength() > longest.getLength()) {
+            } else if (l.getLength() > longest.getLength()) {
                 longest = l;
             }
         }
         if (longest == null) {
             return;
         }
-        
-        Point vert = Utils.getPointAlongLine(longest, longest.getLength()/2f);
-        
+
+        Point vert = Utils.getPointAlongLine(longest, longest.getLength() / 2f);
+
         Line before = null;
         Line after = null;
         Line afterVert = null;
         Line beforeVert = null;
         for (Line l : lines) {
             if (l == longest) {
-                Point p = Utils.getPointAlongLine(l.getNextLine(), l.getNextLine().getLength()/2f);
+                Point p = Utils.getPointAlongLine(l.getNextLine(), l.getNextLine().getLength() / 2f);
                 l.getNextLine().setStart(p);
                 after = l.getNextLine();
                 afterVert = new Line(vert, p);
@@ -325,32 +332,32 @@ public class Shape {
             }
             if (l.hasNextLine()) {
                 if (l.getNextLine() == longest) {
-                    Point p = Utils.getPointAlongLine(l, l.getLength()/2f);
+                    Point p = Utils.getPointAlongLine(l, l.getLength() / 2f);
                     l.setEnd(p);
                     before = l;
-                    
-                    beforeVert = new Line(p,vert);
+
+                    beforeVert = new Line(p, vert);
                 }
             }
         }
-        
+
         if (beforeVert == null || afterVert == null || after == null || before == null) {
             return;
         }
-        
+
         beforeVert.setNextLine(afterVert);
         before.setNextLine(beforeVert);
         afterVert.setNextLine(after);
-        
+
         Line selected = beforeVert;
         ArrayList<Point> points = new ArrayList();
-        
+
         while (selected != before) {
             points.add(selected.getStart());
             selected = selected.getNextLine();
         }
         points.add(selected.getStart());
-        
+
         this.points = points;
     }
 

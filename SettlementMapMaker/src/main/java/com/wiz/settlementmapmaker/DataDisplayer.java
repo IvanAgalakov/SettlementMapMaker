@@ -129,13 +129,13 @@ public class DataDisplayer {
         }
     }
 
-    private Point screenPointToWorldPoint(Point screen, int width, int height) {
+    public Point screenPointToWorldPoint(Point screen, int width, int height) {
         Point world = new Point(-(-1 + 1f / runMan.getZoom()[0]) + (((screen.x / width) * 2f) / runMan.getZoom()[0] - (normx * 2)),
                 (-1 + 1f / runMan.getZoom()[0]) / aspect - (((screen.y / height) * 2f) / aspect / runMan.getZoom()[0] + (normy * 2 - 2) / aspect));
         return world;
     }
 
-    private Point worldPointToScreenPoint(Point world, int width, int height) {
+    public Point worldPointToScreenPoint(Point world, int width, int height) {
         Point screen = new Point((((world.x + (-1 + 1f / runMan.getZoom()[0]) + (normx * 2)) * runMan.getZoom()[0]) / 2f) * width,
                 -((((world.y - (-1 + 1f / runMan.getZoom()[0]) / aspect + (normy * 2 - 2) / aspect) * runMan.getZoom()[0]) * aspect / 2f) * height));
         return screen;
@@ -193,6 +193,10 @@ public class DataDisplayer {
         
         
         WindowVisualizer.drawEnclosedLines(editingShapes, 5, runMan.getEditStyle().getColor());
+        
+//        ArrayList<EditorShape> mousePoint = new ArrayList();
+//        mousePoint.add(new EditorShape(runMan.getMouseWorldPoint()));
+//        WindowVisualizer.drawPoints(mousePoint, 10, runMan.getEditStyle().getColor());
         
     }
 

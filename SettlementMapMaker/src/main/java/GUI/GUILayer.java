@@ -87,9 +87,10 @@ public class GUILayer {
         if (runMan.getRightClickState()) {
             showRightClickMenu = true;
             rightClickPosition = new ImVec2(runMan.getIO().getMousePos());
-        } else if (runMan.getLeftClickState()) {
-            showRightClickMenu = false;
-        }
+        } 
+//        else if (runMan.getLeftClickState()) {
+//            showRightClickMenu = false;
+//        }
         
         if (showRightClickMenu) {
             rightClick();
@@ -115,11 +116,15 @@ public class GUILayer {
         ImGui.setNextWindowPos(rightClickPosition.x, rightClickPosition.y);
         ImGui.begin("Right Click", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove);
         
-        if (ImGui.menuItem("Draw Point Here")) {
-            
+        if (shapeToEdit != null) {
+            if (ImGui.button("New Point")) {
+                Point p = runMan.screenPointToWorldPoint(new Point(rightClickPosition.x, rightClickPosition.y), runMan.getWidth(), runMan.getHeight());
+                runMan.addPoint(shapeToEdit);
+                showRightClickMenu = false;
+            }
         }
 
-        ImGui.setWindowSize(60, 100);
+        ImGui.setWindowSize(120, 100);
         ImGui.end();
     }
 
@@ -330,9 +335,12 @@ public class GUILayer {
             ImGui.inputText("Building Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getName());
         }
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
-            if (i == zone.getSelectedContainedBuilding().get()) {
+            if (i == zone.getSelectedContainedBuilding().get() || zone.getContainedShapes().get(i).isPointInside(runMan.getMouseWorldPoint())) {
                 if (!runMan.containsEditingShape(zone.getContainedShapes().get(i))) {
                     runMan.addEditingShape(zone.getContainedShapes().get(i));
+                }
+                if (runMan.getLeftClickState()) {
+                    zone.getSelectedContainedBuilding().set(i);
                 }
             } else {
                 runMan.removeEditingShape(zone.getContainedShapes().get(i));

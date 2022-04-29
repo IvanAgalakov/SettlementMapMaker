@@ -25,6 +25,7 @@ import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImFont;
 import imgui.ImGuiIO;
 import imgui.ImGuiStyle;
+import imgui.ImVec2;
 import imgui.ImVec4;
 import imgui.app.Color;
 import imgui.flag.ImGuiCol;
@@ -501,6 +502,15 @@ public class RuntimeManager {
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape) zone));
         zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter()));
+    }
+    
+    public Point screenPointToWorldPoint(Point screen, int width, int height) {
+        return dataDis.screenPointToWorldPoint(screen, width, height);
+    }
+    
+    public Point getMouseWorldPoint() {
+        Point p = new Point(io.getMousePosX(), io.getMousePosY());
+        return screenPointToWorldPoint(p, this.getWidth(), this.getHeight());
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
