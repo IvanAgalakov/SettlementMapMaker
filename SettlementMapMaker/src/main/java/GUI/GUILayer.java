@@ -67,35 +67,41 @@ public class GUILayer {
     }
 
     public void textPopup(String text, float x, float y, int number) {
-        ImGui.setNextWindowPos(x, y);
+
+        ImVec2 result = new ImVec2();
+        ImGui.calcTextSize(result, text);
+
+        ImGui.setNextWindowPos(x - result.x / 2, y - result.y / 2);
         ImGui.setNextWindowSize(0, 0);
 
         ImGui.begin(text + "##" + number, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing);
 
         ImGui.text(text);
 
+        //ImGui.setWindowPos(x-ImGui.getWindowSizeX()/2, y);
         ImGui.end();
     }
 
     private boolean showDrawMenu = false;
-    
+
     private boolean showRightClickMenu = false;
     private ImVec2 rightClickPosition = new ImVec2();
 
     public void settlementManagement() {
-        
-        if (runMan.getRightClickState()) {
+        runMan.clearEditingShapes();
+
+        if (runMan.getRightClickState() && !runMan.imGuiWantCaptureMouse()) {
             showRightClickMenu = true;
             rightClickPosition = new ImVec2(runMan.getIO().getMousePos());
-        } 
+        }
 //        else if (runMan.getLeftClickState()) {
 //            showRightClickMenu = false;
 //        }
-        
+
         if (showRightClickMenu) {
             rightClick();
         }
-        
+
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("Management");
@@ -111,11 +117,11 @@ public class GUILayer {
 
         ImGui.end();
     }
-    
+
     public void rightClick() {
         ImGui.setNextWindowPos(rightClickPosition.x, rightClickPosition.y);
         ImGui.begin("Right Click", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove);
-        
+
         if (shapeToEdit != null) {
             if (ImGui.button("New Point")) {
                 Point p = runMan.screenPointToWorldPoint(new Point(rightClickPosition.x, rightClickPosition.y), runMan.getWidth(), runMan.getHeight());
@@ -243,7 +249,7 @@ public class GUILayer {
 
     public void shapeEdit(ImVec2 pos) {
         ImGui.setNextWindowSize(400, 500, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x - 500, pos.y - 550, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x - 700, pos.y - 550, ImGuiCond.Once);
         ImGui.begin("Shape Edit");
         if (shapeToEdit != null) {
 
@@ -300,20 +306,28 @@ public class GUILayer {
 
     }
 
+    private void generate(Zone zone) {
+        for (int i = 0; i < zone.getContainedShapes().size(); i++) {
+            runMan.removeEditingShape(zone.getContainedShapes().get(i));
+        }
+        runMan.generateBlockInZone(zone);
+    }
+
     public void zoneShapeEditOptions(EditorShape toParse) {
         Zone zone = (Zone) toParse;
         if (ImGui.combo("Zone Types", zone.getZoneType(), Constants.ZONE_TYPES)) {
 
         }
 
-        ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f);
+        if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f)) {
+            generate(zone);
+        }
 
-        ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15);
+        if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
+            generate(zone);
+        }
         if (ImGui.button("Generate Block")) {
-            for (int i = 0; i < zone.getContainedShapes().size(); i++) {
-                runMan.removeEditingShape(zone.getContainedShapes().get(i));
-            }
-            runMan.generateBlockInZone(zone);
+            generate(zone);
         }
 
         ImVec2 pos = ImGui.getWindowPos();
@@ -325,25 +339,21 @@ public class GUILayer {
         ImGui.begin("Contained Buildings List");
         ImGui.setWindowPos(pos.x, pos.y);
         ImGui.listBox("Contained Buildings", zone.getSelectedContainedBuilding(), zone.getContainedBuildingNames());
-        
+
         if (zone.getSelectedContainedBuilding().get() >= zone.getContainedShapes().size() && !zone.getContainedShapes().isEmpty()) {
-            zone.getSelectedContainedBuilding().set(zone.getContainedShapes().size()-1);
+            zone.getSelectedContainedBuilding().set(zone.getContainedShapes().size() - 1);
         }
-        
+
         if (!zone.getContainedShapes().isEmpty()) {
             ImGui.checkbox("Show Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getShowLabel());
             ImGui.inputText("Building Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getName());
         }
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             if (i == zone.getSelectedContainedBuilding().get() || zone.getContainedShapes().get(i).isPointInside(runMan.getMouseWorldPoint())) {
-                if (!runMan.containsEditingShape(zone.getContainedShapes().get(i))) {
-                    runMan.addEditingShape(zone.getContainedShapes().get(i));
-                }
-                if (runMan.getLeftClickState()) {
+                runMan.addEditingShape(zone.getContainedShapes().get(i));
+                if (runMan.getLeftClickState() && !runMan.imGuiWantCaptureMouse()) {
                     zone.getSelectedContainedBuilding().set(i);
                 }
-            } else {
-                runMan.removeEditingShape(zone.getContainedShapes().get(i));
             }
         }
         ImGui.end();

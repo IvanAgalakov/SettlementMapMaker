@@ -148,7 +148,9 @@ public class RuntimeManager {
 
     private boolean lastSPress = false;
     private boolean rightClick = false;
+    private boolean lastRightClick = false;
     private boolean leftClick = false;
+    private boolean lastLeftClick = false;
     
     public void controls() {
         if (ImGui.isKeyPressed(ImGui.getKeyIndex(ImGuiKey.Z)) && io.getKeyCtrl()) {
@@ -167,17 +169,20 @@ public class RuntimeManager {
             this.saveCurrentSettlement();
         }
         
-        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightClick == false) {
+        // checks if a mouse press just happened, later would be a good idea to make this a general thing
+        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightClick == false && lastRightClick == false) {
             rightClick = true;
-        } else if (!io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)){
+        } else if (rightClick == true){
             rightClick = false;
         }
+        lastRightClick = io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT);
         
-        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftClick == false) {
+        if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftClick == false && lastLeftClick == false) {
             leftClick = true;
-        } else if (!io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)){
+        } else if (leftClick == true){
             leftClick = false;
         }
+        lastLeftClick = io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
 
         if (io.getMouseWheel() != 0) {
             this.zoom[0] += io.getMouseWheel() * Constants.MOUSE_WHEEL_SENSITIVITY;
@@ -200,6 +205,10 @@ public class RuntimeManager {
     public boolean getLeftClickState() {
         return leftClick;
     }
+    
+    public boolean imGuiWantCaptureMouse() {
+        return io.getWantCaptureMouse();
+    }
 
     public void setEditPoint(Point editPoint) {
         dataDis.setEditPoint(editPoint);
@@ -215,6 +224,10 @@ public class RuntimeManager {
 
     public void removeEditingShape(EditorShape editShape) {
         dataDis.removeEditingShape(editShape);
+    }
+    
+    public void clearEditingShapes() {
+        dataDis.clearEditingShapes();
     }
     
     public boolean containsEditingShape(EditorShape editShape) {

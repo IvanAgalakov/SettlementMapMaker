@@ -109,7 +109,7 @@ public class DataDisplayer {
             v.add(new EditorShape(new Point[]{editPoint}));
 
             WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
-            if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !io.getKeyCtrl()) {
+            if (runMan.getLeftClickState() && !io.getKeyCtrl() && !runMan.imGuiWantCaptureMouse()) {
                 editShape.CalculateCenter();
                 editPoint = null;
                 editShape = null;
@@ -248,6 +248,10 @@ public class DataDisplayer {
     
     public void removeEditingShape(EditorShape shape) {
         this.editingShapes.remove(shape);
+    }
+    
+    public void clearEditingShapes() {
+        this.editingShapes.clear();
     }
     
     public boolean containsEditingShape(EditorShape shape) {
