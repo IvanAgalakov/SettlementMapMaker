@@ -70,14 +70,18 @@ public class Shape {
         return false;
     }
 
-    public Point[] getEnclosedLinesFromPoints() {
+    public Point[] getLinesFromPoints(boolean enclose) {
         Point[] lines = new Point[points.size() * 2];
         for (int i = 0; i < lines.length; i++) {
             //System.out.println(i);
             if ((int) Math.ceil(i / 2.0) < points.size()) {
                 lines[i] = points.get((int) Math.ceil(i / 2.0));
             } else {
-                lines[i] = points.get(0);
+                if (!enclose) {
+                    lines[i] = points.get(points.size()-1);
+                } else {
+                    lines[i] = points.get(0);
+                }
             }
         }
         return lines;

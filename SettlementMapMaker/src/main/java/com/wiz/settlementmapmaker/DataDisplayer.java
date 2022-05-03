@@ -4,11 +4,13 @@
  */
 package com.wiz.settlementmapmaker;
 
+import GUI.DrawColor;
 import GUI.Style;
 import GUI.GUILayer;
 import Shapes.EditorShape;
 import Shapes.Point;
 import Shapes.Zone;
+import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImGuiIO;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +119,7 @@ public class DataDisplayer {
             if (editShape != null) {
                 v.clear();
                 v.add(editShape);
-                WindowVisualizer.drawEnclosedLines(v, 5, runMan.getCurrentSettlement().getEditStyle().getColor());
+                WindowVisualizer.drawLines(v, 5, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
             }
         } else if (editMode == true) {
             updateShapeStyleGroupings();
@@ -127,6 +129,19 @@ public class DataDisplayer {
         if (runMan.getCurrentSettlement() != null) {
             drawStyleGroups();
         }
+        
+//        ArrayList<Point> bezier = new ArrayList();
+//        int divisions = 100;
+//        Point start = new Point(0.1f, -1f);
+//        Point control = new Point(1f, -0.5f);
+//        for (float i = 0; i < 1.0; i += 1f/divisions) {
+//            bezier.add(Utils.quadraticBezier(start, control, mouse, i));
+//        }
+//        bezier.add(mouse);
+//        ArrayList<EditorShape> v = new ArrayList();
+//        v.add(new EditorShape(bezier));
+//        WindowVisualizer.drawLines(v, 40, DrawColor.BLACK, false);
+        
     }
 
     public Point screenPointToWorldPoint(Point screen, int width, int height) {
@@ -171,7 +186,7 @@ public class DataDisplayer {
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
                     WindowVisualizer.drawTriangles(shapeList, style.getColor());
                 } else {
-                    WindowVisualizer.drawEnclosedLines(shapeList, 5, style.getColor());
+                    WindowVisualizer.drawLines(shapeList, 5, style.getColor(), true);
                 }
 
                 for (int x = 0; x < shapeList.size(); x++) {
@@ -192,7 +207,7 @@ public class DataDisplayer {
         }
         
         
-        WindowVisualizer.drawEnclosedLines(editingShapes, 5, runMan.getEditStyle().getColor());
+        WindowVisualizer.drawLines(editingShapes, 5, runMan.getEditStyle().getColor(), true);
         
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
 //        mousePoint.add(new EditorShape(runMan.getMouseWorldPoint()));

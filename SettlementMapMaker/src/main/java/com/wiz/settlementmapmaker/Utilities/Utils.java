@@ -55,4 +55,16 @@ public class Utils {
     }
     
     
+    public static Point quadraticBezier(Point p0, Point p1, Point p2, float t) {
+        Point finalPoint = new Point(0,0);
+        finalPoint.setX((float)Math.pow(1-t, 2) * p0.x +
+                (1-t) * 2 * t * p1.x +
+                t * t * p2.x);
+        finalPoint.setY((float)Math.pow(1-t, 2) * p0.y +
+                (1-t) * 2 * t * p1.y +
+                t * t * p2.y);
+        
+        return finalPoint;
+    }
+    
 }

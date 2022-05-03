@@ -38,17 +38,17 @@ public class WindowVisualizer {
         vertexArray = GL33C.glGenVertexArrays(); // keep these up here and not running every fram, this creates a memory leak if this persistes
         buffer = GL33C.glGenBuffers();
 
-        GL33C.glEnable(GL33C.GL_LINE_SMOOTH);
-        GL33C.glEnable(GL33C.GL_POLYGON_SMOOTH);
-        GL33C.glHint(GL33C.GL_LINE_SMOOTH_HINT, GL33C.GL_NICEST);
-        GL33C.glHint(GL33C.GL_POLYGON_SMOOTH_HINT, GL33C.GL_NICEST);
+//        GL33C.glEnable(GL33C.GL_LINE_SMOOTH);
+//        GL33C.glEnable(GL33C.GL_POLYGON_SMOOTH);
+//        GL33C.glHint(GL33C.GL_LINE_SMOOTH_HINT, GL33C.GL_NICEST);
+//        GL33C.glHint(GL33C.GL_POLYGON_SMOOTH_HINT, GL33C.GL_NICEST);
+//
+//        GL33C.glEnable(GL33C.GL_BLEND);
+//        GL33C.glBlendFunc(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE_MINUS_SRC_ALPHA);
+        GL33C.glBlendFunc(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE);
+        GL33C.glBlendFuncSeparate(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE_MINUS_SRC_ALPHA, GL33C.GL_ONE, GL33C.GL_ONE_MINUS_SRC_ALPHA);
 
-        GL33C.glEnable(GL33C.GL_BLEND);
-        GL33C.glBlendFunc(GL33C.GL_SRC_ALPHA, GL33C.GL_ONE_MINUS_SRC_ALPHA);
-        
         GL33C.glDepthMask(false);
-        
-        
 
         //GL33C.glVertexAttribPointer(1, 2, GL33C.GL_FLOAT, false, stride, 2 * Float.BYTES);
 //        GL33C.glBindVertexArray(0);
@@ -58,21 +58,21 @@ public class WindowVisualizer {
 //        GL33C.glDisableVertexAttribArray(1);
     }
 
-    public static void drawEnclosedLines(ArrayList<EditorShape> shapes, int lineWidth, DrawColor color) {
+    public static void drawLines(ArrayList<EditorShape> shapes, int lineWidth, DrawColor color, boolean enclose) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
         for (int i = 0; i < shapes.size(); i++) {
-            amount += calculateVertices(shapes.get(i).getEnclosedLinesFromPoints()).length;
+            amount += calculateVertices(shapes.get(i).getLinesFromPoints(enclose)).length;
 
         }
 
         vert = new float[amount];
         int count = 0;
         for (int i = 0; i < shapes.size(); i++) {
-            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getEnclosedLinesFromPoints()).length; i2++) {
-                vert[count] = calculateVertices(shapes.get(i).getEnclosedLinesFromPoints())[i2];
+            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getLinesFromPoints(enclose)).length; i2++) {
+                vert[count] = calculateVertices(shapes.get(i).getLinesFromPoints(enclose))[i2];
                 count++;
             }
         }

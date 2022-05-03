@@ -9,6 +9,9 @@ package GUI;
  * @author Ivan
  */
 public class DrawColor {
+    
+    public static final DrawColor BLACK = new DrawColor(0,0,0,1);
+    
     private float[] color = new float[4];
     
     public DrawColor(float[] color) {
