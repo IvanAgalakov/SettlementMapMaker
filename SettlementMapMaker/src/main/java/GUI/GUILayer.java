@@ -10,6 +10,7 @@ import Shapes.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
 import com.wiz.settlementmapmaker.Constants;
 import com.wiz.settlementmapmaker.RuntimeManager;
+import com.wiz.settlementmapmaker.SettlementNameGenerator;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
 import com.wiz.settlementmapmaker.Window;
 import imgui.ImGui;
@@ -583,7 +584,9 @@ public class GUILayer {
             }
 
             ImGui.inputText("Name", runMan.getPendingSettlementName());
-            ImGui.button("Generate Name");
+            if(ImGui.button("Generate Name")) {
+                runMan.getPendingSettlementName().set(SettlementNameGenerator.getRandomSettlementName());
+            }
             if (ImGui.button("Create")) {
                 runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
                 showNewSetWin.set(false);

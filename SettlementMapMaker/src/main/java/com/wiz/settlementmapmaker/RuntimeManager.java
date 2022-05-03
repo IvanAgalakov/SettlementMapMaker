@@ -129,6 +129,8 @@ public class RuntimeManager {
         this.io = io;
         FontLibrary.loadAllFonts(io);
         TextureLibrary.loadAllTextures();
+        SettlementNameGenerator.loadAllNames();
+        
         io.setFontDefault(FontLibrary.getFont(0));
         initStyle();
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);

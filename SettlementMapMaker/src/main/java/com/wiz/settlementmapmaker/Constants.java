@@ -50,9 +50,14 @@ public class Constants {
     public static final float MAX_ZOOM = 2f;
     public static final float MIN_ZOOM = 0.01f;
     
-    
+    // Textures
     public static final String TEXTURE_FOLDER = "folder.png";
     public static final String TEXTURE_PLUS = "plus.png";
     public static final String TEXTURE_ARROW_UP = "arrowUp.png";
     public static final String TEXTURE_ARROW_DOWN = "arrowDown.png";
+    
+    
+    // Name Files
+    public static final String SETTLEMENT_NAME_FIRST = "SettlementFirstHalf.txt";
+    public static final String SETTLEMENT_NAME_SECOND = "SettlementSecondHalf.txt";
 }
