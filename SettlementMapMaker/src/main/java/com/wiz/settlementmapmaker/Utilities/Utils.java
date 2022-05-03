@@ -7,6 +7,7 @@ package com.wiz.settlementmapmaker.Utilities;
 import Shapes.Line;
 import Shapes.Point;
 import imgui.ImVec4;
+import java.util.List;
 
 /**
  *
@@ -65,6 +66,12 @@ public class Utils {
                 t * t * p2.y);
         
         return finalPoint;
+    }
+    
+    public static void addPointsToList(List l, Point... p) {
+        for (int i = 0; i < p.length; i++) {
+            l.add(p[i]);
+        }
     }
     
 }

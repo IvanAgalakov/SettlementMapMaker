@@ -9,6 +9,7 @@ import GUI.Style;
 import GUI.GUILayer;
 import Shapes.EditorShape;
 import Shapes.Point;
+import Shapes.QuadBezierCurve;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImGuiIO;
@@ -130,17 +131,18 @@ public class DataDisplayer {
             drawStyleGroups();
         }
         
-//        ArrayList<Point> bezier = new ArrayList();
-//        int divisions = 100;
+////        ArrayList<Point> bezier = new ArrayList();
+////        int divisions = 10;
 //        Point start = new Point(0.1f, -1f);
 //        Point control = new Point(1f, -0.5f);
-//        for (float i = 0; i < 1.0; i += 1f/divisions) {
-//            bezier.add(Utils.quadraticBezier(start, control, mouse, i));
-//        }
-//        bezier.add(mouse);
+////        for (float i = 0; i < 1.0; i += 1f/divisions) {
+////            bezier.add(Utils.quadraticBezier(start, control, mouse, i));
+////        }
+////        bezier.add(mouse);
+//        QuadBezierCurve curve = new QuadBezierCurve(start, mouse, control, 20, 0.01f);
 //        ArrayList<EditorShape> v = new ArrayList();
-//        v.add(new EditorShape(bezier));
-//        WindowVisualizer.drawLines(v, 40, DrawColor.BLACK, false);
+//        v.add(curve);
+//        WindowVisualizer.drawTriangles(v, DrawColor.BLACK);
         
     }
 

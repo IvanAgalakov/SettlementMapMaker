@@ -1,0 +1,71 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package Shapes;
+
+import com.wiz.settlementmapmaker.Utilities.Utils;
+import imgui.type.ImInt;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author Ivan
+ */
+public class QuadBezierCurve extends EditorShape {
+
+    private Point start;
+    private Point end;
+    private Point control;
+    private ImInt divisions = new ImInt();
+    private float thickness;
+
+    public QuadBezierCurve(Point start, Point end, Point control, int divisions, float thickness) {
+        this.start = start;
+        this.end = end;
+        this.control = control;
+        this.divisions.set(divisions);
+        this.thickness = thickness;
+        this.calculate();
+    }
+
+    public void calculate() {
+        this.points.clear();
+        for (float i = 0; i <= 1f; i += 1f / divisions.get()) {
+            this.points.add(Utils.quadraticBezier(start, control, end, i));
+        }
+        this.points.add(end);
+    }
+
+    @Override
+    public Point[] getTrianglesFromPoints() {
+        ArrayList<Point> trian = new ArrayList();
+
+        ArrayList<Line> lines = this.getLines(false);
+        Point lastBotRight = new Point(0, 0);
+        Point lastTopRight = new Point(0, 0);
+        for (int i = 0; i < lines.size(); i++) {
+            Line curLine = lines.get(i);
+            if (i == 0) {
+                Point topLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), thickness / 2);
+                Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
+                Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
+                Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
+                Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topRight, topLeft);
+                lastBotRight = botRight;
+                lastTopRight = topRight;
+            } else {
+                Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
+                Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
+                Utils.addPointsToList(trian, lastTopRight, lastBotRight, botRight, botRight, topRight, lastTopRight);
+                lastBotRight = botRight;
+                lastTopRight = topRight;
+            }
+        }
+
+        Point[] triArray = new Point[trian.size()];
+        triArray = trian.toArray(triArray);
+        return triArray;
+    }
+
+}

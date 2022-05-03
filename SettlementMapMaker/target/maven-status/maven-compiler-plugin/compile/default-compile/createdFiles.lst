@@ -16,7 +16,6 @@ Shapes\Building.class
 com\wiz\settlementmapmaker\Actions\MethodRunAction.class
 com\wiz\settlementmapmaker\Main.class
 com\wiz\settlementmapmaker\RuntimeManager$WindowFocus.class
-Shapes\Shape.class
 com\wiz\settlementmapmaker\Actions\Action.class
 com\wiz\settlementmapmaker\Utilities\FixedStack.class
 com\wiz\settlementmapmaker\RuntimeManager.class

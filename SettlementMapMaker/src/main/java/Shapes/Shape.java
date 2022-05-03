@@ -282,12 +282,12 @@ public class Shape {
         return numberOfIntersections == 1;
     }
 
-    public ArrayList<Line> getLines() {
+    public ArrayList<Line> getLines(boolean reconnect) {
         ArrayList<Line> lines = new ArrayList<>();
         for (int i = 1; i <= points.size(); i++) {
             if (i < points.size()) {
                 lines.add(new Line(points.get(i - 1), points.get(i)));
-            } else {
+            } else if (reconnect) {
                 lines.add(new Line(points.get(i - 1), points.get(0)));
             }
         }
@@ -296,7 +296,7 @@ public class Shape {
         for (int i = 0; i < lines.size(); i++) {
             if (i + 1 != lines.size()) {
                 lines.get(i).setNextLine(lines.get(i + 1));
-            } else {
+            } else if (reconnect) {
                 lines.get(i).setNextLine(lines.get(0));
             }
         }
@@ -307,7 +307,7 @@ public class Shape {
         if (this.points.size() != 3) {
             return;
         }
-        ArrayList<Line> lines = getLines();
+        ArrayList<Line> lines = getLines(true);
         Line longest = null;
         for (Line l : lines) {
             if (longest == null) {

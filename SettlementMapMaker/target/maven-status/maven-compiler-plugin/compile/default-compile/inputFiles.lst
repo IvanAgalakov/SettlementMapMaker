@@ -4,6 +4,7 @@ C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\Sett
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Actions\AlterListAction.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\Shapes\Line.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Actions\ImStringChangeAction.java
+C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\Shapes\QuadBezierCurve.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Actions\SetListAction.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\FileManager.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Utilities\CityEditorState.java
@@ -18,6 +19,7 @@ C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\Sett
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Actions\MethodRunAction.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Shader.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Utilities\Utils.java
+C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\SettlementNameGenerator.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Window.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Utilities\MethodPass1Arg.java
 C:\Users\Ivan\Documents\Code Projects\SettlementMapMaker\SettlementMapMaker\SettlementMapMaker\src\main\java\com\wiz\settlementmapmaker\Main.java
