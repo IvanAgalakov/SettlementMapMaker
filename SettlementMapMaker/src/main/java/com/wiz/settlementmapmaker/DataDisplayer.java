@@ -8,9 +8,11 @@ import GUI.DrawColor;
 import GUI.Style;
 import GUI.GUILayer;
 import Shapes.EditorShape;
+import Shapes.Line;
 import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.QuadBezierCurve;
+import Shapes.River;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImGuiIO;
@@ -132,18 +134,17 @@ public class DataDisplayer {
             drawStyleGroups();
         }
         
-////        ArrayList<Point> bezier = new ArrayList();
-////        int divisions = 10;
+//        ArrayList<Point> bezier = new ArrayList();
+//        int divisions = 10;
 //        Point start = new Point(0.1f, -1f);
-//        Point control = new Point(1f, -0.5f);
+//        
 ////        for (float i = 0; i < 1.0; i += 1f/divisions) {
 ////            bezier.add(Utils.quadraticBezier(start, control, mouse, i));
 ////        }
 ////        bezier.add(mouse);
-//        QuadBezierCurve curve = new QuadBezierCurve(start, mouse, control, 20, 0.01f);
-//        ArrayList<EditorShape> v = new ArrayList();
-//        v.add(curve);
-//        WindowVisualizer.drawTriangles(v, DrawColor.BLACK);
+//        River curve = new River(new Line(start, mouse), 20, 0.02f,0.07f, 0.02f);
+//        
+//        WindowVisualizer.drawTriangles(curve.getCurves(), DrawColor.BLACK);
         
     }
 
@@ -190,15 +191,17 @@ public class DataDisplayer {
                         Obstacle obs = (Obstacle) shapeList.get(x);
                         
                         if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
-                            ArrayList<EditorShape> bezier = new ArrayList();
-                            ArrayList<Point> points = obs.getPointList();
-                            for (int a = 2; a < points.size(); a+=2) {
-                                bezier.add(new QuadBezierCurve(points.get(a-2), points.get(a), points.get(a-1), 10, 0.01f));
+                            ArrayList<River> rivers = new ArrayList();
+                            ArrayList<Line> lines = obs.getLines(false);
+                            for (int a = 0; a < lines.size(); a++) {
+                                rivers.add(new River(lines.get(a), 4,0.02f,0.03f,0.01f));
                             }
-                            if (!bezier.isEmpty()) {
+                            if (!rivers.isEmpty()) {
                                 shapeList.remove(shapeList.get(x));
                                 x--;
-                                shapeList.addAll(bezier);
+                                for (int a = 0; a < rivers.size(); a++) {
+                                    shapeList.addAll(rivers.get(a).getCurves());
+                                }
                             }
                         }
                     }

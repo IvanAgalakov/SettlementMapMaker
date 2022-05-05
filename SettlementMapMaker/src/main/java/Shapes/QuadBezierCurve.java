@@ -20,6 +20,8 @@ public class QuadBezierCurve extends EditorShape {
     private ImInt divisions = new ImInt();
     private float thickness;
 
+    private QuadBezierCurve previous = null;
+
     public QuadBezierCurve(Point start, Point end, Point control, int divisions, float thickness) {
         this.start = start;
         this.end = end;
@@ -27,6 +29,11 @@ public class QuadBezierCurve extends EditorShape {
         this.divisions.set(divisions);
         this.thickness = thickness;
         this.calculate();
+    }
+
+    public QuadBezierCurve(Point start, Point end, Point control, int divisions, float thickness, QuadBezierCurve previous) {
+        this(start, end, control, divisions, thickness);
+        this.previous = previous;
     }
 
     public void calculate() {
@@ -42,11 +49,19 @@ public class QuadBezierCurve extends EditorShape {
         ArrayList<Point> trian = new ArrayList();
 
         ArrayList<Line> lines = this.getLines(false);
+
         Point lastBotRight = new Point(0, 0);
         Point lastTopRight = new Point(0, 0);
+        if (previous != null) {
+            ArrayList<Line> preLines = previous.getLines(false);
+            Line preLine = preLines.get(preLines.size() - 2);
+            lastBotRight = Utils.normalPointToPoint(preLine.getEnd(), preLine.getRise(), preLine.getRun(), -thickness / 2);
+            lastTopRight = Utils.normalPointToPoint(preLine.getEnd(), preLine.getRise(), preLine.getRun(), thickness / 2);
+        }
+
         for (int i = 0; i < lines.size(); i++) {
             Line curLine = lines.get(i);
-            if (i == 0) {
+            if (i == 0 && previous == null) {
                 Point topLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
                 Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);

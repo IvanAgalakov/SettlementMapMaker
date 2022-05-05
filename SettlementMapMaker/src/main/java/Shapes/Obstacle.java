@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Obstacle extends EditorShape{
     
-    private ImInt obstacleType = new ImInt();
+    private final ImInt obstacleType = new ImInt();
     
     public Obstacle(String name) {
         super(name);
