@@ -74,8 +74,8 @@ public class DataDisplayer {
                 initCameraX = cameraX;
                 initCameraY = cameraY;
             }
-            cameraX = initCameraX + (io.getMousePosX() - initMouseX);
-            cameraY = initCameraY + (io.getMousePosY() - initMouseY);
+            cameraX = initCameraX + (io.getMousePosX() - initMouseX)/runMan.getZoom()[0];
+            cameraY = initCameraY + (io.getMousePosY() - initMouseY)/runMan.getZoom()[0];
             lastMiddleState = true;
         } else {
             lastMiddleState = false;
@@ -185,6 +185,7 @@ public class DataDisplayer {
                             shapeList.remove(shapeList.get(x));
                             x--;
                             shapeList.addAll(zone.getContainedShapes());
+                            continue;
                         }
                     }
                     if (shapeList.get(x) instanceof Obstacle) {
@@ -202,6 +203,7 @@ public class DataDisplayer {
                                 for (int a = 0; a < rivers.size(); a++) {
                                     shapeList.addAll(rivers.get(a).getCurves());
                                 }
+                                continue;
                             }
                         }
                     }
