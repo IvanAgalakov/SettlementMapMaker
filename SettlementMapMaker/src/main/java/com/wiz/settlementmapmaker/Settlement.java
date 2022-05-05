@@ -29,6 +29,8 @@ public class Settlement {
     private Style defaultStyle = new Style(new DrawColor(0, 0, 0, 1), 0);
     private Style backdropStyle = new Style(new DrawColor(0.9216f, 0.8353f, 0.702f, 1f), 0);
     private Style editStyle = new Style(new DrawColor(1f, 0, 0, 1f), 0);
+    private Style waterStyle = new Style(new DrawColor(0, 0, 1f, 1f), 3);
+    
     private HashMap<String, Style> style = new HashMap<>();
 
     private ArrayList<String> cityStyles = new ArrayList<>();
@@ -55,10 +57,12 @@ public class Settlement {
     }
 
     public Style getStyle(String key) {
-        if (!key.equals("default")) {
-            return style.get(key);
-        } else {
+        if (key.equals("default")) {
             return this.defaultStyle;
+        } else if (key.equals("water")) {
+            return this.waterStyle;
+        } else {
+            return style.get(key);
         }
     }
 
@@ -72,6 +76,10 @@ public class Settlement {
     
     public Style getEditStyle() {
         return this.editStyle;
+    }
+    
+    public Style getWaterStye() {
+        return this.waterStyle;
     }
 
     public ArrayList<String> getCityStyles() {

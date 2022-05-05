@@ -8,6 +8,7 @@ import GsonExtras.RuntimeTypeAdapterFactory;
 import Shapes.Building;
 import Shapes.EditorShape;
 import Shapes.Obstacle;
+import Shapes.QuadBezierCurve;
 import Shapes.Zone;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,7 +37,8 @@ public class FileManager {
     private static RuntimeTypeAdapterFactory<EditorShape> shapeAdaptorFactory = RuntimeTypeAdapterFactory.of(EditorShape.class, "EditorShape")
             .registerSubtype(Zone.class, "Zone")
             .registerSubtype(Building.class, "Building")
-            .registerSubtype(Obstacle.class, "Obstacle");
+            .registerSubtype(Obstacle.class, "Obstacle")
+            .registerSubtype(QuadBezierCurve.class, "QuadBezierCurve");
 
     public static void saveSettlement(Settlement settle, String path) {
         Gson settleGson = new GsonBuilder().registerTypeAdapterFactory(shapeAdaptorFactory).create();

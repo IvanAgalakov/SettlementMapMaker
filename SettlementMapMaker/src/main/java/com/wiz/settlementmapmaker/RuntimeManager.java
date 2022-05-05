@@ -481,6 +481,10 @@ public class RuntimeManager {
     public Style getEditStyle() {
         return this.currentSettlement.getEditStyle();
     }
+    
+    public Style getWaterStyle() {
+        return this.currentSettlement.getWaterStye();
+    }
 
     public void addStyle(String style) {
         this.currentSettlement.addStyle(style);

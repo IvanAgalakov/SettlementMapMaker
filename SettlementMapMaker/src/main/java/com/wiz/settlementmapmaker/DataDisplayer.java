@@ -8,6 +8,7 @@ import GUI.DrawColor;
 import GUI.Style;
 import GUI.GUILayer;
 import Shapes.EditorShape;
+import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.QuadBezierCurve;
 import Shapes.Zone;
@@ -161,12 +162,18 @@ public class DataDisplayer {
     public void drawStyleGroups() {
 
         //WindowVisualizer.drawEnclosedLines(new Shape[]{new Shape(new Point[]{new Point(0,0), new Point(1,0)})}, 5, new DrawColor(0,0,0,0));
-        String[] styles = runMan.getStyles();
+        String[] st = runMan.getStyles();
+        ArrayList<String> styles = new ArrayList();
+        for (String s : st) {
+            styles.add(s);
+        }
+        styles.add("water");
+        
+        
+        for (int i = 0; i < styles.size(); i++) {
+            if (this.shapesByStyle.containsKey(styles.get(i))) {
 
-        for (int i = 0; i < styles.length; i++) {
-            if (this.shapesByStyle.containsKey(styles[i])) {
-
-                ArrayList<EditorShape> shapeList = new ArrayList(this.shapesByStyle.get(styles[i]));
+                ArrayList<EditorShape> shapeList = new ArrayList(this.shapesByStyle.get(styles.get(i)));
 
                 for (int x = 0; x < shapeList.size(); x++) {
                     if (shapeList.get(x) instanceof Zone) {
@@ -179,10 +186,26 @@ public class DataDisplayer {
                             shapeList.addAll(zone.getContainedShapes());
                         }
                     }
+                    if (shapeList.get(x) instanceof Obstacle) {
+                        Obstacle obs = (Obstacle) shapeList.get(x);
+                        
+                        if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
+                            ArrayList<EditorShape> bezier = new ArrayList();
+                            ArrayList<Point> points = obs.getPointList();
+                            for (int a = 2; a < points.size(); a+=2) {
+                                bezier.add(new QuadBezierCurve(points.get(a-2), points.get(a), points.get(a-1), 10, 0.01f));
+                            }
+                            if (!bezier.isEmpty()) {
+                                shapeList.remove(shapeList.get(x));
+                                x--;
+                                shapeList.addAll(bezier);
+                            }
+                        }
+                    }
                 }
 
                 // chooses the drawing type based on the style you have selected
-                Style style = runMan.getStyle(styles[i]);
+                Style style = runMan.getStyle(styles.get(i));
                 if (Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
@@ -226,12 +249,20 @@ public class DataDisplayer {
         for (int i = 0; i < styles.length; i++) {
             shapesByStyle.put(styles[i], new ArrayList<>());
         }
+        shapesByStyle.put("water", new ArrayList<>());
 
         ArrayList<EditorShape> shapes = runMan.currentSettlement.getRawEditorShapes();
 
         for (int x = 0; x < shapes.size(); x++) {
             ArrayList currentStyleShapes = new ArrayList<EditorShape>();
 
+            if (shapes.get(x) instanceof Obstacle obs) {
+                if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
+                    this.shapesByStyle.get("water").add(shapes.get(x));
+                }
+                continue;
+            }
+            
             currentStyleShapes.add(shapes.get(x));
 
 //            if (shapes.get(x) instanceof Zone) {

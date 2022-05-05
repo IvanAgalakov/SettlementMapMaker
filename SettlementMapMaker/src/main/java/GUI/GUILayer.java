@@ -5,6 +5,7 @@
 package GUI;
 
 import Shapes.EditorShape;
+import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Actions.ImStringChangeAction;
@@ -299,6 +300,10 @@ public class GUILayer {
             if (shapeToEdit instanceof Zone) {
                 zoneShapeEditOptions(shapeToEdit);
             }
+            
+            if (shapeToEdit instanceof Obstacle) {
+                obstacleShapeEditOptions(shapeToEdit);
+            }
 
         } else {
             ImGui.text("No shape selected, please select a shape!");
@@ -334,6 +339,13 @@ public class GUILayer {
         ImVec2 pos = ImGui.getWindowPos();
         pos.set(pos.x + ImGui.getWindowSizeX(), pos.y);
         containedZoneList(zone, pos);
+    }
+    
+    public void obstacleShapeEditOptions(EditorShape toParse) {
+        Obstacle obst = (Obstacle) toParse;
+        if (ImGui.combo("Obstacle Types", obst.getObstacleType(), Constants.OBSTACLE_TYPES)) {
+            
+        }
     }
 
     public void containedZoneList(Zone zone, ImVec2 pos) {
