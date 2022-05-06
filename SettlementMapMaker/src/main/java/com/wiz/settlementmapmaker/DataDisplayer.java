@@ -199,7 +199,7 @@ public class DataDisplayer {
                                 if (!rivers.isEmpty()) {
                                     previous = rivers.get(rivers.size()-1);
                                 }
-                                rivers.add(new River(lines.get(a), 4,0.02f,0.03f,0.01f, previous));
+                                rivers.add(new River(lines.get(a), obs, previous));
                             }
                             if (!rivers.isEmpty()) {
                                 shapeList.remove(shapeList.get(x));

@@ -15,27 +15,36 @@ import java.util.Random;
 public class River {
 
     private ArrayList<QuadBezierCurve> curves = new ArrayList();
-    private int divisions;
-    private float devMin, devMax;
-    private Line line;
-    private float sectionDev;
+    private final int divisions;
+    private final float devMin, devMax;
+    private final Line line;
+    private final float sectionDev;
     private River previous = null;
+    private final long seed;
+    private final int resolution;
+    private final float thickness;
 
-    public River(Line line, int divisions, float devMin, float devMax, float sectionDev) {
+    public River(Line line, Obstacle obs) {
         this.line = line;
-        this.divisions = divisions;
-        this.devMin = devMin;
-        this.devMax = devMax;
-        this.sectionDev = sectionDev;
+        this.divisions = obs.getDivisions().get();
+        this.devMin = obs.getDevMin().get();
+        this.devMax = obs.getDevMax().get();
+        this.sectionDev = obs.getSectionDev().get();
+        this.seed = obs.getSeed().get();
+        this.resolution = obs.getResolution().get();
+        this.thickness = obs.getThickness().get();
         this.calculate();
     }
 
-    public River(Line line, int divisions, float devMin, float devMax, float sectionDev, River previous) {
+    public River(Line line, Obstacle obs, River previous) {
         this.line = line;
-        this.divisions = divisions;
-        this.devMin = devMin;
-        this.devMax = devMax;
-        this.sectionDev = sectionDev;
+        this.divisions = obs.getDivisions().get();
+        this.devMin = obs.getDevMin().get();
+        this.devMax = obs.getDevMax().get();
+        this.sectionDev = obs.getSectionDev().get();
+        this.seed = obs.getSeed().get();
+        this.resolution = obs.getResolution().get();
+        this.thickness = obs.getThickness().get();
         this.previous = previous;
         this.calculate();
     }
@@ -43,7 +52,7 @@ public class River {
     public final void calculate() {
         curves.clear();
         Random rand = new Random();
-        rand.setSeed(0);
+        rand.setSeed(seed);
 
         float step = line.getLength() / divisions;
 
@@ -65,7 +74,7 @@ public class River {
             Point mid = Utils.getPointAlongLine(l, l.getLength() / 2);
             Point control = Utils.normalPointToPoint(mid, l.getRise(), l.getRun(), sign * rand.nextFloat(devMin, devMax));
 
-            QuadBezierCurve toAdd = new QuadBezierCurve(first, second, control, 6, 0.04f, prev);
+            QuadBezierCurve toAdd = new QuadBezierCurve(first, second, control, resolution, thickness, prev);
             curves.add(toAdd);
             prev = toAdd;
             sign *= -1;
