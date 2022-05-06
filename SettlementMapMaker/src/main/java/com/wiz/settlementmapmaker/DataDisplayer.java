@@ -195,7 +195,11 @@ public class DataDisplayer {
                             ArrayList<River> rivers = new ArrayList();
                             ArrayList<Line> lines = obs.getLines(false);
                             for (int a = 0; a < lines.size(); a++) {
-                                rivers.add(new River(lines.get(a), 4,0.02f,0.03f,0.01f));
+                                River previous = null;
+                                if (!rivers.isEmpty()) {
+                                    previous = rivers.get(rivers.size()-1);
+                                }
+                                rivers.add(new River(lines.get(a), 4,0.02f,0.03f,0.01f, previous));
                             }
                             if (!rivers.isEmpty()) {
                                 shapeList.remove(shapeList.get(x));
