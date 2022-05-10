@@ -11,6 +11,7 @@ import GUI.GUILayer;
 import Shapes.Building;
 import com.wiz.settlementmapmaker.Utilities.FixedStack;
 import Shapes.EditorShape;
+import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Actions.Action;
@@ -530,6 +531,10 @@ public class RuntimeManager {
     public Point getMouseWorldPoint() {
         Point p = new Point(io.getMousePosX(), io.getMousePosY());
         return screenPointToWorldPoint(p, this.getWidth(), this.getHeight());
+    }
+    
+    public void updateObstacle(Obstacle obs) {
+        dataDis.updateAnObstacle(obs);
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

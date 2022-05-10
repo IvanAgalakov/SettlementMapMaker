@@ -302,6 +302,10 @@ public class Shape {
         }
         return lines;
     }
+    
+    public Point getLastPoint() {
+        return this.points.get(this.points.size()-1);
+    }
 
     public void squarizeShape() {
         if (this.points.size() != 3) {

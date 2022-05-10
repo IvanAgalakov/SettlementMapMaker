@@ -16,6 +16,7 @@ import Shapes.River;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImGuiIO;
+import imgui.type.ImBoolean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class DataDisplayer {
 
     private Point editPoint = null;
     private EditorShape editShape = null;
-    
+
     private ArrayList<EditorShape> editingShapes = new ArrayList<>();
 
     private ImGuiIO io;
@@ -46,6 +47,9 @@ public class DataDisplayer {
     private Window window;
 
     private HashMap<String, ArrayList<EditorShape>> shapesByStyle = new HashMap<>();
+
+    private HashMap<Obstacle, ArrayList<EditorShape>> obstacleRivers = new HashMap<>();
+    private HashMap<Obstacle, ImBoolean> updateObstacle = new HashMap<>();
 
     private GUILayer gui;
 
@@ -74,8 +78,8 @@ public class DataDisplayer {
                 initCameraX = cameraX;
                 initCameraY = cameraY;
             }
-            cameraX = initCameraX + (io.getMousePosX() - initMouseX)/runMan.getZoom()[0];
-            cameraY = initCameraY + (io.getMousePosY() - initMouseY)/runMan.getZoom()[0];
+            cameraX = initCameraX + (io.getMousePosX() - initMouseX) / runMan.getZoom()[0];
+            cameraY = initCameraY + (io.getMousePosY() - initMouseY) / runMan.getZoom()[0];
             lastMiddleState = true;
         } else {
             lastMiddleState = false;
@@ -124,6 +128,9 @@ public class DataDisplayer {
                 v.clear();
                 v.add(editShape);
                 WindowVisualizer.drawLines(v, 5, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
+                if (editShape instanceof Obstacle obs) {
+                    runMan.updateObstacle(obs);
+                }
             }
         } else if (editMode == true) {
             updateShapeStyleGroupings();
@@ -133,7 +140,7 @@ public class DataDisplayer {
         if (runMan.getCurrentSettlement() != null) {
             drawStyleGroups();
         }
-        
+
 //        ArrayList<Point> bezier = new ArrayList();
 //        int divisions = 10;
 //        Point start = new Point(0.1f, -1f);
@@ -145,7 +152,6 @@ public class DataDisplayer {
 //        River curve = new River(new Line(start, mouse), 20, 0.02f,0.07f, 0.02f);
 //        
 //        WindowVisualizer.drawTriangles(curve.getCurves(), DrawColor.BLACK);
-        
     }
 
     public Point screenPointToWorldPoint(Point screen, int width, int height) {
@@ -169,8 +175,7 @@ public class DataDisplayer {
             styles.add(s);
         }
         styles.add("water");
-        
-        
+
         for (int i = 0; i < styles.size(); i++) {
             if (this.shapesByStyle.containsKey(styles.get(i))) {
 
@@ -179,7 +184,7 @@ public class DataDisplayer {
                 for (int x = 0; x < shapeList.size(); x++) {
                     if (shapeList.get(x) instanceof Zone) {
                         Zone zone = (Zone) shapeList.get(x);
-                        
+
                         //System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
                         if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
                             shapeList.remove(shapeList.get(x));
@@ -190,25 +195,39 @@ public class DataDisplayer {
                     }
                     if (shapeList.get(x) instanceof Obstacle) {
                         Obstacle obs = (Obstacle) shapeList.get(x);
-                        
-                        if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
-                            ArrayList<River> rivers = new ArrayList();
-                            ArrayList<Line> lines = obs.getLines(false);
-                            for (int a = 0; a < lines.size(); a++) {
-                                River previous = null;
-                                if (!rivers.isEmpty()) {
-                                    previous = rivers.get(rivers.size()-1);
+
+                        if (this.updateObstacle.containsKey(obs)) {
+                            if (this.updateObstacle.get(obs).get()) {
+                                if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
+                                    ArrayList<River> rivers = new ArrayList();
+                                    ArrayList<Line> lines = obs.getLines(false);
+                                    for (int a = 0; a < lines.size(); a++) {
+                                        River previous = null;
+                                        if (!rivers.isEmpty()) {
+                                            previous = rivers.get(rivers.size() - 1);
+                                        }
+                                        rivers.add(new River(lines.get(a), obs, previous));
+                                    }
+                                    if (!rivers.isEmpty()) {
+                                        shapeList.remove(shapeList.get(x));
+                                        x--;
+                                        ArrayList<EditorShape> drawData = new ArrayList();
+                                        for (int a = 0; a < rivers.size(); a++) {
+                                            drawData.addAll(rivers.get(a).getCurves());
+                                        }
+                                        shapeList.addAll(drawData);
+                                        this.obstacleRivers.put(obs, drawData);
+                                        this.updateObstacle.get(obs).set(false);
+                                        continue;
+                                    }
                                 }
-                                rivers.add(new River(lines.get(a), obs, previous));
-                            }
-                            if (!rivers.isEmpty()) {
+                            } else {
                                 shapeList.remove(shapeList.get(x));
                                 x--;
-                                for (int a = 0; a < rivers.size(); a++) {
-                                    shapeList.addAll(rivers.get(a).getCurves());
-                                }
-                                continue;
+                                shapeList.addAll(this.obstacleRivers.get(obs));
                             }
+                        } else {
+                            this.updateObstacle.put(obs, new ImBoolean(true));
                         }
                     }
                 }
@@ -239,14 +258,12 @@ public class DataDisplayer {
             }
 
         }
-        
-        
+
         WindowVisualizer.drawLines(editingShapes, 5, runMan.getEditStyle().getColor(), true);
-        
+
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
 //        mousePoint.add(new EditorShape(runMan.getMouseWorldPoint()));
 //        WindowVisualizer.drawPoints(mousePoint, 10, runMan.getEditStyle().getColor());
-        
     }
 
     // updates the style groups to be rendered, this changes when a change is made to a shape such as a when a new shape is made, and a style is changed
@@ -271,7 +288,7 @@ public class DataDisplayer {
                 }
                 continue;
             }
-            
+
             currentStyleShapes.add(shapes.get(x));
 
 //            if (shapes.get(x) instanceof Zone) {
@@ -291,6 +308,14 @@ public class DataDisplayer {
 
     }
 
+    public void updateAnObstacle(Obstacle ob) {
+        if (this.updateObstacle.containsKey(ob)) {
+            this.updateObstacle.get(ob).set(true);
+        } else {
+            this.updateObstacle.put(ob, new ImBoolean(true));
+        }
+    }
+
     public void setEditPoint(Point editPoint) {
         this.editPoint = editPoint;
     }
@@ -298,19 +323,19 @@ public class DataDisplayer {
     public void setEditShape(EditorShape shape) {
         this.editShape = shape;
     }
-    
+
     public void addEditingShape(EditorShape shape) {
         this.editingShapes.add(shape);
     }
-    
+
     public void removeEditingShape(EditorShape shape) {
         this.editingShapes.remove(shape);
     }
-    
+
     public void clearEditingShapes() {
         this.editingShapes.clear();
     }
-    
+
     public boolean containsEditingShape(EditorShape shape) {
         return this.editingShapes.contains(shape);
     }

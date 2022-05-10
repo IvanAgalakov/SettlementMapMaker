@@ -3,6 +3,7 @@ com\wiz\settlementmapmaker\WindowVisualizer.class
 com\wiz\settlementmapmaker\Utilities\Utils.class
 com\wiz\settlementmapmaker\Shader$shaderTypes.class
 GUI\FontLibrary.class
+Shapes\QuadBezierCurve.class
 Shapes\Zone.class
 com\wiz\settlementmapmaker\Actions\ImStringChangeAction.class
 com\wiz\settlementmapmaker\Constants$CityShapeTypes.class
@@ -10,12 +11,15 @@ com\wiz\settlementmapmaker\Actions\ImIntChangeAction.class
 com\wiz\settlementmapmaker\FixedStack.class
 com\wiz\settlementmapmaker\FixedStack$Node.class
 com\wiz\settlementmapmaker\DataDisplayer.class
+Shapes\River.class
 GUI\Texture.class
 com\wiz\settlementmapmaker\Actions\SetListAction.class
 Shapes\Building.class
 com\wiz\settlementmapmaker\Actions\MethodRunAction.class
 com\wiz\settlementmapmaker\Main.class
 com\wiz\settlementmapmaker\RuntimeManager$WindowFocus.class
+com\wiz\settlementmapmaker\SettlementNameGenerator.class
+Shapes\Shape.class
 com\wiz\settlementmapmaker\Actions\Action.class
 com\wiz\settlementmapmaker\Utilities\FixedStack.class
 com\wiz\settlementmapmaker\RuntimeManager.class
@@ -34,7 +38,6 @@ com\wiz\settlementmapmaker\SettlementGenerator.class
 GsonExtras\RuntimeTypeAdapterFactory.class
 Shapes\Line.class
 com\wiz\settlementmapmaker\ShaderManager.class
-Shapes\Obstacle$ObstacleType.class
 com\wiz\settlementmapmaker\Actions\AlterListAction.class
 com\wiz\settlementmapmaker\Utilities\CityEditorState.class
 Shapes\Obstacle.class

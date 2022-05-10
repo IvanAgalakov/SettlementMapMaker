@@ -19,7 +19,7 @@ public class Obstacle extends EditorShape{
     private final ImLong seed = new ImLong(0);
     private final ImFloat devMax = new ImFloat(0.02f);
     private final ImFloat devMin = new ImFloat(0.01f);
-    private final ImInt divisions = new ImInt(2);
+    private final ImFloat divisions = new ImFloat(0.01f);
     private final ImInt resolution = new ImInt(3);
     private final ImFloat thickness = new ImFloat(0.01f);
     private final ImFloat sectionDev = new ImFloat(0.01f);
@@ -49,7 +49,7 @@ public class Obstacle extends EditorShape{
         return sectionDev;
     }
     
-    public ImInt getDivisions() {
+    public ImFloat getDivisions() {
         return divisions;
     }
     

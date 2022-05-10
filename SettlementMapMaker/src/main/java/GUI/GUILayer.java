@@ -349,13 +349,27 @@ public class GUILayer {
         }
         
         if (Constants.OBSTACLE_TYPES[obst.getObstacleType().get()].equals("River")) {
-            ImGui.inputScalar("seed", ImGuiDataType.S64, obst.getSeed());
-            ImGui.sliderFloat("Minimum Wiggle", obst.getDevMin().getData(), 0.0f, 0.1f);
-            ImGui.sliderFloat("Maximum Wiggle", obst.getDevMax().getData(), 0.001f, 0.2f);
-            ImGui.sliderFloat("Section Deviation", obst.getSectionDev().getData(), 0.001f, 0.1f);
-            ImGui.sliderInt("Divisions", obst.getDivisions().getData(), 2, 20);
-            ImGui.sliderInt("Resolution", obst.getResolution().getData(), 3, 10);
-            ImGui.sliderFloat("thickness", obst.getThickness().getData(), 0.01f, 1f);
+            if (ImGui.inputScalar("seed", ImGuiDataType.S64, obst.getSeed())) {
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Minimum Wiggle", obst.getDevMin().getData(), 0.0f, obst.getDevMax().get()-0.01f)) {
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Maximum Wiggle", obst.getDevMax().getData(), obst.getDevMin().get()+0.01f, 0.2f)){
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Section Deviation", obst.getSectionDev().getData(), 0.001f, 0.1f)){
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.01f, 0.2f)){
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderInt("Resolution", obst.getResolution().getData(), 3, 10)){
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("thickness", obst.getThickness().getData(), 0.01f, 1f)){
+                runMan.updateObstacle(obst);
+            }
             
         }
     }

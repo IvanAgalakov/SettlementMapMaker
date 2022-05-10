@@ -15,7 +15,7 @@ import java.util.Random;
 public class River {
 
     private ArrayList<QuadBezierCurve> curves = new ArrayList();
-    private final int divisions;
+    private final float divisions;
     private final float devMin, devMax;
     private final Line line;
     private final float sectionDev;
@@ -23,6 +23,8 @@ public class River {
     private final long seed;
     private final int resolution;
     private final float thickness;
+    
+    private int sign = 1;
 
     public River(Line line, Obstacle obs) {
         this.line = line;
@@ -46,6 +48,12 @@ public class River {
         this.resolution = obs.getResolution().get();
         this.thickness = obs.getThickness().get();
         this.previous = previous;
+        
+        if (previous != null) {
+            this.line.setStart(previous.getCurve(previous.getCurves().size()-1).getLastPoint());
+            this.sign = previous.getSign();
+        }
+        
         this.calculate();
     }
 
@@ -54,16 +62,17 @@ public class River {
         Random rand = new Random();
         rand.setSeed(seed);
 
-        float step = line.getLength() / divisions;
+        float step = divisions;
 
-        int sign = 1;
+        
         QuadBezierCurve prev = null;
         if (previous != null) {
             prev = previous.getCurve(previous.getLength() - 1);
         }
         
         float walk = 0;
-        for (int i = 1; i <= divisions; i++) {
+        float walkEnd = line.getLength();
+        while (walk < walkEnd) {
             Point first = Utils.getPointAlongLine(line, walk);
             float addToWalk = step + rand.nextFloat(-sectionDev, sectionDev);
             Point second = Utils.getPointAlongLine(line, walk + addToWalk);
@@ -79,6 +88,10 @@ public class River {
             prev = toAdd;
             sign *= -1;
         }
+    }
+    
+    public int getSign() {
+        return this.sign;
     }
 
     public ArrayList<EditorShape> getCurves() {
