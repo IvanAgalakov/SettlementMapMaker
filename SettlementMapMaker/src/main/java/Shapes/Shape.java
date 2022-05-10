@@ -70,10 +70,28 @@ public class Shape {
         return false;
     }
 
-    public Point[] getLinesFromPoints(boolean enclose) {
+    public Point[] getLinesFromPoints(float thickness, boolean enclose) {
+        ArrayList<Point> trian = new ArrayList();
+
+        ArrayList<Line> lines = this.getLines(enclose);
+
+        for (int i = 0; i < lines.size(); i++) {
+            Line curLine = lines.get(i);
+            Point topLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), thickness / 2);
+            Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
+            Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
+            Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
+            Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topRight, topLeft);
+        }
+
+        Point[] triArray = new Point[trian.size()];
+        triArray = trian.toArray(triArray);
+        return triArray;
+    }
+    
+    public Point[] getGlLines(boolean enclose) {
         Point[] lines = new Point[points.size() * 2];
         for (int i = 0; i < lines.length; i++) {
-            //System.out.println(i);
             if ((int) Math.ceil(i / 2.0) < points.size()) {
                 lines[i] = points.get((int) Math.ceil(i / 2.0));
             } else {
@@ -302,9 +320,9 @@ public class Shape {
         }
         return lines;
     }
-    
+
     public Point getLastPoint() {
-        return this.points.get(this.points.size()-1);
+        return this.points.get(this.points.size() - 1);
     }
 
     public void squarizeShape() {

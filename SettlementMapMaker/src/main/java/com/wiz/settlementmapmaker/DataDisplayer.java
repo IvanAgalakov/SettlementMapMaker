@@ -127,7 +127,7 @@ public class DataDisplayer {
             if (editShape != null) {
                 v.clear();
                 v.add(editShape);
-                WindowVisualizer.drawLines(v, 5, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
+                WindowVisualizer.drawGlLines(v, 6, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
                 if (editShape instanceof Obstacle obs) {
                     runMan.updateObstacle(obs);
                 }
@@ -239,7 +239,7 @@ public class DataDisplayer {
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
                     WindowVisualizer.drawTriangles(shapeList, style.getColor());
                 } else {
-                    WindowVisualizer.drawLines(shapeList, 5, style.getColor(), true);
+                    WindowVisualizer.drawLines(shapeList, 0.01f, style.getColor(), true);
                 }
 
                 for (int x = 0; x < shapeList.size(); x++) {
@@ -259,7 +259,7 @@ public class DataDisplayer {
 
         }
 
-        WindowVisualizer.drawLines(editingShapes, 5, runMan.getEditStyle().getColor(), true);
+        WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
 //        mousePoint.add(new EditorShape(runMan.getMouseWorldPoint()));

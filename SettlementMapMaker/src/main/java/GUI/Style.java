@@ -4,6 +4,7 @@
  */
 package GUI;
 
+import imgui.type.ImFloat;
 import imgui.type.ImInt;
 
 /**
@@ -14,6 +15,7 @@ public class Style {
     
     private DrawColor styleColor;
     private ImInt selectedDrawType = new ImInt();
+    private ImFloat lineThickness = new ImFloat();
     public static final String[] styleTypes = new String[]{"line", "point", "dashed line", "solid"};
     
     public Style(DrawColor styleColor, int selectedDrawType) {
