@@ -79,16 +79,47 @@ public class Shape {
             Line curLine = lines.get(i);
             Point topLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), thickness / 2);
             Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
-            Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
+            Point topR = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
             Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
-            Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topRight, topLeft);
+            Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topR, topLeft);
         }
 
         Point[] triArray = new Point[trian.size()];
         triArray = trian.toArray(triArray);
         return triArray;
     }
-    
+
+    public Point[] getDottedLinesFromPoints(float thickness, boolean enclose) {
+        ArrayList<Point> trian = new ArrayList();
+
+        ArrayList<Line> lines = this.getLines(enclose);
+
+        float dis = thickness*2;
+        
+        for (int i = 0; i < lines.size(); i++) {
+            Line curLine = lines.get(i);
+            float walk = 0;
+            while (dis + walk < curLine.getLength()) {
+                
+                Point simStart = Utils.getPointAlongLine(curLine, walk);
+                Point simEnd = Utils.getPointAlongLine(curLine, walk+dis);
+                
+                Point topLeft = Utils.normalPointToPoint(simStart, curLine.getRise(), curLine.getRun(), thickness / 2);
+                Point botLeft = Utils.normalPointToPoint(simStart, curLine.getRise(), curLine.getRun(), -thickness / 2);
+                Point topR = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), thickness / 2);
+                Point botRight = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), -thickness / 2);
+                Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topR, topLeft);
+                
+                walk += dis*2;
+            }
+        }
+
+        Point[] triArray = new Point[trian.size()];
+        triArray = trian.toArray(triArray);
+        
+        return triArray;
+    }
+
     public Point[] getGlLines(boolean enclose) {
         Point[] lines = new Point[points.size() * 2];
         for (int i = 0; i < lines.length; i++) {
@@ -96,7 +127,7 @@ public class Shape {
                 lines[i] = points.get((int) Math.ceil(i / 2.0));
             } else {
                 if (!enclose) {
-                    lines[i] = points.get(points.size()-1);
+                    lines[i] = points.get(points.size() - 1);
                 } else {
                     lines[i] = points.get(0);
                 }
@@ -293,9 +324,9 @@ public class Shape {
             }
         }
 
-        if (numberOfIntersections != 0) {
-            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
-        }
+//        if (numberOfIntersections != 0) {
+//            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
+//        }
 
         return numberOfIntersections == 1;
     }

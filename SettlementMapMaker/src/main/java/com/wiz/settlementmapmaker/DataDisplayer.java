@@ -238,12 +238,14 @@ public class DataDisplayer {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
                     WindowVisualizer.drawTriangles(shapeList, style.getColor());
+                } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("dashed line")) {
+                    WindowVisualizer.drawDottedLines(shapeList, 0.01f, style.getColor(), true);
                 } else {
                     WindowVisualizer.drawLines(shapeList, 0.01f, style.getColor(), true);
                 }
 
                 for (int x = 0; x < shapeList.size(); x++) {
-                    if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("")) {
+                    if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("") && shapeList.get(x).getCenter() != null) {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
                             gui.textPopup(shapeList.get(x).getName().get(), textPoint.x, textPoint.y, i + x + 1);

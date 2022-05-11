@@ -100,6 +100,50 @@ public class WindowVisualizer {
         GL33C.glBindVertexArray(0);
     }
     
+    public static void drawDottedLines(ArrayList<EditorShape> shapes, float lineWidth, DrawColor color, boolean enclose) {
+
+        float dev = 0.01f;
+        
+        GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
+
+        int amount = 0;
+        for (int i = 0; i < shapes.size(); i++) {
+            amount += calculateVertices(shapes.get(i).getDottedLinesFromPoints(lineWidth,enclose)).length;
+
+        }
+
+        vert = new float[amount];
+        int count = 0;
+        for (int i = 0; i < shapes.size(); i++) {
+            for (int i2 = 0; i2 < calculateVertices(shapes.get(i).getDottedLinesFromPoints(lineWidth, enclose)).length; i2++) {
+                vert[count] = calculateVertices(shapes.get(i).getDottedLinesFromPoints(lineWidth, enclose))[i2];
+                count++;
+            }
+        }
+
+        GL33C.glBindVertexArray(vertexArray);
+
+        //vert = new float[]{-1,0,1,0};
+        FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vert.length);
+        verticesBuffer.put(vert).flip();
+
+        GL33C.glBindBuffer(GL33C.GL_ARRAY_BUFFER, buffer);
+        GL33C.glBufferData(GL33C.GL_ARRAY_BUFFER, verticesBuffer, GL33C.GL_STATIC_DRAW);
+
+        //int stride = 4 * Float.BYTES;
+        GL33C.glVertexAttribPointer(0, 2, GL33C.GL_FLOAT, false, 0, 0);
+        GL33C.glBindVertexArray(0);
+
+        GL30C.glBindVertexArray(vertexArray);
+        GL33C.glEnableVertexAttribArray(0);
+
+        GL33C.glLineWidth(lineWidth);
+        GL33C.glDrawArrays(GL33C.GL_TRIANGLES, 0, amount / 2);
+
+        GL33C.glDisableVertexAttribArray(0);
+        GL33C.glBindVertexArray(0);
+    }
+    
     public static void drawGlLines(ArrayList<EditorShape> shapes, float lineWidth, DrawColor color, boolean enclose) {
 
         GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
