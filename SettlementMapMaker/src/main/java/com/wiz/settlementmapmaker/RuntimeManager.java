@@ -500,6 +500,10 @@ public class RuntimeManager {
     public void updateDataDisplay() {
         dataDis.updateShapeStyleGroupings();
     }
+    
+    public void updateShape(EditorShape shape) {
+        this.calculateShape(shape, this.getStyle(this.getStyles()[shape.getStyle().get()]));
+    }
 
     public int getImageResX() {
         return this.imageXRes.get();
@@ -521,7 +525,20 @@ public class RuntimeManager {
         zone.clearContainedShapes();
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape) zone));
-        zone.addBuildings(SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter()));
+        ArrayList<Building> buildings = SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter());
+        for (int i = 0; i < buildings.size(); i++) {
+            calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
+        }
+        zone.addBuildings(buildings);
+    }
+    
+    public void calculateShape(EditorShape shape, Style style) {
+        switch (Style.styleTypes[style.getSelectedStyle().get()]) {
+            case "line" -> shape.calculateLinesFromPoints(Constants.LINE_THICKNESS, true);
+            case "dashed line" -> shape.calculateDottedLinesFromPoints(Constants.LINE_THICKNESS, true);
+            case "point" -> shape.calculatePointsAsPoints();
+            case "solid" -> shape.calculateTrianglesFromPoints();
+        }
     }
     
     public Point screenPointToWorldPoint(Point screen, int width, int height) {

@@ -117,16 +117,18 @@ public class DataDisplayer {
 
             ArrayList<EditorShape> v = new ArrayList<>();
             v.add(new EditorShape(new Point[]{editPoint}));
-
+            v.get(0).calculatePointsAsPoints();
             WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             if (runMan.getLeftClickState() && !io.getKeyCtrl() && !runMan.imGuiWantCaptureMouse()) {
                 editShape.CalculateCenter();
+                runMan.updateShape(editShape);
                 editPoint = null;
                 editShape = null;
             }
             if (editShape != null) {
                 v.clear();
                 v.add(editShape);
+                v.get(0).calculateGlLines(true);
                 WindowVisualizer.drawGlLines(v, 6, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
                 if (editShape instanceof Obstacle obs) {
                     runMan.updateObstacle(obs);
@@ -238,8 +240,6 @@ public class DataDisplayer {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
                     WindowVisualizer.drawTriangles(shapeList, style.getColor());
-                } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("dashed line")) {
-                    WindowVisualizer.drawDottedLines(shapeList, 0.01f, style.getColor(), true);
                 } else {
                     WindowVisualizer.drawLines(shapeList, 0.01f, style.getColor(), true);
                 }
@@ -261,6 +261,10 @@ public class DataDisplayer {
 
         }
 
+        for (int i = 0; i < editingShapes.size(); i++) {
+            editingShapes.get(i).calculateGlLines(true);
+        }
+        
         WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
@@ -293,18 +297,6 @@ public class DataDisplayer {
 
             currentStyleShapes.add(shapes.get(x));
 
-//            if (shapes.get(x) instanceof Zone) {
-//                Zone zone = (Zone) shapes.get(x);
-//                if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
-//                    currentStyleShapes.remove(shapes.get(x));
-//                    //currentStyleShapes.addAll(settleGen.generateVoronoi(zone));
-//                    if (!zone.getPointList().isEmpty()) {
-//                        //currentStyleShapes.addAll(Arrays.asList(settleGen.convertToBlock(zone, 0.01f, 0.1f)));
-//                        //currentStyleShapes.addAll(settleGen.generateSettlementBlock(zone, 0.01f, 0.02f));
-//                        currentStyleShapes.addAll(zone.getContainedShapes());
-//                    }
-//                }
-//            }
             this.shapesByStyle.get(styles[shapes.get(x).getStyle().get()]).addAll(currentStyleShapes);
         }
 
@@ -327,7 +319,7 @@ public class DataDisplayer {
     }
 
     public void addEditingShape(EditorShape shape) {
-        this.editingShapes.add(shape);
+        this.editingShapes.add(new EditorShape(shape));
     }
 
     public void removeEditingShape(EditorShape shape) {

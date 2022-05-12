@@ -295,6 +295,7 @@ public class GUILayer {
                 ImGui.endDisabled();
             }
             if (ImGui.combo("Style", shapeToEdit.getStyle(), runMan.getStyles())) {
+                runMan.updateShape(shapeToEdit);
                 runMan.updateDataDisplay();
             }
 

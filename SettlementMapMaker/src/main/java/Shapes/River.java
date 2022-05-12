@@ -4,6 +4,7 @@
  */
 package Shapes;
 
+import com.wiz.settlementmapmaker.Constants;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import java.util.ArrayList;
 import java.util.Random;
@@ -84,6 +85,7 @@ public class River {
             Point control = Utils.normalPointToPoint(mid, l.getRise(), l.getRun(), sign * rand.nextFloat(devMin, devMax));
 
             QuadBezierCurve toAdd = new QuadBezierCurve(first, second, control, resolution, thickness, prev);
+            toAdd.calculateTrianglesFromPoints();
             curves.add(toAdd);
             prev = toAdd;
             sign *= -1;

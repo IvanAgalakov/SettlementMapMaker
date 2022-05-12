@@ -16,6 +16,8 @@ import java.util.Arrays;
 public class Shape {
 
     protected ArrayList<Point> points = new ArrayList();
+    protected ArrayList<Point> visualPoints = new ArrayList();
+    
     private Point center;
     private Point topRight;
     private Point bottomLeft;
@@ -70,8 +72,8 @@ public class Shape {
         return false;
     }
 
-    public Point[] getLinesFromPoints(float thickness, boolean enclose) {
-        ArrayList<Point> trian = new ArrayList();
+    public void calculateLinesFromPoints(float thickness, boolean enclose) {
+        visualPoints.clear();
 
         ArrayList<Line> lines = this.getLines(enclose);
 
@@ -81,16 +83,12 @@ public class Shape {
             Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
             Point topR = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
             Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
-            Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topR, topLeft);
+            Utils.addPointsToList(visualPoints, topLeft, botLeft, botRight, botRight, topR, topLeft);
         }
-
-        Point[] triArray = new Point[trian.size()];
-        triArray = trian.toArray(triArray);
-        return triArray;
     }
 
-    public Point[] getDottedLinesFromPoints(float thickness, boolean enclose) {
-        ArrayList<Point> trian = new ArrayList();
+    public void calculateDottedLinesFromPoints(float thickness, boolean enclose) {
+        visualPoints.clear();
 
         ArrayList<Line> lines = this.getLines(enclose);
 
@@ -108,57 +106,48 @@ public class Shape {
                 Point botLeft = Utils.normalPointToPoint(simStart, curLine.getRise(), curLine.getRun(), -thickness / 2);
                 Point topR = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botRight = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), -thickness / 2);
-                Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topR, topLeft);
+                Utils.addPointsToList(visualPoints, topLeft, botLeft, botRight, botRight, topR, topLeft);
                 
                 walk += dis*2;
             }
         }
-
-        Point[] triArray = new Point[trian.size()];
-        triArray = trian.toArray(triArray);
-        
-        return triArray;
     }
 
-    public Point[] getGlLines(boolean enclose) {
-        Point[] lines = new Point[points.size() * 2];
-        for (int i = 0; i < lines.length; i++) {
+    public void calculateGlLines(boolean enclose) {
+        visualPoints.clear();
+        
+        int amount = points.size() * 2;
+        for (int i = 0; i < amount; i++) {
             if ((int) Math.ceil(i / 2.0) < points.size()) {
-                lines[i] = points.get((int) Math.ceil(i / 2.0));
+                visualPoints.add(points.get((int) Math.ceil(i / 2.0)));
             } else {
                 if (!enclose) {
-                    lines[i] = points.get(points.size() - 1);
+                    visualPoints.add(points.get(points.size() - 1));
                 } else {
-                    lines[i] = points.get(0);
+                    visualPoints.add(points.get(0));
                 }
             }
         }
-        return lines;
     }
 
-    public Point[] getTrianglesFromPoints() {
+    public void calculateTrianglesFromPoints() {
 
+        visualPoints.clear();
+        
         if (points.size() < 3) {
-            return new Point[0];
+            return;
         }
-
-        ArrayList<Point> triangles = new ArrayList();
 
         int count = 0;
         for (int i = 0; i < points.size(); i++) {
-            triangles.add(points.get(i));
+            visualPoints.add(points.get(i));
             if (count == 2) {
-                triangles.add(points.get(i));
+                visualPoints.add(points.get(i));
                 count = -1;
             }
             count++;
         }
-        triangles.add(points.get(0));
-
-        Point[] triArray = new Point[triangles.size()];
-        triArray = triangles.toArray(triArray);
-
-        return triArray;
+        visualPoints.add(points.get(0));
 
     }
 
@@ -350,6 +339,15 @@ public class Shape {
             }
         }
         return lines;
+    }
+    
+    public void calculatePointsAsPoints() {
+        visualPoints.clear();
+        visualPoints.addAll(points);
+    }
+    
+    public ArrayList<Point> getVisualPoints() {
+        return this.visualPoints;
     }
 
     public Point getLastPoint() {

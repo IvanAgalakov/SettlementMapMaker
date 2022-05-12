@@ -45,9 +45,8 @@ public class QuadBezierCurve extends EditorShape {
     }
 
     @Override
-    public Point[] getTrianglesFromPoints() {
-        ArrayList<Point> trian = new ArrayList();
-
+    public void calculateTrianglesFromPoints() {
+        
         ArrayList<Line> lines = this.getLines(false);
 
         Point lastBotRight = new Point(0, 0);
@@ -66,21 +65,19 @@ public class QuadBezierCurve extends EditorShape {
                 Point botLeft = Utils.normalPointToPoint(curLine.getStart(), curLine.getRise(), curLine.getRun(), -thickness / 2);
                 Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
-                Utils.addPointsToList(trian, topLeft, botLeft, botRight, botRight, topRight, topLeft);
+                Utils.addPointsToList(this.visualPoints, topLeft, botLeft, botRight, botRight, topRight, topLeft);
                 lastBotRight = botRight;
                 lastTopRight = topRight;
             } else {
                 Point topRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botRight = Utils.normalPointToPoint(curLine.getEnd(), curLine.getRise(), curLine.getRun(), -thickness / 2);
-                Utils.addPointsToList(trian, lastTopRight, lastBotRight, botRight, botRight, topRight, lastTopRight);
+                Utils.addPointsToList(this.visualPoints, lastTopRight, lastBotRight, botRight, botRight, topRight, lastTopRight);
                 lastBotRight = botRight;
                 lastTopRight = topRight;
             }
         }
 
-        Point[] triArray = new Point[trian.size()];
-        triArray = trian.toArray(triArray);
-        return triArray;
+        
     }
 
 }

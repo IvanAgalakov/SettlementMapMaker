@@ -25,6 +25,8 @@ public class Constants {
     
     public static final int CALM_GREEN = ImColor.intToColor(55, 140, 78, 255);
     
+    public static final float LINE_THICKNESS = 0.01f;
+    
     public static enum CityShapeTypes {
         ZONE((state) -> new Zone(state.defaultZoneName, 0)),
         BUILDING((state) -> new Building(state.defaultBuildingName)),
