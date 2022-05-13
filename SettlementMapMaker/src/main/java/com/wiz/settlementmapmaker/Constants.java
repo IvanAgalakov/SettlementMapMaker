@@ -44,7 +44,7 @@ public class Constants {
         }
     }
     
-    public static final String[] ZONE_TYPES = new String[]{"Generate Buildings", "Block Building Generation"};
+    public static final String[] ZONE_TYPES = new String[]{"Generate Buildings", "Generate City"};
     
     public static final String[] OBSTACLE_TYPES = new String[]{"River"};
     

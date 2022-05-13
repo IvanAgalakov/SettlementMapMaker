@@ -5,6 +5,7 @@
 package Shapes;
 
 import java.util.ArrayList;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
 
 /**
  *
@@ -24,6 +25,16 @@ public class Building extends EditorShape {
     public Building(ArrayList<Point> points) {
         super(points);
         setName("");
+    }
+    
+    public Building (PolygonSimple base) {
+        this("");
+        double[] x = base.getXPoints();
+        double[] y = base.getYPoints();
+        
+        for (int i = 0; i < x.length; i++) {
+            this.points.add(new Point((float)x[i], (float)y[i]));
+        }
     }
 
     public void setName() {

@@ -9,10 +9,15 @@ import Shapes.EditorShape;
 import Shapes.Line;
 
 import Shapes.Point;
+import Shapes.Zone;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Random;
+import kn.uni.voronoitreemap.datastructure.OpenList;
+import kn.uni.voronoitreemap.diagram.PowerDiagram;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import kn.uni.voronoitreemap.j2d.Site;
 
 /**
  *
@@ -185,6 +190,54 @@ public class SettlementGenerator {
         ArrayList<Building> ret = cutUpShape(cutup, times - 1, minPerimeter);
 
         return ret;
+    }
+
+    public static ArrayList<Building> getMultipleBlocks(Zone base) {
+        ArrayList<Building> zones = new ArrayList<>();
+
+        PowerDiagram diagram = new PowerDiagram();
+        OpenList sites = new OpenList();
+
+        Random rand = new Random();
+
+        PolygonSimple rootPolygon = new PolygonSimple();
+
+        for (int i = 0; i < base.size(); i++) {
+            rootPolygon.add(base.getPoint(i).x, base.getPoint(i).y);
+        }
+
+        float width = (base.getTopRight().x - base.getBottomLeft().x);
+        float height = (base.getTopRight().y - base.getBottomLeft().y);
+        float addx = base.getBottomLeft().x;
+        float addy = base.getBottomLeft().y;
+        for (int i = 0; i < base.getRegions().get(); i++) {
+            Site site = new Site(addx + rand.nextFloat(width), addy + rand.nextFloat(height));
+            // we could also set a different weighting to some sites
+            //site.setWeight(rand.nextDouble(10));
+            sites.add(site);
+        }
+
+        diagram.setSites(sites);
+
+        diagram.setClipPoly(rootPolygon);
+
+        diagram.computeDiagram();
+
+        for (int i = 0; i < sites.size; i++) {
+            Site site = sites.array[i];
+            PolygonSimple polygon = site.getPolygon();
+            if (polygon != null) {
+                Building build = new Building(polygon);
+                build.removeAllOfPoint(Point.zero);
+                build.ScaleShape(0.9f, 0.9f);
+                zones.add(build);
+                System.out.println(build.size());
+            }
+        }
+        
+        
+
+        return zones;
     }
 
     public static EditorShape[] toShapeArray(EditorShape[][] ar) {

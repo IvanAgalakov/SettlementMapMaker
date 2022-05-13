@@ -8,6 +8,7 @@ import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import imgui.type.ImLong;
 import java.util.ArrayList;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Zone extends EditorShape {
 
     private ImInt zoneType;
     private ImInt divisions = new ImInt(1);
+    private ImInt regions = new ImInt(4);
     private ImFloat minPerimeter = new ImFloat(0.01f);
     private final ArrayList<Building> containedShapes = new ArrayList<Building>();
     private ImInt selectedContainedBuilding = new ImInt();
@@ -36,6 +38,10 @@ public class Zone extends EditorShape {
     
     public int getDivisions() {
         return divisions.get();
+    }
+    
+    public ImInt getRegions() {
+        return regions;
     }
     
     public float getMinPerimeter() {

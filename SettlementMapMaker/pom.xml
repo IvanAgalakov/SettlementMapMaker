@@ -192,6 +192,11 @@
             <version>2.8.9</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.ArlindNocaj</groupId>
+            <artifactId>power-voronoi-diagram</artifactId>
+            <version>-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>

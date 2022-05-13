@@ -131,7 +131,7 @@ public class RuntimeManager {
         FontLibrary.loadAllFonts(io);
         TextureLibrary.loadAllTextures();
         SettlementNameGenerator.loadAllNames();
-        
+
         io.setFontDefault(FontLibrary.getFont(0));
         initStyle();
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
@@ -154,7 +154,7 @@ public class RuntimeManager {
     private boolean lastRightClick = false;
     private boolean leftClick = false;
     private boolean lastLeftClick = false;
-    
+
     public void controls() {
         if (ImGui.isKeyPressed(ImGui.getKeyIndex(ImGuiKey.Z)) && io.getKeyCtrl()) {
             if (this.canUndo()) {
@@ -171,18 +171,18 @@ public class RuntimeManager {
         if (io.getKeysDown(GLFW.GLFW_KEY_S) && io.getKeyCtrl() && lastSPress == false) {
             this.saveCurrentSettlement();
         }
-        
+
         // checks if a mouse press just happened, later would be a good idea to make this a general thing
         if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightClick == false && lastRightClick == false) {
             rightClick = true;
-        } else if (rightClick == true){
+        } else if (rightClick == true) {
             rightClick = false;
         }
         lastRightClick = io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT);
-        
+
         if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftClick == false && lastLeftClick == false) {
             leftClick = true;
-        } else if (leftClick == true){
+        } else if (leftClick == true) {
             leftClick = false;
         }
         lastLeftClick = io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
@@ -200,15 +200,15 @@ public class RuntimeManager {
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
 
     }
-    
+
     public boolean getRightClickState() {
         return rightClick;
     }
-    
+
     public boolean getLeftClickState() {
         return leftClick;
     }
-    
+
     public boolean imGuiWantCaptureMouse() {
         return io.getWantCaptureMouse();
     }
@@ -228,11 +228,11 @@ public class RuntimeManager {
     public void removeEditingShape(EditorShape editShape) {
         dataDis.removeEditingShape(editShape);
     }
-    
+
     public void clearEditingShapes() {
         dataDis.clearEditingShapes();
     }
-    
+
     public boolean containsEditingShape(EditorShape editShape) {
         return dataDis.containsEditingShape(editShape);
     }
@@ -482,7 +482,7 @@ public class RuntimeManager {
     public Style getEditStyle() {
         return this.currentSettlement.getEditStyle();
     }
-    
+
     public Style getWaterStyle() {
         return this.currentSettlement.getWaterStye();
     }
@@ -500,7 +500,7 @@ public class RuntimeManager {
     public void updateDataDisplay() {
         dataDis.updateShapeStyleGroupings();
     }
-    
+
     public void updateShape(EditorShape shape) {
         this.calculateShape(shape, this.getStyle(this.getStyles()[shape.getStyle().get()]));
     }
@@ -531,25 +531,39 @@ public class RuntimeManager {
         }
         zone.addBuildings(buildings);
     }
-    
+
+    public void generateCitySectionsInZone(Zone zone) {
+        zone.clearContainedShapes();
+        ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone);
+        buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
+        for (int i = 0; i < buildings.size(); i++) {
+            calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
+        }
+        zone.getContainedShapes().addAll(buildings);
+    }
+
     public void calculateShape(EditorShape shape, Style style) {
         switch (Style.styleTypes[style.getSelectedStyle().get()]) {
-            case "line" -> shape.calculateLinesFromPoints(Constants.LINE_THICKNESS, true);
-            case "dashed line" -> shape.calculateDottedLinesFromPoints(Constants.LINE_THICKNESS, true);
-            case "point" -> shape.calculatePointsAsPoints();
-            case "solid" -> shape.calculateTrianglesFromPoints();
+            case "line" ->
+                shape.calculateLinesFromPoints(Constants.LINE_THICKNESS, true);
+            case "dashed line" ->
+                shape.calculateDottedLinesFromPoints(Constants.LINE_THICKNESS, true);
+            case "point" ->
+                shape.calculatePointsAsPoints();
+            case "solid" ->
+                shape.calculateTrianglesFromPoints();
         }
     }
-    
+
     public Point screenPointToWorldPoint(Point screen, int width, int height) {
         return dataDis.screenPointToWorldPoint(screen, width, height);
     }
-    
+
     public Point getMouseWorldPoint() {
         Point p = new Point(io.getMousePosX(), io.getMousePosY());
         return screenPointToWorldPoint(p, this.getWidth(), this.getHeight());
     }
-    
+
     public void updateObstacle(Obstacle obs) {
         dataDis.updateAnObstacle(obs);
     }

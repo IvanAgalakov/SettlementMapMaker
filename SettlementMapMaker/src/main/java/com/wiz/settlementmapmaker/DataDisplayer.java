@@ -188,7 +188,7 @@ public class DataDisplayer {
                         Zone zone = (Zone) shapeList.get(x);
 
                         //System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
-                        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
+                        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings") || Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
                             shapeList.remove(shapeList.get(x));
                             x--;
                             shapeList.addAll(zone.getContainedShapes());

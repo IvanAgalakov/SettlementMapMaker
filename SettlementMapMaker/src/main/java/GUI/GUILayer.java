@@ -302,7 +302,7 @@ public class GUILayer {
             if (shapeToEdit instanceof Zone) {
                 zoneShapeEditOptions(shapeToEdit);
             }
-            
+
             if (shapeToEdit instanceof Obstacle) {
                 obstacleShapeEditOptions(shapeToEdit);
             }
@@ -314,11 +314,26 @@ public class GUILayer {
 
     }
 
-    private void generate(Zone zone) {
+    private void generateBlock(Zone zone) {
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             runMan.removeEditingShape(zone.getContainedShapes().get(i));
         }
         runMan.generateBlockInZone(zone);
+    }
+
+    private void generateCity(Zone zone) {
+        for (int i = 0; i < zone.getContainedShapes().size(); i++) {
+            runMan.removeEditingShape(zone.getContainedShapes().get(i));
+        }
+        runMan.generateCitySectionsInZone(zone);
+    }
+    
+    private void generate(int gen, Zone zone) {
+        if (gen == 0) {
+            generateBlock(zone);
+        } else {
+            generateCity(zone);
+        }
     }
 
     public void zoneShapeEditOptions(EditorShape toParse) {
@@ -327,51 +342,65 @@ public class GUILayer {
 
         }
 
+        int gen = -1;
+        if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
+            if (ImGui.button("Generate Block")) {
+                generateBlock(zone);
+                gen = 0;
+            }
+        } else if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
+            if (ImGui.button("Generate City")) {
+                generateCity(zone);
+                gen = 1;
+            }
+            
+            if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
+                generateCity(zone);
+            }
+        }
+
         if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f)) {
-            generate(zone);
+            generate(gen,zone);
         }
 
         if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
-            generate(zone);
-        }
-        if (ImGui.button("Generate Block")) {
-            generate(zone);
+            generate(gen,zone);
         }
 
         ImVec2 pos = ImGui.getWindowPos();
         pos.set(pos.x + ImGui.getWindowSizeX(), pos.y);
         containedZoneList(zone, pos);
     }
-    
+
     public void obstacleShapeEditOptions(EditorShape toParse) {
         Obstacle obst = (Obstacle) toParse;
         if (ImGui.combo("Obstacle Types", obst.getObstacleType(), Constants.OBSTACLE_TYPES)) {
-            
+
         }
-        
+
         if (Constants.OBSTACLE_TYPES[obst.getObstacleType().get()].equals("River")) {
             if (ImGui.inputScalar("seed", ImGuiDataType.S64, obst.getSeed())) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("Minimum Wiggle", obst.getDevMin().getData(), 0.0f, obst.getDevMax().get()-0.01f)) {
+            if (ImGui.sliderFloat("Minimum Wiggle", obst.getDevMin().getData(), 0.0f, obst.getDevMax().get() - 0.01f)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("Maximum Wiggle", obst.getDevMax().getData(), obst.getDevMin().get()+0.01f, 0.2f)){
+            if (ImGui.sliderFloat("Maximum Wiggle", obst.getDevMax().getData(), obst.getDevMin().get() + 0.01f, 0.2f)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("Section Deviation", obst.getSectionDev().getData(), 0.001f, 0.1f)){
+            if (ImGui.sliderFloat("Section Deviation", obst.getSectionDev().getData(), 0.001f, 0.1f)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.01f, 0.2f)){
+            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.01f, 0.2f)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderInt("Resolution", obst.getResolution().getData(), 3, 10)){
+            if (ImGui.sliderInt("Resolution", obst.getResolution().getData(), 3, 10)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("thickness", obst.getThickness().getData(), 0.01f, 1f)){
+            if (ImGui.sliderFloat("thickness", obst.getThickness().getData(), 0.01f, 1f)) {
                 runMan.updateObstacle(obst);
             }
-            
+
         }
     }
 
@@ -623,7 +652,7 @@ public class GUILayer {
             }
 
             ImGui.inputText("Name", runMan.getPendingSettlementName());
-            if(ImGui.button("Generate Name")) {
+            if (ImGui.button("Generate Name")) {
                 runMan.getPendingSettlementName().set(SettlementNameGenerator.getRandomSettlementName());
             }
             if (ImGui.button("Create")) {

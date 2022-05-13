@@ -159,8 +159,12 @@ public class Shape {
         this.CalculateCenter();
     }
 
-    public void removePoints() {
-
+    public void removeAllOfPoint(Point p) {
+        for (int i = points.size()-1; i >= 0; i--) {
+            if (points.get(i).equals(p)) {
+                points.remove(i);
+            }
+        }
     }
 
     public void CalculateCenter() {
@@ -225,6 +229,9 @@ public class Shape {
     }
 
     public void ScaleShape(float x, float y) {
+        if (center == null) {
+            this.CalculateCenter();
+        }
         for (int i = 0; i < points.size(); i++) {
             points.get(i).setX(center.x + ((points.get(i).x - center.x) * x));
             points.get(i).setY(center.y + ((points.get(i).y - center.y) * y));
