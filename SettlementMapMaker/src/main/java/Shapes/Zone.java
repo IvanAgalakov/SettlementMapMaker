@@ -20,6 +20,7 @@ public class Zone extends EditorShape {
     private ImInt divisions = new ImInt(1);
     private ImInt regions = new ImInt(4);
     private ImFloat minPerimeter = new ImFloat(0.01f);
+    private ImFloat minSideSize = new ImFloat(0.001f);
     private final ArrayList<Building> containedShapes = new ArrayList<Building>();
     private ImInt selectedContainedBuilding = new ImInt();
 
@@ -48,12 +49,20 @@ public class Zone extends EditorShape {
         return minPerimeter.get();
     }
     
+    public float getMinSideLength() {
+        return minSideSize.get();
+    }
+    
     public int[] getDivisionData() {
         return divisions.getData();
     }
     
     public float[] getMinPerimeterData() {
         return minPerimeter.getData();
+    }
+    
+    public float[] getMinSideLengthData() {
+        return minSideSize.getData();
     }
     
     public ArrayList<Building> getContainedShapes() {

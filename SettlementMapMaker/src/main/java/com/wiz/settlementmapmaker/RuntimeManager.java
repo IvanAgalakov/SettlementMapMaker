@@ -526,6 +526,11 @@ public class RuntimeManager {
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape) zone));
         ArrayList<Building> buildings = SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter());
+        for (int i = buildings.size() - 1; i >= 0; i--) {
+            if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
+                buildings.remove(i);
+            }
+        }
         for (int i = 0; i < buildings.size(); i++) {
             calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
         }
@@ -536,6 +541,11 @@ public class RuntimeManager {
         zone.clearContainedShapes();
         ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone);
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
+        for (int i = buildings.size() - 1; i >= 0; i--) {
+            if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
+                buildings.remove(i);
+            }
+        }
         for (int i = 0; i < buildings.size(); i++) {
             calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
         }

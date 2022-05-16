@@ -297,6 +297,26 @@ public class Shape {
         }
         return perimeter;
     }
+    
+    public float getFootprint() {
+        if (topRight == null || bottomLeft == null) {
+            this.CalculateCenter();
+        }
+        return (topRight.y-bottomLeft.y)*(topRight.x-bottomLeft.x);
+    }
+    
+    public float getSmallestSide() {
+        ArrayList<Line> lines = this.getLines(true);
+        float f = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            if (i == 0) {
+                f = lines.get(i).getLength();
+            } else if (lines.get(i).getLength() < f) {
+                f = lines.get(i).getLength();
+            }
+        }
+        return f;
+    }
 
     public boolean isPointInside(Point p) {
         ArrayList<Line> lines = new ArrayList<>();

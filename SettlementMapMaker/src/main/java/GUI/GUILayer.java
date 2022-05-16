@@ -359,7 +359,11 @@ public class GUILayer {
             }
         }
 
-        if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.0001f, 3f)) {
+        if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.001f, 3f)) {
+            generate(gen,zone);
+        }
+        
+        if (ImGui.sliderFloat("Minimum Side Length", zone.getMinSideLengthData(), 0.0001f, 0.1f)) {
             generate(gen,zone);
         }
 
