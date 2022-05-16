@@ -34,8 +34,8 @@ public class DataDisplayer {
     private float initCameraX = 0f, initCameraY = 0f;
     private float cameraX = 0f, cameraY = 0f;
 
-    private float realMouseX = 0f;
-    private float realMouseY = 0f;
+    private double realMouseX = 0f;
+    private double realMouseY = 0f;
 
     private Point editPoint = null;
     private EditorShape editShape = null;
@@ -48,7 +48,7 @@ public class DataDisplayer {
 
     private HashMap<String, ArrayList<EditorShape>> shapesByStyle = new HashMap<>();
 
-    private HashMap<Obstacle, ArrayList<EditorShape>> obstacleRivers = new HashMap<>();
+    private HashMap<Obstacle, ArrayList<EditorShape>> obstacles = new HashMap<>();
     private HashMap<Obstacle, ImBoolean> updateObstacle = new HashMap<>();
 
     private GUILayer gui;
@@ -195,9 +195,7 @@ public class DataDisplayer {
                             continue;
                         }
                     }
-                    if (shapeList.get(x) instanceof Obstacle) {
-                        Obstacle obs = (Obstacle) shapeList.get(x);
-
+                    if (shapeList.get(x) instanceof Obstacle obs) {
                         if (this.updateObstacle.containsKey(obs)) {
                             if (this.updateObstacle.get(obs).get()) {
                                 if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
@@ -217,8 +215,9 @@ public class DataDisplayer {
                                         for (int a = 0; a < rivers.size(); a++) {
                                             drawData.addAll(rivers.get(a).getCurves());
                                         }
+                                        
                                         shapeList.addAll(drawData);
-                                        this.obstacleRivers.put(obs, drawData);
+                                        this.obstacles.put(obs, drawData);
                                         this.updateObstacle.get(obs).set(false);
                                         continue;
                                     }
@@ -226,7 +225,7 @@ public class DataDisplayer {
                             } else {
                                 shapeList.remove(shapeList.get(x));
                                 x--;
-                                shapeList.addAll(this.obstacleRivers.get(obs));
+                                shapeList.addAll(this.obstacles.get(obs));
                             }
                         } else {
                             this.updateObstacle.put(obs, new ImBoolean(true));
@@ -248,11 +247,11 @@ public class DataDisplayer {
                     if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("") && shapeList.get(x).getCenter() != null) {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
-                            gui.textPopup(shapeList.get(x).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            gui.textPopup(shapeList.get(x).getName().get(), (float)textPoint.x, (float)textPoint.y, i + x + 1);
                         } else {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
-                            gui.textPopup(shapeList.get(x).getName().get(), textPoint.x, textPoint.y, i + x + 1);
+                            gui.textPopup(shapeList.get(x).getName().get(), (float)textPoint.x, (float)textPoint.y, i + x + 1);
                         }
                     }
                 }
@@ -332,6 +331,18 @@ public class DataDisplayer {
 
     public boolean containsEditingShape(EditorShape shape) {
         return this.editingShapes.contains(shape);
+    }
+    
+    public ArrayList<EditorShape> getBlockingShapes() {
+        ArrayList<ArrayList<EditorShape>> shapes = new ArrayList<>(this.obstacles.values());
+        ArrayList<EditorShape> singleList = new ArrayList<>();
+        for (int i = 0; i < shapes.size(); i++) {
+            for (int a = 0; a < shapes.get(i).size(); a++) {
+                shapes.get(i).get(a).calculateTrianglesFromPoints();
+                singleList.add(new EditorShape(shapes.get(i).get(a).getVisualPoints()));
+            }
+        }
+        return singleList;
     }
 
 }

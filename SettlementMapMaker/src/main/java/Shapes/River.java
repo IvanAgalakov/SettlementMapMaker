@@ -16,14 +16,14 @@ import java.util.Random;
 public class River {
 
     private ArrayList<QuadBezierCurve> curves = new ArrayList();
-    private final float divisions;
-    private final float devMin, devMax;
+    private final double divisions;
+    private final double devMin, devMax;
     private final Line line;
-    private final float sectionDev;
+    private final double sectionDev;
     private River previous = null;
     private final long seed;
     private final int resolution;
-    private final float thickness;
+    private final double thickness;
     
     private int sign = 1;
 
@@ -63,7 +63,7 @@ public class River {
         Random rand = new Random();
         rand.setSeed(seed);
 
-        float step = divisions;
+        double step = divisions;
 
         
         QuadBezierCurve prev = null;
@@ -71,18 +71,18 @@ public class River {
             prev = previous.getCurve(previous.getLength() - 1);
         }
         
-        float walk = 0;
-        float walkEnd = line.getLength();
+        double walk = 0;
+        double walkEnd = line.getLength();
         while (walk < walkEnd) {
             Point first = Utils.getPointAlongLine(line, walk);
-            float addToWalk = step + rand.nextFloat(-sectionDev, sectionDev);
+            double addToWalk = step + rand.nextDouble(-sectionDev, sectionDev);
             Point second = Utils.getPointAlongLine(line, walk + addToWalk);
 
             walk += addToWalk;
 
             Line l = new Line(first, second);
             Point mid = Utils.getPointAlongLine(l, l.getLength() / 2);
-            Point control = Utils.normalPointToPoint(mid, l.getRise(), l.getRun(), sign * rand.nextFloat(devMin, devMax));
+            Point control = Utils.normalPointToPoint(mid, l.getRise(), l.getRun(), sign * rand.nextDouble(devMin, devMax));
 
             QuadBezierCurve toAdd = new QuadBezierCurve(first, second, control, resolution, thickness, prev);
             toAdd.calculateTrianglesFromPoints();

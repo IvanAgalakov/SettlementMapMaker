@@ -206,12 +206,12 @@ public class SettlementGenerator {
             rootPolygon.add(base.getPoint(i).x, base.getPoint(i).y);
         }
 
-        float width = (base.getTopRight().x - base.getBottomLeft().x);
-        float height = (base.getTopRight().y - base.getBottomLeft().y);
-        float addx = base.getBottomLeft().x;
-        float addy = base.getBottomLeft().y;
+        double width = (base.getTopRight().x - base.getBottomLeft().x);
+        double height = (base.getTopRight().y - base.getBottomLeft().y);
+        double addx = base.getBottomLeft().x;
+        double addy = base.getBottomLeft().y;
         for (int i = 0; i < base.getRegions().get(); i++) {
-            Site site = new Site(addx + rand.nextFloat(width), addy + rand.nextFloat(height));
+            Site site = new Site(addx + rand.nextDouble(width), addy + rand.nextDouble(height));
             // we could also set a different weighting to some sites
             //site.setWeight(rand.nextDouble(10));
             sites.add(site);

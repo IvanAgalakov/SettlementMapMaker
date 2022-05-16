@@ -10,12 +10,12 @@ package Shapes;
  */
 public class Point {
 
-    public float x;
-    public float y;
+    public double x;
+    public double y;
 
     public static Point zero = new Point(0, 0);
 
-    public Point(float x, float y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -25,11 +25,11 @@ public class Point {
         this.y = p.y;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
     
@@ -38,32 +38,32 @@ public class Point {
         this.x = p.x;
     }
 
-    public void minClampX(float cX) {
+    public void minClampX(double cX) {
         if (cX > x) {
             x = cX;
         }
     }
 
-    public void maxClampX(float cX) {
+    public void maxClampX(double cX) {
         if (cX < x) {
             x = cX;
         }
     }
 
-    public void minClampY(float cY) {
+    public void minClampY(double cY) {
         if (cY > y) {
             y = cY;
         }
     }
 
-    public void maxClampY(float cY) {
+    public void maxClampY(double cY) {
         if (cY < y) {
             y = cY;
         }
     }
 
-    public float getDistanceToPoint(Point p) {
-        return (float) Math.sqrt(Math.pow((this.x - p.x), 2) + Math.pow((this.y - p.y), 2));
+    public double getDistanceToPoint(Point p) {
+        return Math.sqrt(Math.pow((this.x - p.x), 2) + Math.pow((this.y - p.y), 2));
     }
 
     @Override

@@ -17,13 +17,13 @@ public class Shape {
 
     protected ArrayList<Point> points = new ArrayList();
     protected ArrayList<Point> visualPoints = new ArrayList();
-    
+
     private Point center;
     private Point topRight;
     private Point bottomLeft;
 
-    private float width;
-    private float height;
+    private double width;
+    private double height;
 
     protected Shape(Point... points) {
         this.points.addAll(Arrays.asList(points));
@@ -72,7 +72,7 @@ public class Shape {
         return false;
     }
 
-    public void calculateLinesFromPoints(float thickness, boolean enclose) {
+    public void calculateLinesFromPoints(double thickness, boolean enclose) {
         visualPoints.clear();
 
         ArrayList<Line> lines = this.getLines(enclose);
@@ -87,35 +87,35 @@ public class Shape {
         }
     }
 
-    public void calculateDottedLinesFromPoints(float thickness, boolean enclose) {
+    public void calculateDottedLinesFromPoints(double thickness, boolean enclose) {
         visualPoints.clear();
 
         ArrayList<Line> lines = this.getLines(enclose);
 
-        float dis = thickness*2;
-        
+        double dis = thickness * 2;
+
         for (int i = 0; i < lines.size(); i++) {
             Line curLine = lines.get(i);
-            float walk = 0;
+            double walk = 0;
             while (dis + walk < curLine.getLength()) {
-                
+
                 Point simStart = Utils.getPointAlongLine(curLine, walk);
-                Point simEnd = Utils.getPointAlongLine(curLine, walk+dis);
-                
+                Point simEnd = Utils.getPointAlongLine(curLine, walk + dis);
+
                 Point topLeft = Utils.normalPointToPoint(simStart, curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botLeft = Utils.normalPointToPoint(simStart, curLine.getRise(), curLine.getRun(), -thickness / 2);
                 Point topR = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), thickness / 2);
                 Point botRight = Utils.normalPointToPoint(simEnd, curLine.getRise(), curLine.getRun(), -thickness / 2);
                 Utils.addPointsToList(visualPoints, topLeft, botLeft, botRight, botRight, topR, topLeft);
-                
-                walk += dis*2;
+
+                walk += dis * 2;
             }
         }
     }
 
     public void calculateGlLines(boolean enclose) {
         visualPoints.clear();
-        
+
         int amount = points.size() * 2;
         for (int i = 0; i < amount; i++) {
             if ((int) Math.ceil(i / 2.0) < points.size()) {
@@ -133,7 +133,7 @@ public class Shape {
     public void calculateTrianglesFromPoints() {
 
         visualPoints.clear();
-        
+
         if (points.size() < 3) {
             return;
         }
@@ -160,7 +160,7 @@ public class Shape {
     }
 
     public void removeAllOfPoint(Point p) {
-        for (int i = points.size()-1; i >= 0; i--) {
+        for (int i = points.size() - 1; i >= 0; i--) {
             if (points.get(i).equals(p)) {
                 points.remove(i);
             }
@@ -168,8 +168,8 @@ public class Shape {
     }
 
     public void CalculateCenter() {
-        float averageX = 0, averageY = 0;
-        Float bigX = null, bigY = null, smallX = null, smallY = null;
+        double averageX = 0, averageY = 0;
+        Double bigX = null, bigY = null, smallX = null, smallY = null;
         for (int i = 0; i < points.size(); i++) {
             averageX += points.get(i).x;
             averageY += points.get(i).y;
@@ -216,11 +216,11 @@ public class Shape {
         return bottomLeft;
     }
 
-    public float getWidth() {
+    public double getWidth() {
         return this.width;
     }
 
-    public float getHeight() {
+    public double getHeight() {
         return this.height;
     }
 
@@ -228,7 +228,7 @@ public class Shape {
         return center;
     }
 
-    public void ScaleShape(float x, float y) {
+    public void ScaleShape(double x, double y) {
         if (center == null) {
             this.CalculateCenter();
         }
@@ -238,14 +238,14 @@ public class Shape {
         }
     }
 
-    public void ScaleAroundPoint(float x, float y, Point p) {
+    public void ScaleAroundPoint(double x, double y, Point p) {
         for (int i = 0; i < points.size(); i++) {
             points.get(i).setX(p.x + ((points.get(i).x - p.x) * x));
             points.get(i).setY(p.y + ((points.get(i).y - p.y) * y));
         }
     }
 
-    public Shape SimulateScaleAroundPoint(float x, float y, Point p) {
+    public Shape SimulateScaleAroundPoint(double x, double y, Point p) {
         Shape s = new Shape(this);
         for (int i = 0; i < s.getPoints().length; i++) {
             s.getPoints()[i].setX(p.x + ((s.getPoints()[i].x - p.x) * x));
@@ -254,7 +254,7 @@ public class Shape {
         return s;
     }
 
-    public Shape translateCopyShape(float x, float y) {
+    public Shape translateCopyShape(double x, double y) {
         Shape copy = new Shape(this);
         for (int i = 0; i < copy.getPoints().length; i++) {
             copy.getPoints()[i].setX(copy.getPoints()[i].x + x);
@@ -284,9 +284,9 @@ public class Shape {
         return result;
     }
 
-    public float getPerimeter() {
+    public double getPerimeter() {
         Point last = null;
-        float perimeter = 0;
+        double perimeter = 0;
         for (Point p : points) {
             if (last != null) {
                 perimeter += p.getDistanceToPoint(last);
@@ -297,17 +297,17 @@ public class Shape {
         }
         return perimeter;
     }
-    
-    public float getFootprint() {
+
+    public double getFootprint() {
         if (topRight == null || bottomLeft == null) {
             this.CalculateCenter();
         }
-        return (topRight.y-bottomLeft.y)*(topRight.x-bottomLeft.x);
+        return (topRight.y - bottomLeft.y) * (topRight.x - bottomLeft.x);
     }
-    
-    public float getSmallestSide() {
+
+    public double getSmallestSide() {
         ArrayList<Line> lines = this.getLines(true);
-        float f = 0;
+        double f = 0;
         for (int i = 0; i < lines.size(); i++) {
             if (i == 0) {
                 f = lines.get(i).getLength();
@@ -343,8 +343,32 @@ public class Shape {
 //        if (numberOfIntersections != 0) {
 //            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
 //        }
-
         return numberOfIntersections == 1;
+    }
+
+    public boolean hasPointsInside(Shape s) {
+        for (int i = 0; i < this.points.size(); i++) {
+            if (s.isPointInside(this.points.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean overlaps(Shape s) {
+        ArrayList<Line> myLines = this.getLines(true);
+        ArrayList<Line> theirLines = s.getLines(true);
+        for (int i = 0; i < myLines.size(); i++) {
+            for (int a = 0; a < theirLines.size(); a++) {
+                Point p = myLines.get(i).getIntersection(theirLines.get(a));
+                if (p != null) {
+                    if (myLines.get(i).isPointOnLine(p) && theirLines.get(a).isPointOnLine(p)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public ArrayList<Line> getLines(boolean reconnect) {
@@ -367,12 +391,12 @@ public class Shape {
         }
         return lines;
     }
-    
+
     public void calculatePointsAsPoints() {
         visualPoints.clear();
         visualPoints.addAll(points);
     }
-    
+
     public ArrayList<Point> getVisualPoints() {
         return this.visualPoints;
     }

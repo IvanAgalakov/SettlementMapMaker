@@ -233,8 +233,8 @@ public class WindowVisualizer {
         float[] vert = new float[points.size() * 2];
         int count = 0;
         for (int i = 0; i < points.size(); i++) {
-            vert[count] = points.get(i).x;
-            vert[count + 1] = points.get(i).y;
+            vert[count] = (float)points.get(i).x;
+            vert[count + 1] = (float)points.get(i).y;
 
             count += 2;
         }

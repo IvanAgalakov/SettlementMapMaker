@@ -526,11 +526,22 @@ public class RuntimeManager {
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape) zone));
         ArrayList<Building> buildings = SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter());
+        
+        ArrayList<EditorShape> block = dataDis.getBlockingShapes();
         for (int i = buildings.size() - 1; i >= 0; i--) {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
                 buildings.remove(i);
+            } else {
+                for (int a = 0; a < block.size(); a++) {
+                    if (buildings.get(i).overlaps(block.get(a))) {
+                        buildings.remove(i);
+                        break;
+                    }
+                }
             }
-        }
+        } 
+        
+        
         for (int i = 0; i < buildings.size(); i++) {
             calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
         }
@@ -541,9 +552,18 @@ public class RuntimeManager {
         zone.clearContainedShapes();
         ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone);
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
+        
+        ArrayList<EditorShape> block = dataDis.getBlockingShapes();
         for (int i = buildings.size() - 1; i >= 0; i--) {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
                 buildings.remove(i);
+            } else {
+                for (int a = 0; a < block.size(); a++) {
+                    if (buildings.get(i).overlaps(block.get(a))) {
+                        buildings.remove(i);
+                        break;
+                    }
+                }
             }
         }
         for (int i = 0; i < buildings.size(); i++) {

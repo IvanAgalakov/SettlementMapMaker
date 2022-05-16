@@ -327,7 +327,7 @@ public class GUILayer {
         }
         runMan.generateCitySectionsInZone(zone);
     }
-    
+
     private void generate(int gen, Zone zone) {
         if (gen == 0) {
             generateBlock(zone);
@@ -344,31 +344,31 @@ public class GUILayer {
 
         int gen = -1;
         if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
+            gen = 0;
             if (ImGui.button("Generate Block")) {
                 generateBlock(zone);
-                gen = 0;
             }
         } else if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
+            gen = 1;
             if (ImGui.button("Generate City")) {
                 generateCity(zone);
-                gen = 1;
             }
-            
+
             if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
                 generateCity(zone);
             }
         }
 
         if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.001f, 3f)) {
-            generate(gen,zone);
+            generate(gen, zone);
         }
-        
+
         if (ImGui.sliderFloat("Minimum Side Length", zone.getMinSideLengthData(), 0.0001f, 0.1f)) {
-            generate(gen,zone);
+            generate(gen, zone);
         }
 
         if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
-            generate(gen,zone);
+            generate(gen, zone);
         }
 
         ImVec2 pos = ImGui.getWindowPos();
@@ -395,7 +395,7 @@ public class GUILayer {
             if (ImGui.sliderFloat("Section Deviation", obst.getSectionDev().getData(), 0.001f, 0.1f)) {
                 runMan.updateObstacle(obst);
             }
-            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.01f, 0.2f)) {
+            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.01f, 10f)) {
                 runMan.updateObstacle(obst);
             }
             if (ImGui.sliderInt("Resolution", obst.getResolution().getData(), 3, 10)) {

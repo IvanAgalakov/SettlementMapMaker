@@ -18,11 +18,11 @@ public class QuadBezierCurve extends EditorShape {
     private Point end;
     private Point control;
     private ImInt divisions = new ImInt();
-    private float thickness;
+    private double thickness;
 
     private QuadBezierCurve previous = null;
 
-    public QuadBezierCurve(Point start, Point end, Point control, int divisions, float thickness) {
+    public QuadBezierCurve(Point start, Point end, Point control, int divisions, double thickness) {
         this.start = start;
         this.end = end;
         this.control = control;
@@ -31,14 +31,14 @@ public class QuadBezierCurve extends EditorShape {
         this.calculate();
     }
 
-    public QuadBezierCurve(Point start, Point end, Point control, int divisions, float thickness, QuadBezierCurve previous) {
+    public QuadBezierCurve(Point start, Point end, Point control, int divisions, double thickness, QuadBezierCurve previous) {
         this(start, end, control, divisions, thickness);
         this.previous = previous;
     }
 
     public void calculate() {
         this.points.clear();
-        for (float i = 0; i <= 1f; i += 1f / divisions.get()) {
+        for (double i = 0; i <= 1f; i += 1f / divisions.get()) {
             this.points.add(Utils.quadraticBezier(start, control, end, i));
         }
         this.points.add(end);

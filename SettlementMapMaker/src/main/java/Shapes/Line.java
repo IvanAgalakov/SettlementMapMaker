@@ -32,15 +32,15 @@ public class Line {
         return nextLine != null;
     }
 
-    public float getRise() {
+    public double getRise() {
         return end.y - start.y;
     }
 
-    public float getRun() {
+    public double getRun() {
         return end.x - start.x;
     }
 
-    public float getLength() {
+    public double getLength() {
         return start.getDistanceToPoint(end);
     }
 
@@ -60,7 +60,7 @@ public class Line {
         end = p;
     }
     
-    public Float getSlope() {
+    public Double getSlope() {
         if(getRun() != 0) {
             return (getRise()/getRun());
         } else {
@@ -68,7 +68,7 @@ public class Line {
         }
     }
     
-    public Float getY1() {
+    public Double getY1() {
         if(this.getSlope() == null) {
             return null;
         }
@@ -90,23 +90,23 @@ public class Line {
 //            return null;
 //        }
 //        
-//        float x = (line.getY1() - this.getY1()) / (this.getSlope() - line.getSlope());
-//        float y = this.getSlope() * x + this.getY1();
+//        double x = (line.getY1() - this.getY1()) / (this.getSlope() - line.getSlope());
+//        double y = this.getSlope() * x + this.getY1();
 //        
 //        return new Point(x,y);
 //    }
     
     public Point getIntersection(Line line) {
         //System.out.println("value of : " + line);
-        float a1 = this.end.y - this.start.y;
-        float b1 = this.start.x - this.end.x;
-        float c1 = a1 * this.start.x + b1 * this.start.y;
+        double a1 = this.end.y - this.start.y;
+        double b1 = this.start.x - this.end.x;
+        double c1 = a1 * this.start.x + b1 * this.start.y;
  
-        float a2 = line.end.y - line.start.y;
-        float b2 = line.start.x - line.end.x;
-        float c2 = a2 * line.start.x + b2 * line.start.y;
+        double a2 = line.end.y - line.start.y;
+        double b2 = line.start.x - line.end.x;
+        double c2 = a2 * line.start.x + b2 * line.start.y;
  
-        float delta = a1 * b2 - a2 * b1;
+        double delta = a1 * b2 - a2 * b1;
         //System.out.println("a1 : " + a1 + " b1 : " + b1 + " c1 : " + c1 + " a2 : " + a2 + " b2 : " + b2 + " c2 : " + c2 + " delta : " + delta );
         
         Point inter = new Point((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta);
@@ -138,7 +138,7 @@ public class Line {
             }
         }
         
-        float y = this.getSlope() * point.x + this.getY1();
+        double y = this.getSlope() * point.x + this.getY1();
         
         if (y < point.y) {
             return true;
