@@ -101,7 +101,26 @@ public class DataDisplayer {
         } else {
             aspect = runMan.getImageResX() / (float) runMan.getImageResY();
         }
+        
+        Point topLeft = new Point(0,0);
+        Point bottomRight = new Point(runMan.getWidth(),runMan.getHeight());
+        
+        topLeft = this.screenPointToWorldPoint(topLeft, runMan.getWidth(), runMan.getHeight());
+        bottomRight = this.screenPointToWorldPoint(bottomRight, runMan.getWidth(), runMan.getHeight());
+        
+        System.out.println(bottomRight);
+        
+        Point pixOffset = new Point((bottomRight.x-topLeft.x-2), (topLeft.y-bottomRight.y-1.0989583643790368));
+        pixOffset = this.worldPointToScreenPoint(pixOffset, runMan.getWidth(), runMan.getHeight());
+        System.out.println(pixOffset);
+        pixOffset.setY(-pixOffset.y);
+        
+        
         GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "aspectX"), aspect);
+        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "iTime"), (System.currentTimeMillis()-runMan.getStartTime())/1000f);
+        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "iZoom"), runMan.getZoom()[0]);
+        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "adjust"), (float)pixOffset.x, (float)pixOffset.y);
+        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "windowSize"), (float)runMan.getWidth(), (float)runMan.getHeight());
 
         Point mouse = this.screenPointToWorldPoint(new Point(io.getMousePosX(), io.getMousePosY()), runMan.getWidth(), runMan.getHeight());
         realMouseX = mouse.x;
@@ -142,6 +161,12 @@ public class DataDisplayer {
         if (runMan.getCurrentSettlement() != null) {
             drawStyleGroups();
         }
+        
+//        ArrayList<EditorShape> shapes = new ArrayList();
+//        EditorShape p = new EditorShape(new Point(0,0), new Point(2,-1));
+//        p.calculatePointsAsPoints();
+//        shapes.add(p);
+//        WindowVisualizer.drawPoints(shapes, 100, DrawColor.BLACK);
 
 //        ArrayList<Point> bezier = new ArrayList();
 //        int divisions = 10;

@@ -137,6 +137,10 @@ public class RuntimeManager {
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
         //io.setFontDefault(defaultFont);
     }
+    
+    public long getStartTime() {
+        return window.getStartTime();
+    }
 
     public ImGuiIO getIO() {
         return this.io;

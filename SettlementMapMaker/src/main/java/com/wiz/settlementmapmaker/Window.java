@@ -54,12 +54,19 @@ public class Window {
     private ArrayList<Point> currentShape = new ArrayList<Point>();
 
     private EditorShape[] draw;
+    
+    private long startTime;
 
     public Window(GUILayer layer) {
+        startTime = System.currentTimeMillis();
         this.imGuiLayer = layer;
         runMan = new RuntimeManager(this, this.imGuiLayer);
 
         this.setGen = new SettlementGenerator();
+    }
+    
+    public long getStartTime() {
+        return startTime;
     }
 
     public void init() {
