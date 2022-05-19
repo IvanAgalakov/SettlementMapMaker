@@ -4,6 +4,8 @@
  */
 package com.wiz.settlementmapmaker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.lwjgl.opengl.GL33C;
 
 /**
@@ -12,14 +14,22 @@ import org.lwjgl.opengl.GL33C;
  */
 public class ShaderManager {
     
+    public static HashMap<ProgramNames, Integer> programs = new HashMap<>();
+    
     public static enum ShaderNames {
         BASIC_FRAGMENT(new Shader(Shader.shaderTypes.FRAGMENT, "BasicFragmentShader.txt")),
+        WATER_FRAGMENT(new Shader(Shader.shaderTypes.FRAGMENT, "WaterShader.txt")),
         BASIC_VERTEX(new Shader(Shader.shaderTypes.VERTEX, "BasicVertexShader.txt"));
         
         public final Shader SHADER;
         private ShaderNames(Shader shader) {
            SHADER = shader;
         }
+    }
+    
+    public static enum ProgramNames {
+        WATER,
+        DEFAULT,
     }
     
     public static int programFromShaders(int... shaders) {
@@ -34,5 +44,20 @@ public class ShaderManager {
         }
         return program;
     }
+    
+    public static void makePrograms() {
+        programs.put(ProgramNames.DEFAULT, programFromShaders(ShaderNames.BASIC_FRAGMENT.SHADER.getShader(), ShaderNames.BASIC_VERTEX.SHADER.getShader()));
+        programs.put(ProgramNames.WATER, programFromShaders(ShaderNames.WATER_FRAGMENT.SHADER.getShader(), ShaderNames.BASIC_VERTEX.SHADER.getShader()));
+    }
+    
+    public static int getProgram(ProgramNames name) {
+        return programs.get(name);
+    }
+    
+    public static ArrayList<Integer> getAllPrograms() {
+        return new ArrayList(programs.values());
+    }
+    
+    
     
 }

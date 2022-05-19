@@ -66,10 +66,13 @@ public class DataDisplayer {
     private float normy;
 
     private float aspect;
+    
+    private int selectedProgram = GL33C.GL_NONE;
 
     public void display() {
-        GL33C.glUseProgram(window.getProgram());
-
+        //GL33C.glUseProgram(ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT));
+        this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
+        
         if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && io.getKeyCtrl()) {
 
             if (lastMiddleState == false) {
@@ -92,35 +95,24 @@ public class DataDisplayer {
             normx = cameraX / (float) runMan.getImageResX();
             normy = 1 - cameraY / (float) runMan.getImageResY();
         }
-        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "offset"), normx * 2 - 1, normy * 2 - 1);
-
-        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "zoom"), runMan.getZoom()[0]);
 
         if (runMan.savePlease == 0) {
             aspect = runMan.getWidth() / (float) runMan.getHeight();
         } else {
             aspect = runMan.getImageResX() / (float) runMan.getImageResY();
         }
-        
-        Point topLeft = new Point(0,0);
-        Point bottomRight = new Point(runMan.getWidth(),runMan.getHeight());
-        
-        topLeft = this.screenPointToWorldPoint(topLeft, runMan.getWidth(), runMan.getHeight());
-        bottomRight = this.screenPointToWorldPoint(bottomRight, runMan.getWidth(), runMan.getHeight());
-        
-        System.out.println(bottomRight);
-        
-        Point pixOffset = new Point((bottomRight.x-topLeft.x-2), (topLeft.y-bottomRight.y-1.0989583643790368));
-        pixOffset = this.worldPointToScreenPoint(pixOffset, runMan.getWidth(), runMan.getHeight());
-        System.out.println(pixOffset);
-        pixOffset.setY(-pixOffset.y);
-        
-        
-        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "aspectX"), aspect);
-        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "iTime"), (System.currentTimeMillis()-runMan.getStartTime())/1000f);
-        GL33C.glUniform1f(GL33C.glGetUniformLocation(window.getProgram(), "iZoom"), runMan.getZoom()[0]);
-        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "adjust"), (float)pixOffset.x, (float)pixOffset.y);
-        GL33C.glUniform2f(GL33C.glGetUniformLocation(window.getProgram(), "windowSize"), (float)runMan.getWidth(), (float)runMan.getHeight());
+
+        ArrayList<Integer> allPrograms = ShaderManager.getAllPrograms();
+        for (int i = 0; i < allPrograms.size(); i++) {
+            this.selectProgram(allPrograms.get(i));
+            GL33C.glUniform2f(GL33C.glGetUniformLocation(allPrograms.get(i), "offset"), normx * 2 - 1, normy * 2 - 1);
+            GL33C.glUniform1f(GL33C.glGetUniformLocation(allPrograms.get(i), "zoom"), runMan.getZoom()[0]);
+            GL33C.glUniform1f(GL33C.glGetUniformLocation(allPrograms.get(i), "aspect"), aspect);
+            GL33C.glUniform1f(GL33C.glGetUniformLocation(allPrograms.get(i), "iTime"), (System.currentTimeMillis() - runMan.getStartTime()) / 1000f);
+            GL33C.glUniform2f(GL33C.glGetUniformLocation(allPrograms.get(i), "windowSize"), (float) runMan.getWidth(), (float) runMan.getHeight());
+            GL33C.glUniform1f(GL33C.glGetUniformLocation(allPrograms.get(i), "normX"), normx);
+            GL33C.glUniform1f(GL33C.glGetUniformLocation(allPrograms.get(i), "normY"), normy);
+        }
 
         Point mouse = this.screenPointToWorldPoint(new Point(io.getMousePosX(), io.getMousePosY()), runMan.getWidth(), runMan.getHeight());
         realMouseX = mouse.x;
@@ -129,6 +121,7 @@ public class DataDisplayer {
         //System.out.println(io.getMousePos() + " : " + p.toString());
         //gui.textPopup("test", p.x, p.y);
 
+        
         if (editPoint != null) {
             editMode = true;
             editPoint.setX(realMouseX);
@@ -137,6 +130,7 @@ public class DataDisplayer {
             ArrayList<EditorShape> v = new ArrayList<>();
             v.add(new EditorShape(new Point[]{editPoint}));
             v.get(0).calculatePointsAsPoints();
+            this.setColor(runMan.getCurrentSettlement().getDefaultStyle().getColor());
             WindowVisualizer.drawPoints(v, 5, runMan.getCurrentSettlement().getDefaultStyle().getColor());
             if (runMan.getLeftClickState() && !io.getKeyCtrl() && !runMan.imGuiWantCaptureMouse()) {
                 editShape.CalculateCenter();
@@ -148,6 +142,7 @@ public class DataDisplayer {
                 v.clear();
                 v.add(editShape);
                 v.get(0).calculateGlLines(true);
+                this.setColor(runMan.getCurrentSettlement().getEditStyle().getColor());
                 WindowVisualizer.drawGlLines(v, 6, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
                 if (editShape instanceof Obstacle obs) {
                     runMan.updateObstacle(obs);
@@ -161,13 +156,12 @@ public class DataDisplayer {
         if (runMan.getCurrentSettlement() != null) {
             drawStyleGroups();
         }
-        
+
 //        ArrayList<EditorShape> shapes = new ArrayList();
 //        EditorShape p = new EditorShape(new Point(0,0), new Point(2,-1));
 //        p.calculatePointsAsPoints();
 //        shapes.add(p);
 //        WindowVisualizer.drawPoints(shapes, 100, DrawColor.BLACK);
-
 //        ArrayList<Point> bezier = new ArrayList();
 //        int divisions = 10;
 //        Point start = new Point(0.1f, -1f);
@@ -240,7 +234,7 @@ public class DataDisplayer {
                                         for (int a = 0; a < rivers.size(); a++) {
                                             drawData.addAll(rivers.get(a).getCurves());
                                         }
-                                        
+
                                         shapeList.addAll(drawData);
                                         this.obstacles.put(obs, drawData);
                                         this.updateObstacle.get(obs).set(false);
@@ -260,6 +254,17 @@ public class DataDisplayer {
 
                 // chooses the drawing type based on the style you have selected
                 Style style = runMan.getStyle(styles.get(i));
+                
+                int program = ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT);
+                DrawColor color = style.getColor();
+                
+                if (styles.get(i).equals("water")) {
+                    program = ShaderManager.getProgram(ShaderManager.ProgramNames.WATER);
+                }
+                
+                this.selectProgram(program);
+                GL33C.glUniform3f(GL33C.glGetUniformLocation(program, "col"), color.getRed(), color.getGreen(), color.getBlue());
+                
                 if (Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
@@ -272,11 +277,11 @@ public class DataDisplayer {
                     if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("") && shapeList.get(x).getCenter() != null) {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
-                            gui.textPopup(shapeList.get(x).getName().get(), (float)textPoint.x, (float)textPoint.y, i + x + 1);
+                            gui.textPopup(shapeList.get(x).getName().get(), (float) textPoint.x, (float) textPoint.y, i + x + 1);
                         } else {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
-                            gui.textPopup(shapeList.get(x).getName().get(), (float)textPoint.x, (float)textPoint.y, i + x + 1);
+                            gui.textPopup(shapeList.get(x).getName().get(), (float) textPoint.x, (float) textPoint.y, i + x + 1);
                         }
                     }
                 }
@@ -288,7 +293,7 @@ public class DataDisplayer {
         for (int i = 0; i < editingShapes.size(); i++) {
             editingShapes.get(i).calculateGlLines(true);
         }
-        
+
         WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
@@ -357,7 +362,7 @@ public class DataDisplayer {
     public boolean containsEditingShape(EditorShape shape) {
         return this.editingShapes.contains(shape);
     }
-    
+
     public ArrayList<EditorShape> getBlockingShapes() {
         ArrayList<ArrayList<EditorShape>> shapes = new ArrayList<>(this.obstacles.values());
         ArrayList<EditorShape> singleList = new ArrayList<>();
@@ -368,6 +373,20 @@ public class DataDisplayer {
             }
         }
         return singleList;
+    }
+    
+    public void setColor(DrawColor color) {
+        GL33C.glUniform3f(GL33C.glGetUniformLocation(selectedProgram, "col"), color.getRed(), color.getGreen(), color.getBlue());
+    }
+    
+    public void selectProgram(ShaderManager.ProgramNames name) {
+        this.selectedProgram = ShaderManager.getProgram(name);
+        GL33C.glUseProgram(this.selectedProgram);
+    }
+    
+    public void selectProgram(int program) {
+        this.selectedProgram = program;
+        GL33C.glUseProgram(this.selectedProgram);
     }
 
 }

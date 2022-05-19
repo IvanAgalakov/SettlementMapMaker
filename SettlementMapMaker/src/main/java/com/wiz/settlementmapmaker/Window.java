@@ -40,7 +40,10 @@ public class Window {
 
     private String glslVersion = null;
     private long windowPtr;
-    private int program;
+    
+    private int defaultProgram;
+    private int waterProgram;
+    
     private int frameBuffer;
     private int renderBuffer;
 
@@ -149,9 +152,13 @@ public class Window {
     }
 
     private void shadersInit() {
-        Shader basicVertexShader = ShaderManager.ShaderNames.BASIC_VERTEX.SHADER;
-        Shader basicFragmentShader = ShaderManager.ShaderNames.BASIC_FRAGMENT.SHADER;
-        this.program = ShaderManager.programFromShaders(basicVertexShader.getShader(), basicFragmentShader.getShader());
+        ShaderManager.makePrograms();
+        //Shader basicVertexShader = ShaderManager.ShaderNames.BASIC_VERTEX.SHADER;
+        //Shader basicFragmentShader = ShaderManager.ShaderNames.BASIC_FRAGMENT.SHADER;
+        //this.defaultProgram = ShaderManager.programFromShaders(basicVertexShader.getShader(), basicFragmentShader.getShader());
+        
+        //Shader waterShader = ShaderManager.ShaderNames.WATER_FRAGMENT.SHADER;
+        //this.waterProgram = ShaderManager.programFromShaders(basicVertexShader.getShader(), waterShader.getShader());
 //
 //        try {
 //            BufferedImage i = ImageIO.read(new File("C:\\Users\\Ivan\\Downloads\\house.png"));
@@ -233,10 +240,6 @@ public class Window {
 
     public long getWindowPointer() {
         return this.windowPtr;
-    }
-
-    public int getProgram() {
-        return this.program;
     }
 
 }

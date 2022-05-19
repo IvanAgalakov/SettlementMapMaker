@@ -60,7 +60,7 @@ public class WindowVisualizer {
 
     public static void drawLines(ArrayList<EditorShape> shapes, float lineWidth, DrawColor color, boolean enclose) {
 
-        GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
+        //GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
         for (int i = 0; i < shapes.size(); i++) {
@@ -102,7 +102,7 @@ public class WindowVisualizer {
     
     public static void drawGlLines(ArrayList<EditorShape> shapes, float lineWidth, DrawColor color, boolean enclose) {
 
-        GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
+        //GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
         for (int i = 0; i < shapes.size(); i++) {
@@ -144,7 +144,7 @@ public class WindowVisualizer {
 
     public static void drawTriangles(ArrayList<EditorShape> shapes, DrawColor color) {
 
-        GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
+        //GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
         for (int i = 0; i < shapes.size(); i++) {
@@ -184,7 +184,7 @@ public class WindowVisualizer {
 
     public static void drawPoints(ArrayList<EditorShape> shapes, float pointSize, DrawColor color) {
         //System.out.println(color.toString());
-        GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
+        //GL33C.glUniform3f(GL33C.glGetUniformLocation(window.getProgram(), "col"), color.getRed(), color.getGreen(), color.getBlue());
 
         int amount = 0;
         for (int i = 0; i < shapes.size(); i++) {
