@@ -231,7 +231,7 @@ public class SettlementGenerator {
                 build.removeAllOfPoint(Point.zero);
                 build.ScaleShape(0.9f, 0.9f);
                 zones.add(build);
-                System.out.println(build.size());
+                //System.out.println(build.size());
             }
         }
         

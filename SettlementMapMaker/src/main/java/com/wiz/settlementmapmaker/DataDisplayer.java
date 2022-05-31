@@ -121,7 +121,7 @@ public class DataDisplayer {
         //System.out.println(io.getMousePos() + " : " + p.toString());
         //gui.textPopup("test", p.x, p.y);
 
-        
+        this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
         if (editPoint != null) {
             editMode = true;
             editPoint.setX(realMouseX);
@@ -203,18 +203,15 @@ public class DataDisplayer {
                 ArrayList<EditorShape> shapeList = new ArrayList(this.shapesByStyle.get(styles.get(i)));
 
                 for (int x = 0; x < shapeList.size(); x++) {
-                    if (shapeList.get(x) instanceof Zone) {
-                        Zone zone = (Zone) shapeList.get(x);
-
+                    if (shapeList.get(x) instanceof Zone zone) {
                         //System.out.println(zone.getPointList().size() + " - " + Constants.ZONE_TYPES[zone.getZoneType().get()]);
                         if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings") || Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
                             shapeList.remove(shapeList.get(x));
                             x--;
                             shapeList.addAll(zone.getContainedShapes());
-                            continue;
                         }
                     }
-                    if (shapeList.get(x) instanceof Obstacle obs) {
+                    else if (shapeList.get(x) instanceof Obstacle obs) {
                         if (this.updateObstacle.containsKey(obs)) {
                             if (this.updateObstacle.get(obs).get()) {
                                 if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
@@ -238,9 +235,10 @@ public class DataDisplayer {
                                         shapeList.addAll(drawData);
                                         this.obstacles.put(obs, drawData);
                                         this.updateObstacle.get(obs).set(false);
-                                        continue;
+                                        
                                     }
                                 }
+                                
                             } else {
                                 shapeList.remove(shapeList.get(x));
                                 x--;
@@ -293,7 +291,11 @@ public class DataDisplayer {
         for (int i = 0; i < editingShapes.size(); i++) {
             editingShapes.get(i).calculateGlLines(true);
         }
+        
+        //System.out.println(editingShapes.size());
 
+        this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
+        this.setColor(runMan.getEditStyle().getColor());
         WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
@@ -328,6 +330,8 @@ public class DataDisplayer {
 
             this.shapesByStyle.get(styles[shapes.get(x).getStyle().get()]).addAll(currentStyleShapes);
         }
+        
+        System.out.println("updated style groupings");
 
     }
 
@@ -368,7 +372,6 @@ public class DataDisplayer {
         ArrayList<EditorShape> singleList = new ArrayList<>();
         for (int i = 0; i < shapes.size(); i++) {
             for (int a = 0; a < shapes.get(i).size(); a++) {
-                shapes.get(i).get(a).calculateTrianglesFromPoints();
                 singleList.add(new EditorShape(shapes.get(i).get(a).getVisualPoints()));
             }
         }

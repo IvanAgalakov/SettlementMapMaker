@@ -53,7 +53,7 @@ public class QuadBezierCurve extends EditorShape {
         Point lastTopRight = new Point(0, 0);
         if (previous != null) {
             ArrayList<Line> preLines = previous.getLines(false);
-            Line preLine = preLines.get(preLines.size() - 2);
+            Line preLine = preLines.get(preLines.size() - 1);
             lastBotRight = Utils.normalPointToPoint(preLine.getEnd(), preLine.getRise(), preLine.getRun(), -thickness / 2);
             lastTopRight = Utils.normalPointToPoint(preLine.getEnd(), preLine.getRise(), preLine.getRun(), thickness / 2);
         }

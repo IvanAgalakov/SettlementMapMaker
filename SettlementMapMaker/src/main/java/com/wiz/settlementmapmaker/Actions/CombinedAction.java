@@ -20,7 +20,7 @@ public class CombinedAction implements Action {
     public Action revert() {
         Action[] revertedActions = new Action[actions.length];
         for(int i = 0; i < revertedActions.length; i++) {
-            System.out.println(actions[i].getClass().getName());
+            //System.out.println(actions[i].getClass().getName());
             revertedActions[i]= actions[i].revert();
         }
         

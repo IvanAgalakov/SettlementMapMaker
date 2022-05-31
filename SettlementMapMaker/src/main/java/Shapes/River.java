@@ -26,6 +26,8 @@ public class River {
     private final double thickness;
     
     private int sign = 1;
+    
+    private ArrayList<EditorShape> shapes = new ArrayList();
 
     public River(Line line, Obstacle obs) {
         this.line = line;
@@ -69,6 +71,7 @@ public class River {
         QuadBezierCurve prev = null;
         if (previous != null) {
             prev = previous.getCurve(previous.getLength() - 1);
+            //System.out.println(prev);
         }
         
         double walk = 0;
@@ -87,6 +90,7 @@ public class River {
             QuadBezierCurve toAdd = new QuadBezierCurve(first, second, control, resolution, thickness, prev);
             toAdd.calculateTrianglesFromPoints();
             curves.add(toAdd);
+            shapes.add(toAdd);
             prev = toAdd;
             sign *= -1;
         }
@@ -97,10 +101,6 @@ public class River {
     }
 
     public ArrayList<EditorShape> getCurves() {
-        ArrayList<EditorShape> shapes = new ArrayList();
-        for (QuadBezierCurve b : curves) {
-            shapes.add(b);
-        }
         return shapes;
     }
 

@@ -45,6 +45,7 @@ GUI\Style.class
 GUI\GUILayer.class
 com\wiz\settlementmapmaker\Constants.class
 Shapes\EditorShape.class
+com\wiz\settlementmapmaker\ShaderManager$ProgramNames.class
 com\wiz\settlementmapmaker\ShaderManager$ShaderNames.class
 com\wiz\settlementmapmaker\Settlement.class
 com\wiz\settlementmapmaker\FileManager.class

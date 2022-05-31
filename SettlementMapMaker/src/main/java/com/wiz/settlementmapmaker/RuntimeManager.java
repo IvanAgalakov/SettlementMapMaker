@@ -558,6 +558,7 @@ public class RuntimeManager {
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
         
         ArrayList<EditorShape> block = dataDis.getBlockingShapes();
+       
         for (int i = buildings.size() - 1; i >= 0; i--) {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
                 buildings.remove(i);

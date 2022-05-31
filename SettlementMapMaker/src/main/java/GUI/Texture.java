@@ -54,7 +54,7 @@ public class Texture {
     }
 
     public static ByteBuffer convertImage(BufferedImage image) {
-        System.out.println(image.getColorModel().toString());
+        //System.out.println(image.getColorModel().toString());
         int[] pixels = new int[image.getWidth() * image.getHeight()];
         image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 
