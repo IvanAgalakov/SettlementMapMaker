@@ -9,12 +9,21 @@ import Shapes.Point;
 import imgui.ImVec4;
 import java.util.List;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Ivan
  */
 public class Utils {
+    
+    private static final DecimalFormat twoPlaceRound = new DecimalFormat("0.00");
 
+    public static String roundToTwoPlaces(double d) {
+        return twoPlaceRound.format(d);
+    }
+    
     public static ImVec4 integerRGBAtoVec4(int r, int g, int b, int a) {
         return new ImVec4(r / 255f, g / 255f, b / 255f, a / 255f);
     }

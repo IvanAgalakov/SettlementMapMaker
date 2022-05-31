@@ -237,6 +237,18 @@ public class Shape {
             points.get(i).setY(center.y + ((points.get(i).y - center.y) * y));
         }
     }
+    
+    public void ScaleByNumber(double number) {
+        if (center == null) {
+            this.CalculateCenter();
+        }
+        for (int i = 0; i < points.size(); i++) {
+            Line line = new Line(points.get(i), center);
+            Point p = Utils.getPointAlongLine(line, number);
+            
+            points.get(i).set(p);
+        }
+    }
 
     public void ScaleAroundPoint(double x, double y, Point p) {
         for (int i = 0; i < points.size(); i++) {

@@ -23,6 +23,8 @@ public class Zone extends EditorShape {
     private ImFloat minSideSize = new ImFloat(0.001f);
     private final ArrayList<Building> containedShapes = new ArrayList<Building>();
     private ImInt selectedContainedBuilding = new ImInt();
+    private ImFloat roadSize = new ImFloat(0.01f);
+    private long hiddenSeed = 0;
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -31,6 +33,14 @@ public class Zone extends EditorShape {
 
     public void setZoneType(String type) {
         
+    }
+    
+    public long getHiddenSeed() {
+        return hiddenSeed;
+    }
+    
+    public void setHiddenSeed(long seed) {
+        hiddenSeed = seed;
     }
 
     public ImInt getZoneType() {
@@ -87,5 +97,9 @@ public class Zone extends EditorShape {
             s[i] = containedShapes.get(i).getName().get();
         }
         return s;
+    }
+    
+    public ImFloat getRoadSize() {
+        return roadSize;
     }
 }

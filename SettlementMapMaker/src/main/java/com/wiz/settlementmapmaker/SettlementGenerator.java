@@ -27,16 +27,6 @@ public class SettlementGenerator {
 
     private static Random rand = new Random();
 
-    public static ArrayList<EditorShape> generateVoronoi(EditorShape v) {
-
-        if (v.getPointList().size() <= 2) {
-            return new ArrayList();
-        }
-
-        //Voronoi voronoi = new Voronoi();
-        return new ArrayList();
-    }
-
     public static ArrayList<Building> generateBlockThroughCutting(Building v) {
         if (v.size() < 3) {
             ArrayList<Building> base = new ArrayList<>();
@@ -170,7 +160,7 @@ public class SettlementGenerator {
 //        }
         for (int i = 0; i < blockShapes.size(); i++) {
             blockShapes.get(i).squarizeShape();
-            blockShapes.get(i).ScaleShape(0.99f, 0.99f);
+            //blockShapes.get(i).ScaleByNumber(0.001f, 0.001f);
         }
         return blockShapes;
     }
@@ -192,13 +182,13 @@ public class SettlementGenerator {
         return ret;
     }
 
-    public static ArrayList<Building> getMultipleBlocks(Zone base) {
+    public static ArrayList<Building> getMultipleBlocks(Zone base, long seed) {
+        rand.setSeed(seed);
+        
         ArrayList<Building> zones = new ArrayList<>();
 
         PowerDiagram diagram = new PowerDiagram();
         OpenList sites = new OpenList();
-
-        Random rand = new Random();
 
         PolygonSimple rootPolygon = new PolygonSimple();
 
@@ -229,7 +219,7 @@ public class SettlementGenerator {
             if (polygon != null) {
                 Building build = new Building(polygon);
                 build.removeAllOfPoint(Point.zero);
-                build.ScaleShape(0.9f, 0.9f);
+                build.ScaleByNumber(base.getRoadSize().get());
                 zones.add(build);
                 //System.out.println(build.size());
             }

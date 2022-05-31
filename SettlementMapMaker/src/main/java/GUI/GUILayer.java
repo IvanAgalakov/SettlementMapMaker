@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -93,10 +94,10 @@ public class GUILayer {
     public void settlementManagement() {
         runMan.clearEditingShapes();
 
-        if (runMan.getRightClickState() && !runMan.imGuiWantCaptureMouse()) {
-            showRightClickMenu = true;
-            rightClickPosition = new ImVec2(runMan.getIO().getMousePos());
-        }
+//        if (runMan.getRightClickState() && !runMan.imGuiWantCaptureMouse()) {
+//            showRightClickMenu = true;
+//            rightClickPosition = new ImVec2(runMan.getIO().getMousePos());
+//        }
 //        else if (runMan.getLeftClickState()) {
 //            showRightClickMenu = false;
 //        }
@@ -227,6 +228,9 @@ public class GUILayer {
             // moving of shapes end
 
             if (ImGui.button("Delete Selected " + editorType)) {
+                if (runMan.getShapes(editorType.get()).get(runMan.getSelectedShape().get()) instanceof Obstacle obs) {
+                    runMan.removeObstacle(obs);
+                }
                 runMan.removeShape(runMan.getSelectedShape().get(), editorType.get());
             }
         } else {
@@ -321,18 +325,22 @@ public class GUILayer {
         runMan.generateBlockInZone(zone);
     }
 
-    private void generateCity(Zone zone) {
+    private void generateCity(Zone zone, boolean sameSeed) {
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             runMan.removeEditingShape(zone.getContainedShapes().get(i));
         }
-        runMan.generateCitySectionsInZone(zone);
+        Random r = new Random();
+        if (!sameSeed) {
+            zone.setHiddenSeed(r.nextLong(0, Long.MAX_VALUE));
+        }
+        runMan.generateCitySectionsInZone(zone,zone.getHiddenSeed());
     }
 
-    private void generate(int gen, Zone zone) {
+    private void generate(int gen, Zone zone, boolean sameSeed) {
         if (gen == 0) {
             generateBlock(zone);
         } else {
-            generateCity(zone);
+            generateCity(zone, sameSeed);
         }
     }
 
@@ -351,24 +359,28 @@ public class GUILayer {
         } else if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
             gen = 1;
             if (ImGui.button("Generate City")) {
-                generateCity(zone);
+                generateCity(zone, false);
             }
 
             if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
-                generateCity(zone);
+                generateCity(zone, false);
+            }
+            
+            if (ImGui.sliderFloat("Road Size", zone.getRoadSize().getData(), 0.001f, 0.1f)) {
+                generateCity(zone, true);
             }
         }
 
         if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.001f, 3f)) {
-            generate(gen, zone);
+            generate(gen, zone, true);
         }
 
         if (ImGui.sliderFloat("Minimum Side Length", zone.getMinSideLengthData(), 0.0001f, 0.1f)) {
-            generate(gen, zone);
+            generate(gen, zone, true);
         }
 
         if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
-            generate(gen, zone);
+            generate(gen, zone, true);
         }
 
         ImVec2 pos = ImGui.getWindowPos();

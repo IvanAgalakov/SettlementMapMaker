@@ -391,5 +391,19 @@ public class DataDisplayer {
         this.selectedProgram = program;
         GL33C.glUseProgram(this.selectedProgram);
     }
+    
+    public void clearObstacleList() {
+        this.obstacles.clear();
+        this.updateObstacle.clear();
+    }
+    
+    public void removeObstacleEntry(Obstacle obs) {
+        if (this.obstacles.containsKey(obs)) {
+            this.obstacles.remove(obs);
+        }
+        if (this.updateObstacle.containsKey(obs)) {
+            this.updateObstacle.remove(obs);
+        }
+    }
 
 }

@@ -4,6 +4,8 @@
  */
 package Shapes;
 
+import com.wiz.settlementmapmaker.Utilities.Utils;
+
 /**
  *
  * @author 904187003
@@ -14,6 +16,8 @@ public class Point {
     public double y;
 
     public static Point zero = new Point(0, 0);
+    
+    
 
     public Point(double x, double y) {
         this.x = x;
@@ -73,11 +77,25 @@ public class Point {
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + Utils.roundToTwoPlaces(x) + ", " + Utils.roundToTwoPlaces(y) + ")";
     }
     
     public boolean equals(Point p) {
         if (p.x == this.x && p.y == this.y) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isAbove(Point p) {
+        if (this.y > p.y) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isRightOf(Point p) {
+        if (this.x > p.x) {
             return true;
         }
         return false;

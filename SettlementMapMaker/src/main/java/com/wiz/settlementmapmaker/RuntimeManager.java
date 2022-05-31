@@ -265,6 +265,8 @@ public class RuntimeManager {
         this.updateStyleList();
         this.updateShapeList();
         this.updateDataDisplay();
+        
+        dataDis.clearObstacleList();
     }
 
     public Settlement getCurrentSettlement() {
@@ -363,7 +365,7 @@ public class RuntimeManager {
 
     public void removeShape(int selectedShape, String shapeType) {
         EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
-        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList())));
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList()), new MethodRunAction(() -> updateDataDisplay())));
     }
 
     public void addPoint(EditorShape addTo) {
@@ -552,9 +554,9 @@ public class RuntimeManager {
         zone.addBuildings(buildings);
     }
 
-    public void generateCitySectionsInZone(Zone zone) {
+    public void generateCitySectionsInZone(Zone zone, long seed) {
         zone.clearContainedShapes();
-        ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone);
+        ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone, seed);
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
         
         ArrayList<EditorShape> block = dataDis.getBlockingShapes();
@@ -601,6 +603,10 @@ public class RuntimeManager {
 
     public void updateObstacle(Obstacle obs) {
         dataDis.updateAnObstacle(obs);
+    }
+    
+    public void removeObstacle(Obstacle obs) {
+        dataDis.removeObstacleEntry(obs);
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
