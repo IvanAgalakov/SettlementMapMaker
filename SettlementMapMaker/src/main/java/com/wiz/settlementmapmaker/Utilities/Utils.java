@@ -4,6 +4,7 @@
  */
 package com.wiz.settlementmapmaker.Utilities;
 
+import Shapes.EditorShape;
 import Shapes.Line;
 import Shapes.Point;
 import imgui.ImVec4;
@@ -17,17 +18,17 @@ import java.text.DecimalFormat;
  * @author Ivan
  */
 public class Utils {
-    
+
     private static final DecimalFormat twoPlaceRound = new DecimalFormat("0.00");
 
     public static String roundToTwoPlaces(double d) {
         return twoPlaceRound.format(d);
     }
-    
+
     public static ImVec4 integerRGBAtoVec4(int r, int g, int b, int a) {
         return new ImVec4(r / 255f, g / 255f, b / 255f, a / 255f);
     }
-    
+
     public static Point normalPointToPoint(Point p, double rise, double run, double deviate) {
         double hypo = Math.sqrt((rise * rise) + (run * run));
         // System.out.println(p.toString() + " | " + -run + " | " + rise + " | " + hypo + " | " + deviate);
@@ -42,7 +43,7 @@ public class Utils {
 
         return new Point(start.x + run * formula, start.y + rise * formula);
     }
-    
+
     public static Point getPointAlongLine(Line line, double deviate) {
         Point start = line.getStart();
         double rise = line.getRise();
@@ -63,24 +64,35 @@ public class Utils {
 
         return c;
     }
-    
-    
+
     public static Point quadraticBezier(Point p0, Point p1, Point p2, double t) {
-        Point finalPoint = new Point(0,0);
-        finalPoint.setX(Math.pow(1-t, 2) * p0.x +
-                (1-t) * 2 * t * p1.x +
-                t * t * p2.x);
-        finalPoint.setY(Math.pow(1-t, 2) * p0.y +
-                (1-t) * 2 * t * p1.y +
-                t * t * p2.y);
-        
+        Point finalPoint = new Point(0, 0);
+        finalPoint.setX(Math.pow(1 - t, 2) * p0.x
+                + (1 - t) * 2 * t * p1.x
+                + t * t * p2.x);
+        finalPoint.setY(Math.pow(1 - t, 2) * p0.y
+                + (1 - t) * 2 * t * p1.y
+                + t * t * p2.y);
+
         return finalPoint;
     }
-    
+
     public static void addPointsToList(List l, Point... p) {
         for (int i = 0; i < p.length; i++) {
             l.add(p[i]);
         }
     }
-    
+
+    public static EditorShape boxPoints(EditorShape shape) {
+        
+        shape.CalculateCenter();
+        
+        EditorShape boxShape = new EditorShape();
+        Point one = shape.getBottomLeft();
+        Point two = shape.getTopRight();
+        boxShape.addPoints(one, new Point(one.x, two.y), two, new Point(two.x, one.y));
+
+        return boxShape;
+    }
+
 }

@@ -34,6 +34,8 @@ public class Settlement {
     private HashMap<String, Style> style = new HashMap<>();
 
     private ArrayList<String> cityStyles = new ArrayList<>();
+    
+    private Zone cameraShape = new Zone();
 
     public Settlement(String name) {
         style.put("Zone Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
@@ -130,6 +132,14 @@ public class Settlement {
             cityStyles.remove(s);
             style.remove(s);
         }
+    }
+    
+    public void clearCameraShape() {
+        this.cameraShape.clear();
+    }
+    
+    public EditorShape getCamera() {
+        return cameraShape;
     }
 
 }

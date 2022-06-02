@@ -95,6 +95,8 @@ public class RuntimeManager {
 
     private ImInt imageXRes = new ImInt(8000);
     private ImInt imageYRes = new ImInt(8000);
+    
+    private boolean settingCamera = false;
 
     public RuntimeManager(Window window, GUILayer gui) {
         this.window = window;
@@ -202,6 +204,13 @@ public class RuntimeManager {
         }
 
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
+        
+        
+        if (this.settingCamera) {
+            if (this.getCurrentSettlement().getCamera().size() >= 2 && this.getCurrentSettlement().getCamera() != dataDis.getEditShape()) {
+                this.setCamera(false);
+            }
+        }
 
     }
 
@@ -615,6 +624,36 @@ public class RuntimeManager {
     
     public void removeObstacle(Obstacle obs) {
         dataDis.removeObstacleEntry(obs);
+    }
+    
+    public boolean isSettingCamera() {
+        return this.settingCamera;
+    }
+    
+    public void setCamera(boolean b) {
+        this.settingCamera = b;
+        if (b) {
+            dataDis.setEditShape(this.currentSettlement.getCamera());
+            Point p = new Point(0,0);
+            
+            this.currentSettlement.getCamera().addPoints(p);
+            
+            dataDis.setEditPoint(p);
+        } else {
+            dataDis.setEditShape(null);
+        }
+    }
+    
+    public void clearCameraShape() {
+        this.currentSettlement.clearCameraShape();
+    }
+    
+    public EditorShape getCameraShape() {
+        return this.currentSettlement.getCamera();
+    }
+    
+    public DataDisplayer getDataDisplay() {
+        return this.dataDis;
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

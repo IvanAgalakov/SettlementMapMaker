@@ -13,6 +13,7 @@ import com.wiz.settlementmapmaker.Constants;
 import com.wiz.settlementmapmaker.RuntimeManager;
 import com.wiz.settlementmapmaker.SettlementNameGenerator;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
+import com.wiz.settlementmapmaker.Utilities.Utils;
 import com.wiz.settlementmapmaker.Window;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
@@ -91,6 +92,8 @@ public class GUILayer {
     private boolean showRightClickMenu = false;
     private ImVec2 rightClickPosition = new ImVec2();
 
+    private ImBoolean showCamera = new ImBoolean(false);
+    
     public void settlementManagement() {
         runMan.clearEditingShapes();
 
@@ -101,7 +104,6 @@ public class GUILayer {
 //        else if (runMan.getLeftClickState()) {
 //            showRightClickMenu = false;
 //        }
-
         if (showRightClickMenu) {
             rightClick();
         }
@@ -112,9 +114,33 @@ public class GUILayer {
 
         ImGui.inputText("Settlement Name: ", runMan.getSettlementName());
         ImGui.sliderFloat("Zoom", runMan.getZoom(), Constants.MIN_ZOOM, Constants.MAX_ZOOM);
-        if (ImGui.button("Toggle Draw Menu")) {
-            showDrawMenu = !showDrawMenu;
+
+        if (!runMan.isSettingCamera()) {
+            if (ImGui.button("Toggle Draw Menu")) {
+                showDrawMenu = !showDrawMenu;
+            }
+
+            if (ImGui.button("Set Export Camera")) {
+                showDrawMenu = false;
+                runMan.clearCameraShape();
+                runMan.setCamera(true);
+            }
+            ImGui.sameLine();
+            ImGui.checkbox("Show Camera", showCamera);
+            
+        } else {
+            ImGui.beginDisabled();
+            ImGui.button("Toggle Draw Menu");
+            ImGui.button("Set Export Camera");
+            ImGui.sameLine();
+            ImGui.checkbox("Show Camera", showCamera);
+            ImGui.endDisabled();
         }
+        
+        if (this.showCamera.get()) {
+            runMan.addEditingShape(Utils.boxPoints(runMan.getCameraShape()));
+        }
+
         if (showDrawMenu) {
             drawMenu();
         }
@@ -333,7 +359,7 @@ public class GUILayer {
         if (!sameSeed) {
             zone.setHiddenSeed(r.nextLong(0, Long.MAX_VALUE));
         }
-        runMan.generateCitySectionsInZone(zone,zone.getHiddenSeed());
+        runMan.generateCitySectionsInZone(zone, zone.getHiddenSeed());
     }
 
     private void generate(int gen, Zone zone, boolean sameSeed) {
@@ -365,7 +391,7 @@ public class GUILayer {
             if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
                 generateCity(zone, true);
             }
-            
+
             if (ImGui.sliderFloat("Road Size", zone.getRoadSize().getData(), 0.001f, 0.1f)) {
                 generateCity(zone, true);
             }
@@ -559,8 +585,22 @@ public class GUILayer {
         if (!ImGui.begin("Export", showExportWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
             ImGui.end();
         } else {
-            ImGui.inputInt("Width", runMan.getImageResXArray());
-            ImGui.inputInt("Height", runMan.getImageResYArray());
+            
+            EditorShape camera = runMan.getCameraShape();
+            double width = camera.getTopRight().x - camera.getBottomLeft().x;
+            double height = camera.getTopRight().y - camera.getBottomLeft().y;
+            
+            double ratio = height/width;
+            
+            if (ImGui.inputInt("Width", runMan.getImageResXArray())) {
+                runMan.getImageResYArray().set((int)(ratio*runMan.getImageResXArray().get()));
+            }
+            if (ImGui.inputInt("Height", runMan.getImageResYArray())) {
+                runMan.getImageResXArray().set((int)(runMan.getImageResYArray().get() / ratio));
+            }
+            
+            
+            
             if (ImGui.button("Save Image")) {
                 runMan.savePlease = 1;
             }

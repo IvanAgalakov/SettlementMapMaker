@@ -30,6 +30,10 @@ public class Zone extends EditorShape {
         super(name);
         this.zoneType = new ImInt(zoneType);
     }
+    
+    public Zone() {
+        super("");
+    }
 
     public void setZoneType(String type) {
         

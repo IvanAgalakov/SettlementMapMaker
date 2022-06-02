@@ -40,10 +40,10 @@ public class Window {
 
     private String glslVersion = null;
     private long windowPtr;
-    
+
     private int defaultProgram;
     private int waterProgram;
-    
+
     private int frameBuffer;
     private int renderBuffer;
 
@@ -57,7 +57,7 @@ public class Window {
     private ArrayList<Point> currentShape = new ArrayList<Point>();
 
     private EditorShape[] draw;
-    
+
     private long startTime;
 
     public Window(GUILayer layer) {
@@ -67,7 +67,7 @@ public class Window {
 
         this.setGen = new SettlementGenerator();
     }
-    
+
     public long getStartTime() {
         return startTime;
     }
@@ -156,7 +156,7 @@ public class Window {
         //Shader basicVertexShader = ShaderManager.ShaderNames.BASIC_VERTEX.SHADER;
         //Shader basicFragmentShader = ShaderManager.ShaderNames.BASIC_FRAGMENT.SHADER;
         //this.defaultProgram = ShaderManager.programFromShaders(basicVertexShader.getShader(), basicFragmentShader.getShader());
-        
+
         //Shader waterShader = ShaderManager.ShaderNames.WATER_FRAGMENT.SHADER;
         //this.waterProgram = ShaderManager.programFromShaders(basicVertexShader.getShader(), waterShader.getShader());
 //
@@ -179,6 +179,21 @@ public class Window {
                 GL33C.glGetIntegerv(GL_VIEWPORT, windowView);
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
+                EditorShape exportView = runMan.getCameraShape();
+                exportView.CalculateCenter();
+
+                Point center = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getCenter(), runMan.getImageResX(), runMan.getImageResY());
+                
+
+                double width = exportView.getTopRight().x - exportView.getBottomLeft().x;
+                double height = exportView.getTopRight().y - exportView.getBottomLeft().y;
+
+                float ratio = (float)(height / width);
+
+                runMan.getDataDisplay().setCameraX((float) center.x - (runMan.getImageResX()*ratio)/2);
+                runMan.getDataDisplay().setCameraY((float) center.y - (runMan.getImageResY()*ratio)/2);
+                runMan.getZoom()[0] = (float)(1/ratio);
+                
                 GL33C.glViewport(0, 0, runMan.getImageResX(), runMan.getImageResY());
                 //System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
                 displayX = runMan.getImageResX();
@@ -198,7 +213,6 @@ public class Window {
 
             imGuiGlfw.newFrame();
 
-            
             if (runMan.savePlease == 2) {
                 runMan.getIO().setDisplaySize(displayX, displayY);
             }

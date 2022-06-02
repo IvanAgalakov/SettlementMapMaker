@@ -66,13 +66,13 @@ public class DataDisplayer {
     private float normy;
 
     private float aspect;
-    
+
     private int selectedProgram = GL33C.GL_NONE;
 
     public void display() {
         //GL33C.glUseProgram(ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT));
         this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
-        
+
         if (io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && io.getKeyCtrl()) {
 
             if (lastMiddleState == false) {
@@ -135,12 +135,23 @@ public class DataDisplayer {
             if (runMan.getLeftClickState() && !io.getKeyCtrl() && !runMan.imGuiWantCaptureMouse()) {
                 editShape.CalculateCenter();
                 runMan.updateShape(editShape);
-                editPoint = null;
-                editShape = null;
+                
+                if (!runMan.isSettingCamera() || editShape.size() >= 2) {
+                    editPoint = null;
+                    editShape = null;
+                } else {
+                    Point p = new Point(mouse.x,mouse.y);
+                    editShape.addPoints(p);
+                    editPoint = p;
+                }
             }
             if (editShape != null) {
                 v.clear();
-                v.add(editShape);
+                if (!runMan.isSettingCamera()) {
+                    v.add(editShape);
+                } else {
+                    v.add(Utils.boxPoints(editShape));
+                }
                 v.get(0).calculateGlLines(true);
                 this.setColor(runMan.getCurrentSettlement().getEditStyle().getColor());
                 WindowVisualizer.drawGlLines(v, 6, runMan.getCurrentSettlement().getEditStyle().getColor(), true);
@@ -210,8 +221,7 @@ public class DataDisplayer {
                             x--;
                             shapeList.addAll(zone.getContainedShapes());
                         }
-                    }
-                    else if (shapeList.get(x) instanceof Obstacle obs) {
+                    } else if (shapeList.get(x) instanceof Obstacle obs) {
                         if (this.updateObstacle.containsKey(obs)) {
                             if (this.updateObstacle.get(obs).get()) {
                                 if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
@@ -235,10 +245,10 @@ public class DataDisplayer {
                                         shapeList.addAll(drawData);
                                         this.obstacles.put(obs, drawData);
                                         this.updateObstacle.get(obs).set(false);
-                                        
+
                                     }
                                 }
-                                
+
                             } else {
                                 shapeList.remove(shapeList.get(x));
                                 x--;
@@ -252,17 +262,17 @@ public class DataDisplayer {
 
                 // chooses the drawing type based on the style you have selected
                 Style style = runMan.getStyle(styles.get(i));
-                
+
                 int program = ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT);
                 DrawColor color = style.getColor();
-                
+
                 if (styles.get(i).equals("water")) {
                     program = ShaderManager.getProgram(ShaderManager.ProgramNames.WATER);
                 }
-                
+
                 this.selectProgram(program);
                 GL33C.glUniform3f(GL33C.glGetUniformLocation(program, "col"), color.getRed(), color.getGreen(), color.getBlue());
-                
+
                 if (Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
@@ -291,12 +301,13 @@ public class DataDisplayer {
         for (int i = 0; i < editingShapes.size(); i++) {
             editingShapes.get(i).calculateGlLines(true);
         }
-        
-        //System.out.println(editingShapes.size());
 
-        this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
-        this.setColor(runMan.getEditStyle().getColor());
-        WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
+        //System.out.println(editingShapes.size());
+        if (runMan.savePlease == 0) {
+            this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
+            this.setColor(runMan.getEditStyle().getColor());
+            WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
+        }
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
 //        mousePoint.add(new EditorShape(runMan.getMouseWorldPoint()));
@@ -330,7 +341,7 @@ public class DataDisplayer {
 
             this.shapesByStyle.get(styles[shapes.get(x).getStyle().get()]).addAll(currentStyleShapes);
         }
-        
+
         System.out.println("updated style groupings");
 
     }
@@ -349,6 +360,10 @@ public class DataDisplayer {
 
     public void setEditShape(EditorShape shape) {
         this.editShape = shape;
+    }
+    
+    public EditorShape getEditShape() {
+        return this.editShape;
     }
 
     public void addEditingShape(EditorShape shape) {
@@ -377,26 +392,26 @@ public class DataDisplayer {
         }
         return singleList;
     }
-    
+
     public void setColor(DrawColor color) {
         GL33C.glUniform3f(GL33C.glGetUniformLocation(selectedProgram, "col"), color.getRed(), color.getGreen(), color.getBlue());
     }
-    
+
     public void selectProgram(ShaderManager.ProgramNames name) {
         this.selectedProgram = ShaderManager.getProgram(name);
         GL33C.glUseProgram(this.selectedProgram);
     }
-    
+
     public void selectProgram(int program) {
         this.selectedProgram = program;
         GL33C.glUseProgram(this.selectedProgram);
     }
-    
+
     public void clearObstacleList() {
         this.obstacles.clear();
         this.updateObstacle.clear();
     }
-    
+
     public void removeObstacleEntry(Obstacle obs) {
         if (this.obstacles.containsKey(obs)) {
             this.obstacles.remove(obs);
@@ -404,6 +419,14 @@ public class DataDisplayer {
         if (this.updateObstacle.containsKey(obs)) {
             this.updateObstacle.remove(obs);
         }
+    }
+    
+    public void setCameraX(float x) {
+        this.cameraX = x;
+    }
+    
+    public void setCameraY(float y) {
+        this.cameraY = y;
     }
 
 }

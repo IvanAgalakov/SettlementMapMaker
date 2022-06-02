@@ -25,17 +25,17 @@ public class Shape {
     private double width;
     private double height;
 
-    protected Shape(Point... points) {
+    public Shape(Point... points) {
         this.points.addAll(Arrays.asList(points));
         this.CalculateCenter();
     }
 
-    protected Shape(ArrayList<Point> points) {
+    public Shape(ArrayList<Point> points) {
         this.points.addAll(points);
         this.CalculateCenter();
     }
 
-    protected Shape() {
+    public Shape() {
         this.points = new ArrayList<>();
     }
 
@@ -486,6 +486,10 @@ public class Shape {
             s += "(" + points.get(i).x + ", " + points.get(i).y + ")\n";
         }
         return s;
+    }
+    
+    public void clear() {
+        this.points.clear();
     }
 
 }
