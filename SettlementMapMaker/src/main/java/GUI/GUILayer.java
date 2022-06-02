@@ -363,7 +363,7 @@ public class GUILayer {
             }
 
             if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
-                generateCity(zone, false);
+                generateCity(zone, true);
             }
             
             if (ImGui.sliderFloat("Road Size", zone.getRoadSize().getData(), 0.001f, 0.1f)) {

@@ -41,6 +41,11 @@ public class Point {
         this.y = p.y;
         this.x = p.x;
     }
+    
+    public void set(double x, double y) {
+        this.y = y;
+        this.x = x;
+    }
 
     public void minClampX(double cX) {
         if (cX > x) {

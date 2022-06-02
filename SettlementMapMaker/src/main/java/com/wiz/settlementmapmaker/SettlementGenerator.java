@@ -201,7 +201,14 @@ public class SettlementGenerator {
         double addx = base.getBottomLeft().x;
         double addy = base.getBottomLeft().y;
         for (int i = 0; i < base.getRegions().get(); i++) {
-            Site site = new Site(addx + rand.nextDouble(width), addy + rand.nextDouble(height));
+            Point place = new Point(addx + rand.nextDouble(width), addy + rand.nextDouble(height));
+            Site site = new Site(place.x,place.y);
+//            while (!base.contains(place)) {
+//                site = new Site(place.x,place.y);
+//                place.set(addx + rand.nextDouble(width), addy + rand.nextDouble(height));
+//            }
+            // too slow ):  ^^^^^^^^ add a decomposition of the shape into triangles for random placement within the triangles
+
             // we could also set a different weighting to some sites
             //site.setWeight(rand.nextDouble(10));
             sites.add(site);

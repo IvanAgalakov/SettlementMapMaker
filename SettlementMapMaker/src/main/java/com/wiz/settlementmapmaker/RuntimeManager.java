@@ -557,6 +557,14 @@ public class RuntimeManager {
     public void generateCitySectionsInZone(Zone zone, long seed) {
         zone.clearContainedShapes();
         ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone, seed);
+        
+        for (int i = buildings.size() - 1; i >= 0; i--) {
+            if (buildings.get(i).getPerimeter() < zone.getMinPerimeter()) {
+                buildings.remove(i);
+            }
+        }
+        
+        
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
         
         ArrayList<EditorShape> block = dataDis.getBlockingShapes();
