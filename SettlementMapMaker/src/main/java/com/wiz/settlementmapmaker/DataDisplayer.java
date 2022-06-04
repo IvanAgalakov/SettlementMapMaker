@@ -70,6 +70,8 @@ public class DataDisplayer {
     private int selectedProgram = GL33C.GL_NONE;
 
     public void display() {
+
+        //System.out.println("Camera: " + this.cameraX + ", " + this.cameraY);
         //GL33C.glUseProgram(ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT));
         this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
 
@@ -88,19 +90,7 @@ public class DataDisplayer {
             lastMiddleState = false;
         }
 
-        if (runMan.savePlease == 0) {
-            normx = cameraX / (float) runMan.getWidth();
-            normy = 1 - cameraY / (float) runMan.getHeight();
-        } else {
-            normx = cameraX / (float) runMan.getImageResX();
-            normy = 1 - cameraY / (float) runMan.getImageResY();
-        }
-
-        if (runMan.savePlease == 0) {
-            aspect = runMan.getWidth() / (float) runMan.getHeight();
-        } else {
-            aspect = runMan.getImageResX() / (float) runMan.getImageResY();
-        }
+        updateCalculations();
 
         ArrayList<Integer> allPrograms = ShaderManager.getAllPrograms();
         for (int i = 0; i < allPrograms.size(); i++) {
@@ -135,12 +125,12 @@ public class DataDisplayer {
             if (runMan.getLeftClickState() && !io.getKeyCtrl() && !runMan.imGuiWantCaptureMouse()) {
                 editShape.CalculateCenter();
                 runMan.updateShape(editShape);
-                
+
                 if (!runMan.isSettingCamera() || editShape.size() >= 2) {
                     editPoint = null;
                     editShape = null;
                 } else {
-                    Point p = new Point(mouse.x,mouse.y);
+                    Point p = new Point(mouse.x, mouse.y);
                     editShape.addPoints(p);
                     editPoint = p;
                 }
@@ -185,6 +175,23 @@ public class DataDisplayer {
 //        
 //        WindowVisualizer.drawTriangles(curve.getCurves(), DrawColor.BLACK);
     }
+    
+    public void updateCalculations() {
+        if (runMan.savePlease == 0) {
+            normx = cameraX / (float) runMan.getWidth();
+            normy = 1 - cameraY / (float) runMan.getHeight();
+        } else {
+            normx = cameraX / (float) runMan.getImageResX();
+            normy = 1 - cameraY / (float) runMan.getImageResY();
+        }
+
+        if (runMan.savePlease == 0) {
+            aspect = runMan.getWidth() / (float) runMan.getHeight();
+        } else {
+            aspect = runMan.getImageResX() / (float) runMan.getImageResY();
+        }
+    }
+    
 
     public Point screenPointToWorldPoint(Point screen, int width, int height) {
         Point world = new Point(-(-1 + 1f / runMan.getZoom()[0]) + (((screen.x / width) * 2f) / runMan.getZoom()[0] - (normx * 2)),
@@ -286,6 +293,10 @@ public class DataDisplayer {
                         if (runMan.savePlease == 0) {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
                             gui.textPopup(shapeList.get(x).getName().get(), (float) textPoint.x, (float) textPoint.y, i + x + 1);
+
+//                            if (shapeList.get(x).getName().get().equals("Debug")) {
+//                                System.out.println("Debug: " + textPoint);
+//                            }
                         } else {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
@@ -361,7 +372,7 @@ public class DataDisplayer {
     public void setEditShape(EditorShape shape) {
         this.editShape = shape;
     }
-    
+
     public EditorShape getEditShape() {
         return this.editShape;
     }
@@ -420,13 +431,17 @@ public class DataDisplayer {
             this.updateObstacle.remove(obs);
         }
     }
-    
+
     public void setCameraX(float x) {
         this.cameraX = x;
     }
-    
+
     public void setCameraY(float y) {
         this.cameraY = y;
+    }
+
+    public Point getCameraPosition() {
+        return new Point(cameraX, cameraY);
     }
 
 }

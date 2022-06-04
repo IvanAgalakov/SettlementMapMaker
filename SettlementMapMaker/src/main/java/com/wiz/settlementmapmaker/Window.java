@@ -179,21 +179,10 @@ public class Window {
                 GL33C.glGetIntegerv(GL_VIEWPORT, windowView);
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-                EditorShape exportView = runMan.getCameraShape();
-                exportView.CalculateCenter();
-
-                Point center = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getCenter(), runMan.getImageResX(), runMan.getImageResY());
+                this.calculateExportView();
                 
-
-                double width = exportView.getTopRight().x - exportView.getBottomLeft().x;
-                double height = exportView.getTopRight().y - exportView.getBottomLeft().y;
-
-                float ratio = (float)(height / width);
-
-                runMan.getDataDisplay().setCameraX((float) center.x - (runMan.getImageResX()*ratio)/2);
-                runMan.getDataDisplay().setCameraY((float) center.y - (runMan.getImageResY()*ratio)/2);
-                runMan.getZoom()[0] = (float)(1/ratio);
-                
+                //System.out.println(runMan.getDataDisplay().worldPointToScreenPoint(new Point(0.5,-1), runMan.getImageResX(), runMan.getImageResY()));
+                //System.out.println(runMan.getDataDisplay().screenPointToWorldPoint(runMan.getDataDisplay().getCameraPosition(), runMan.getImageResX(), runMan.getImageResY()));
                 GL33C.glViewport(0, 0, runMan.getImageResX(), runMan.getImageResY());
                 //System.out.println(windowView[2] / (float) runMan.getImageResX() + ", " + windowView[3] / (float) runMan.getImageResY());
                 displayX = runMan.getImageResX();
@@ -254,6 +243,51 @@ public class Window {
 
     public long getWindowPointer() {
         return this.windowPtr;
+    }
+
+    public void calculateExportView() {
+
+        
+
+        EditorShape exportView = runMan.getCameraShape();
+        exportView.CalculateCenter();
+
+        runMan.getZoom()[0] = 1;
+        runMan.getDataDisplay().setCameraX(0);
+        runMan.getDataDisplay().setCameraY(0);
+        
+        runMan.getDataDisplay().updateCalculations();
+        
+        Point topRight = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getTopRight(), runMan.getImageResX(), runMan.getImageResY());
+        Point bottomLeft = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getBottomLeft(), runMan.getImageResX(), runMan.getImageResY());
+
+        float width = (float) Math.abs(topRight.x - bottomLeft.x);
+        float height = (float) Math.abs(topRight.y - bottomLeft.y);
+        float ratio = (float) (width / runMan.getImageResX());
+
+        //System.out.println(ratio + " : " + topRight + " : " + bottomLeft);
+        
+        //center = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getCenter(), runMan.getImageResX(), runMan.getImageResY());
+        
+        runMan.getDataDisplay().updateCalculations();
+        
+        topRight = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getTopRight(), runMan.getImageResX(), runMan.getImageResY());
+        bottomLeft = runMan.getDataDisplay().worldPointToScreenPoint(exportView.getBottomLeft(), runMan.getImageResX(), runMan.getImageResY());
+        
+        
+        Point topLeft = new Point(bottomLeft.x, topRight.y);
+
+        
+        
+        float xOffset = (runMan.getImageResX()-width)/2f;
+        float yOffset = (runMan.getImageResY()-height)/2f;
+        
+        System.out.println("( {" + runMan.getImageResX() + "," + width + "} {" + runMan.getImageResY() + "," + height + "} )");
+        
+        runMan.getDataDisplay().setCameraX((float) -topLeft.x+xOffset);
+        runMan.getDataDisplay().setCameraY((float) -topLeft.y+yOffset);
+        
+        runMan.getZoom()[0] = 1/ratio;
     }
 
 }

@@ -579,6 +579,7 @@ public class GUILayer {
 
     }
 
+    boolean exportJustOpened = true;
     public void exportWindow() {
         ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
         ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
@@ -597,6 +598,12 @@ public class GUILayer {
             }
             if (ImGui.inputInt("Height", runMan.getImageResYArray())) {
                 runMan.getImageResXArray().set((int)(runMan.getImageResYArray().get() / ratio));
+            }
+            
+            if (exportJustOpened) {
+                runMan.getImageResXArray().set(1000);
+                runMan.getImageResYArray().set((int)(ratio*runMan.getImageResXArray().get()));
+                exportJustOpened = false;
             }
             
             
