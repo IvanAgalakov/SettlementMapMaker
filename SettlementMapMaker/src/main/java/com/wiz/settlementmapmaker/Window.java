@@ -229,7 +229,7 @@ public class Window {
 
             if (runMan.savePlease == 2) {
                 GL33C.glReadBuffer(GL33C.GL_COLOR_ATTACHMENT0);
-                FileManager.saveScreen(runMan.getImageResX(), runMan.getImageResY());
+                FileManager.saveScreen(runMan.getImageResX(), runMan.getImageResY(), runMan.getExportFilePath().get()+"\\" + runMan.getExportFileName().get() + ".png");
                 GL33C.glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 GL33C.glViewport(windowView[0], windowView[1], windowView[2], windowView[3]);
                 displayX = windowView[2];

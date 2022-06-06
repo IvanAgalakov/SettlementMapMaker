@@ -606,6 +606,28 @@ public class GUILayer {
                 exportJustOpened = false;
             }
             
+            ImGui.inputText("File Location",runMan.getExportFilePath());
+            ImGui.sameLine();
+            if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_FOLDER), 25, 22) && !this.fileChooserOpen) {
+                SwingUtilities.invokeLater(() -> {
+                    JFrame j = new JFrame();
+                    j.setAlwaysOnTop(true);
+                    JFileChooser fileChooser = new JFileChooser();
+                    this.fileChooserOpen = true;
+                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int choice = fileChooser.showOpenDialog(j);
+
+                    if (choice == JFileChooser.APPROVE_OPTION) {
+                        // set the label to the path of the selected file
+                        runMan.setExportFilePath(fileChooser.getSelectedFile().getAbsolutePath());
+                    }
+
+                    this.fileChooserOpen = false;
+                });
+            }
+            
+            ImGui.inputText("Name", runMan.getExportFileName());
+            
             
             
             if (ImGui.button("Save Image")) {

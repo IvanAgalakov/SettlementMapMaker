@@ -655,6 +655,18 @@ public class RuntimeManager {
     public DataDisplayer getDataDisplay() {
         return this.dataDis;
     }
+    
+    public ImString getExportFilePath() {
+        return this.currentSettlement.getExportFilePath();
+    }
+    
+    public void setExportFilePath(String s) {
+        this.currentSettlement.setExportFilePath(s);
+    }
+    
+    public ImString getExportFileName() {
+        return this.currentSettlement.getExportFileName();
+    }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {
 

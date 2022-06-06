@@ -12,6 +12,7 @@ import Shapes.Obstacle;
 import Shapes.Building;
 import Shapes.Shape;
 import imgui.ImColor;
+import imgui.type.ImString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ public class Settlement {
     private ArrayList<String> cityStyles = new ArrayList<>();
     
     private Zone cameraShape = new Zone();
+    
+    private ImString exportFilePath = new ImString();
+    private ImString exportFileName = new ImString();
 
     public Settlement(String name) {
         style.put("Zone Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
@@ -52,6 +56,7 @@ public class Settlement {
         }
 
         this.name = name;
+        this.exportFileName.set(name);
     }
 
     public float[] getColor(String key) {
@@ -140,6 +145,18 @@ public class Settlement {
     
     public EditorShape getCamera() {
         return cameraShape;
+    }
+    
+    public void setExportFilePath(String f) {
+        this.exportFilePath.set(f);
+    }
+    
+    public ImString getExportFilePath() {
+        return this.exportFilePath;
+    }
+    
+    public ImString getExportFileName() {
+        return this.exportFileName;
     }
 
 }

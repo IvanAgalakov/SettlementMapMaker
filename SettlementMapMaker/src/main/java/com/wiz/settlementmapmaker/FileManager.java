@@ -62,7 +62,7 @@ public class FileManager {
         return null;
     }
 
-    public static void saveScreen(int width, int height) {
+    public static void saveScreen(int width, int height, String path) {
         float[] pixels = new float[width * height * 3];
 
         GL33C.glReadPixels(0, 0, width, height, GL33C.GL_RGB, GL33C.GL_FLOAT, pixels);
@@ -83,7 +83,7 @@ public class FileManager {
             }
 
             if (img != null) {
-                File outputFile = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\image.png");
+                File outputFile = new File(path);
                 ImageIO.write(img, "png", outputFile);
             }
         } catch (IOException ex) {
