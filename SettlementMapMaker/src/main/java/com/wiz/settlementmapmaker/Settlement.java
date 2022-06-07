@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  *
@@ -38,7 +39,7 @@ public class Settlement {
     
     private Zone cameraShape = new Zone();
     
-    private ImString exportFilePath = new ImString();
+    private ImString exportFilePath = new ImString(FileSystemView.getFileSystemView().getDefaultDirectory().getPath());
     private ImString exportFileName = new ImString();
 
     public Settlement(String name) {
@@ -129,6 +130,13 @@ public class Settlement {
         if (!cityStyles.contains(s)) {
             cityStyles.add(s);
             style.put(s, new Style(new DrawColor(1, 1, 1, 1), 0));
+        }
+    }
+    
+    public void addStyle(String s, Style sty, int pos) {
+        if (!cityStyles.contains(s)) {
+            cityStyles.add(pos, s);
+            style.put(s, sty);
         }
     }
 

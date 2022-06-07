@@ -13,6 +13,7 @@ import com.wiz.settlementmapmaker.Constants;
 import com.wiz.settlementmapmaker.RuntimeManager;
 import com.wiz.settlementmapmaker.SettlementNameGenerator;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
+import com.wiz.settlementmapmaker.Utilities.MethodPass;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import com.wiz.settlementmapmaker.Window;
 import imgui.ImGui;
@@ -63,12 +64,27 @@ public class GUILayer {
         this.runMan = runMan;
     }
 
+    private boolean openConfirmationPopup = false;
+    private boolean openErrorPopup = false;
     public void imgui() {
         toolBar();
+        
+        
         if (!runMan.getSettlementFileDirectory().get().equals("")) {
             settlementManagement();
         }
-
+        
+        if (openConfirmationPopup) {
+            ImGui.openPopup("Confirmation Popup");
+            openConfirmationPopup = false;
+        }
+        
+        if (openErrorPopup) {
+            ImGui.openPopup("Error Popup");
+            openErrorPopup = false;
+        }
+        
+        modalPopups();
     }
 
     public void textPopup(String text, float x, float y, int number) {
@@ -93,6 +109,8 @@ public class GUILayer {
     private ImVec2 rightClickPosition = new ImVec2();
 
     private ImBoolean showCamera = new ImBoolean(false);
+    
+    
     
     public void settlementManagement() {
         runMan.clearEditingShapes();
@@ -144,8 +162,83 @@ public class GUILayer {
         if (showDrawMenu) {
             drawMenu();
         }
+        
+        
+        
+//        if (ImGui.button("test")) {
+//            yesMethod = () -> System.out.println("working");
+//            ImGui.openPopup("Confirmation Popup");
+//        }
+        
+        
+        
 
         ImGui.end();
+        
+    }
+    
+    String confirmationMessage = "Are you sure about blah blah blah?";
+    MethodPass yesMethod;
+    String errorMessage = "ERROR: SOMETHING WENT WRONG, PLEASE TRY AGAIN.";
+    
+    public void modalPopups() {
+        
+        int width = 150;
+        int height = 100;
+        float buttonWidth = 50;
+        float buttonHeight = 40;
+        ImVec2 result = new ImVec2();
+        ImGui.calcTextSize(result, confirmationMessage);
+        if (width < result.x+10) {
+            width = (int)result.x+10;
+        }
+        ImGui.setNextWindowSize(width, height);
+        ImGui.setNextWindowPos(runMan.getWidth()/2-width/2, runMan.getHeight()/2-height/2);
+        if (ImGui.beginPopupModal("Confirmation Popup", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse)) {
+            ImGui.text(confirmationMessage);
+            if (ImGui.button("yes", buttonWidth, buttonHeight)) {
+                if (yesMethod != null) {
+                    yesMethod.myMethod();
+                }
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.sameLine(width-buttonWidth);
+            if(ImGui.button("no", buttonWidth, buttonHeight)) {
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.endPopup();
+        }
+        
+        
+        width = 150;
+        height = 100;
+        buttonWidth = 50;
+        buttonHeight = 40;
+        ImGui.calcTextSize(result, errorMessage);
+        if (width < result.x+10) {
+            width = (int)result.x+10;
+        }
+        ImGui.setNextWindowSize(width, height);
+        ImGui.setNextWindowPos(runMan.getWidth()/2-width/2, runMan.getHeight()/2-height/2);
+        if (ImGui.beginPopupModal("Error Popup", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse)) {
+            ImGui.textColored(Constants.COLOR_RED, errorMessage);
+            ImGui.indent(width/2-buttonWidth/2);
+            if (ImGui.button("Ok", buttonWidth, buttonHeight)) {
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.endPopup();
+        }
+    }
+    
+    public void openConfirmationPopup(MethodPass method, String message) {
+        this.confirmationMessage = message;
+        this.yesMethod = method;
+        this.openConfirmationPopup = true;
+    }
+    
+    public void openErrorPopup(String message) {
+        this.errorMessage = message;
+        this.openErrorPopup = true;
     }
 
     public void rightClick() {
@@ -201,7 +294,7 @@ public class GUILayer {
         ImGui.setNextWindowPos(pos.x, pos.y, ImGuiCond.Always);
         ImGui.begin("Shape Drawing Menu");
 
-        ImGui.textColored(Constants.CALM_GREEN, "Drawing: " + editorType + "s");
+        ImGui.textColored(Constants.COLOR_CALM_GREEN, "Drawing: " + editorType + "s");
 
         // start of tab bar
         ImGui.beginTabBar("Edit Type");
@@ -573,7 +666,11 @@ public class GUILayer {
                 runMan.saveCurrentSettlement();
             }
             if (ImGui.menuItem("Export")) {
-                showExportWin.set(true);
+                if (runMan.getCameraShape().size() > 0) {
+                    showExportWin.set(true);
+                } else {
+                    this.openErrorPopup("Please set an Export Camera before attempting export.");
+                }
             }
         }
 
@@ -631,7 +728,12 @@ public class GUILayer {
             
             
             if (ImGui.button("Save Image")) {
-                runMan.savePlease = 1;
+                File f = new File(runMan.getExportFilePath().get());
+                if (f.canWrite()) {
+                    runMan.savePlease = 1;
+                } else {
+                    this.openErrorPopup("Invalid Path");
+                }
             }
             ImGui.end();
         }
@@ -692,7 +794,11 @@ public class GUILayer {
                 ImGui.endChild();
 
                 if (remove != -1) {
-                    runMan.removeStyle(runMan.getCityStyles().get(remove));
+                    //runMan.removeStyle(runMan.getCityStyles().get(remove));
+                    final int pass = remove;
+                    //yesMethod = () -> runMan.removeStyle(runMan.getCityStyles().get(pass));
+                    //openConfirmationPopup = true;
+                    this.openConfirmationPopup(() -> runMan.removeStyle(runMan.getCityStyles().get(pass)), "Are you sure you want to delete this style?");
                 }
 
                 ImGui.separator();
@@ -742,8 +848,13 @@ public class GUILayer {
                 runMan.getPendingSettlementName().set(SettlementNameGenerator.getRandomSettlementName());
             }
             if (ImGui.button("Create")) {
-                runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
-                showNewSetWin.set(false);
+                File f = new File(runMan.getPendingSettlementFolderDirectory().get());
+                if (f.canWrite()) {
+                    runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
+                    showNewSetWin.set(false);
+                } else {
+                    this.openErrorPopup("Invalid Path");
+                }
             }
             ImGui.end();
         }

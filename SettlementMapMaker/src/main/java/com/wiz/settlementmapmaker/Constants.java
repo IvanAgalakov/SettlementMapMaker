@@ -23,7 +23,8 @@ public class Constants {
     public static final int COLOR_WARM_PARCHMENT = ImColor.intToColor(150, 109, 80, 255);
     public static final int COLOR_PARCHMENT = ImColor.intToColor(230, 203, 156, 255);
     
-    public static final int CALM_GREEN = ImColor.intToColor(55, 140, 78, 255);
+    public static final int COLOR_CALM_GREEN = ImColor.intToColor(55, 140, 78, 255);
+    public static final int COLOR_RED = ImColor.intToColor(212, 46, 34, 255);
     
     public static final float LINE_THICKNESS = 0.01f;
     

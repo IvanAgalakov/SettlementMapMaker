@@ -508,8 +508,13 @@ public class RuntimeManager {
     }
 
     public void removeStyle(String style) {
-        this.currentSettlement.removeStyle(style);
-        this.updateStyleList();
+        ArrayList<String> cityStyles = this.currentSettlement.getCityStyles();
+        int pos = cityStyles.indexOf(style);
+        Style styleToGo = this.currentSettlement.getStyle(style);
+        
+        this.useAction(new CombinedAction(new MethodRunAction(() -> this.currentSettlement.removeStyle(style), () -> this.currentSettlement.addStyle(style, styleToGo, pos)), new MethodRunAction(() -> this.updateStyleList())));
+        //this.currentSettlement.removeStyle(style);
+        //this.updateStyleList();
     }
 
     public void updateDataDisplay() {
