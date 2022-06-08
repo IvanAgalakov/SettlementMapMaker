@@ -445,6 +445,10 @@ public class GUILayer {
     }
 
     private void generateCity(Zone zone, boolean sameSeed) {
+        if (!zone.isConvex()) {
+            this.openErrorPopup("City generation only available with convex zones.");
+            return;
+        }
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             runMan.removeEditingShape(zone.getContainedShapes().get(i));
         }

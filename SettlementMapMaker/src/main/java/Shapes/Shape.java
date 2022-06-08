@@ -478,6 +478,45 @@ public class Shape {
 
         this.points = points;
     }
+    
+    /*
+    given p[k], p[k+1], p[k+2] each with coordinates x, y:
+    dx1 = x[k+1]-x[k]
+    dy1 = y[k+1]-y[k]
+    dx2 = x[k+2]-x[k+1]
+    dy2 = y[k+2]-y[k+1]
+    zcrossproduct = dx1*dy2 - dy1*dx2
+    */
+    
+    public boolean isConvex() {
+        int sign = 0;
+        for (int i = 0; i < this.points.size(); i++) {
+            int place1 = i;
+            int place2 = i+1;
+            int place3 = i+3;
+            
+            while (place2 >= this.points.size()) {
+                place2 -= this.points.size();
+            }
+            while (place3 >= this.points.size()) {
+                place3 -= this.points.size();
+            }
+            
+            double dx1 = this.points.get(place2).x-this.points.get(place1).x;
+            double dy1 = this.points.get(place2).y-this.points.get(place1).y;
+            double dx2 = this.points.get(place3).x-this.points.get(place2).x;
+            double dy2 = this.points.get(place3).y-this.points.get(place2).y;
+            
+            double zcrossproduct = dx1*dy2 - dy1*dx2;
+            
+            if (sign == 0) {
+                sign = (int)Math.signum(zcrossproduct);
+            } else if (sign != (int)Math.signum(zcrossproduct)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public String toString() {

@@ -191,6 +191,7 @@ public class SettlementGenerator {
         OpenList sites = new OpenList();
 
         PolygonSimple rootPolygon = new PolygonSimple();
+        
 
         for (int i = 0; i < base.size(); i++) {
             rootPolygon.add(base.getPoint(i).x, base.getPoint(i).y);
