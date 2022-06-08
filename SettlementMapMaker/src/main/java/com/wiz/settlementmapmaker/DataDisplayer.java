@@ -150,7 +150,7 @@ public class DataDisplayer {
                 }
             }
         } else if (editMode == true) {
-            updateShapeStyleGroupings();
+            //updateShapeStyleGroupings();
             editMode = false;
         }
 

@@ -383,6 +383,7 @@ public class RuntimeManager {
         addTo.CalculateCenter();
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
+        dataDis.updateShapeStyleGroupings();
     }
 
     public void movePoint(int dir, EditorShape moveIn, ImInt toMove) {
