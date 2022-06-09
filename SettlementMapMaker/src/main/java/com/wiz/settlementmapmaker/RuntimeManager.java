@@ -233,6 +233,14 @@ public class RuntimeManager {
     public void setEditShape(EditorShape editShape) {
         dataDis.setEditShape(editShape);
     }
+    
+    public void setEditShapeMoveMode(boolean b) {
+        this.dataDis.setEditShapeMoveMode(b);
+    }
+    
+    public void addEditingPoint(Point p) {
+        dataDis.addEditingPoint(p);
+    }
 
     public void addEditingShape(EditorShape editShape) {
         dataDis.addEditingShape(editShape);
@@ -602,7 +610,7 @@ public class RuntimeManager {
         zone.getContainedShapes().addAll(buildings);
     }
 
-    public void calculateShape(EditorShape shape, Style style) {
+    public static void calculateShape(EditorShape shape, Style style) {
         switch (Style.styleTypes[style.getSelectedStyle().get()]) {
             case "line" ->
                 shape.calculateLinesFromPoints(Constants.LINE_THICKNESS, true);

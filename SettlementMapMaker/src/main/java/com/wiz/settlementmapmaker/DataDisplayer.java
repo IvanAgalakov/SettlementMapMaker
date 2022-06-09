@@ -39,8 +39,10 @@ public class DataDisplayer {
 
     private Point editPoint = null;
     private EditorShape editShape = null;
+    private boolean moveShape = false;
 
     private ArrayList<EditorShape> editingShapes = new ArrayList<>();
+    private ArrayList<Point> editingPoints = new ArrayList<>();
 
     private ImGuiIO io;
     private RuntimeManager runMan;
@@ -127,8 +129,13 @@ public class DataDisplayer {
                 runMan.updateShape(editShape);
 
                 if (!runMan.isSettingCamera() || editShape.size() >= 2) {
+                    if (editShape instanceof Zone zone && moveShape) {
+                        zone.finishTranslation();
+                    }
                     editPoint = null;
                     editShape = null;
+                    moveShape = false;
+
                 } else {
                     Point p = new Point(mouse.x, mouse.y);
                     editShape.addPoints(p);
@@ -137,6 +144,10 @@ public class DataDisplayer {
             }
             if (editShape != null) {
                 v.clear();
+                // for moving shapes around
+                if (this.moveShape) {
+                    editShape.moveCenterTo(editPoint);
+                }
                 if (!runMan.isSettingCamera()) {
                     v.add(editShape);
                 } else {
@@ -175,7 +186,7 @@ public class DataDisplayer {
 //        
 //        WindowVisualizer.drawTriangles(curve.getCurves(), DrawColor.BLACK);
     }
-    
+
     public void updateCalculations() {
         if (runMan.savePlease == 0) {
             normx = cameraX / (float) runMan.getWidth();
@@ -191,7 +202,6 @@ public class DataDisplayer {
             aspect = runMan.getImageResX() / (float) runMan.getImageResY();
         }
     }
-    
 
     public Point screenPointToWorldPoint(Point screen, int width, int height) {
         Point world = new Point(-(-1 + 1f / runMan.getZoom()[0]) + (((screen.x / width) * 2f) / runMan.getZoom()[0] - (normx * 2)),
@@ -291,12 +301,12 @@ public class DataDisplayer {
                 for (int x = 0; x < shapeList.size(); x++) {
                     if (shapeList.get(x).getShowLabel().get() && !shapeList.get(x).getName().get().equals("") && shapeList.get(x).getCenter() != null) {
                         if (runMan.savePlease == 0) {
-                            Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
-                            gui.textPopup(shapeList.get(x).getName().get(), (float) textPoint.x, (float) textPoint.y, i + x + 1);
+                            // making sure that the label doesn't block a shape that is being edited
+                            if (this.editShape != shapeList.get(x)) {
+                                Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getWidth(), runMan.getHeight());
+                                gui.textPopup(shapeList.get(x).getName().get(), (float) textPoint.x, (float) textPoint.y, i + x + 1);
+                            }
 
-//                            if (shapeList.get(x).getName().get().equals("Debug")) {
-//                                System.out.println("Debug: " + textPoint);
-//                            }
                         } else {
                             Point textPoint = this.worldPointToScreenPoint(shapeList.get(x).getCenter(), runMan.getImageResX(), runMan.getImageResY());
                             //System.out.println(textPoint);
@@ -318,6 +328,9 @@ public class DataDisplayer {
             this.selectProgram(ShaderManager.ProgramNames.DEFAULT);
             this.setColor(runMan.getEditStyle().getColor());
             WindowVisualizer.drawGlLines(editingShapes, 6, runMan.getEditStyle().getColor(), true);
+
+            // for visualization of vertices and other things
+            WindowVisualizer.drawPointsWithPoints(this.editingPoints, 10, runMan.getEditStyle().getColor());
         }
 
 //        ArrayList<EditorShape> mousePoint = new ArrayList();
@@ -373,6 +386,10 @@ public class DataDisplayer {
         this.editShape = shape;
     }
 
+    public void setEditShapeMoveMode(boolean b) {
+        this.moveShape = b;
+    }
+
     public EditorShape getEditShape() {
         return this.editShape;
     }
@@ -381,12 +398,17 @@ public class DataDisplayer {
         this.editingShapes.add(new EditorShape(shape));
     }
 
+    public void addEditingPoint(Point p) {
+        editingPoints.add(p);
+    }
+
     public void removeEditingShape(EditorShape shape) {
         this.editingShapes.remove(shape);
     }
 
     public void clearEditingShapes() {
         this.editingShapes.clear();
+        this.editingPoints.clear();
     }
 
     public boolean containsEditingShape(EditorShape shape) {

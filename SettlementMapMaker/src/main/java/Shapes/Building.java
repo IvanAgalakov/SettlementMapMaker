@@ -16,6 +16,11 @@ public class Building extends EditorShape {
     public Building(String name) {
         super(name);
     }
+    
+    public Building(Building base) {
+        super(base.getName().get());
+        this.points = new ArrayList<>(base.getPointList());
+    }
 
     public Building(EditorShape base) {
         super("");

@@ -60,6 +60,7 @@ public class Constants {
     public static final String TEXTURE_PLUS = "plus.png";
     public static final String TEXTURE_ARROW_UP = "arrowUp.png";
     public static final String TEXTURE_ARROW_DOWN = "arrowDown.png";
+    public static final String TEXTURE_MOVE_ARROW = "moveArrow.png";
     
     
     // Name Files

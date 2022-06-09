@@ -26,7 +26,7 @@ public class EditorShape extends Shape {
 
     public EditorShape(EditorShape shape) {
         for (int i = 0; i < shape.getPoints().length; i++) {
-            points.add(new Point(shape.getPoints()[i]));
+            points.add(new Point(shape.getPoint(i)));
         }
         CalculateCenter();
     }

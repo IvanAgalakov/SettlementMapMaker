@@ -344,6 +344,12 @@ public class GUILayer {
             if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20)) {
                 runMan.moveShape(1, runMan.getShapes(editorType.get()), runMan.getSelectedShape());
             }
+            ImGui.sameLine();
+            if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_MOVE_ARROW), 20, 20)) {
+                runMan.setEditPoint(new Point(0,0));
+                runMan.setEditShape(runMan.getShapes(editorType.get()).get(runMan.getSelectedShape().get()));
+                runMan.setEditShapeMoveMode(true);
+            }
             // moving of shapes end
 
             if (ImGui.button("Delete Selected " + editorType)) {
@@ -357,6 +363,8 @@ public class GUILayer {
             ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20);
             ImGui.sameLine();
             ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20);
+            ImGui.sameLine();
+            ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_MOVE_ARROW), 20, 20);
             ImGui.button("Delete Selected " + editorType);
             ImGui.endDisabled();
         }
@@ -397,6 +405,7 @@ public class GUILayer {
             ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray(), 4);
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
+                selectedPoint.set(shapeToEdit.size()-1);
             }
             if (selectedPoint.get() < shapeToEdit.getPointList().size() && !shapeToEdit.getPointList().isEmpty()) {
                 if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20)) {
@@ -406,14 +415,26 @@ public class GUILayer {
                 if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20)) {
                     runMan.movePoint(1, shapeToEdit, selectedPoint);
                 }
+                ImGui.sameLine();
+                if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_MOVE_ARROW), 20, 20)) {
+                    runMan.setEditPoint(shapeToEdit.getPointList().get(selectedPoint.get()));
+                    runMan.setEditShape(shapeToEdit);
+                }
+                
                 if (ImGui.button("Delete Point")) {
                     runMan.removePoint(shapeToEdit, shapeToEdit.getPointList().get(selectedPoint.get()));
                 }
+                
+                // adding a highlighted point for the shape currently being edited
+                Point thePoint = new Point(shapeToEdit.getPointList().get(selectedPoint.get()));
+                runMan.addEditingPoint(thePoint);
             } else {
                 ImGui.beginDisabled();
                 ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20);
                 ImGui.sameLine();
                 ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_DOWN), 20, 20);
+                ImGui.sameLine();
+                ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_MOVE_ARROW), 20, 20);
                 ImGui.button("Delete Point");
                 ImGui.endDisabled();
             }

@@ -4,6 +4,8 @@
  */
 package Shapes;
 
+import com.wiz.settlementmapmaker.RuntimeManager;
+import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import imgui.type.ImLong;
@@ -30,19 +32,19 @@ public class Zone extends EditorShape {
         super(name);
         this.zoneType = new ImInt(zoneType);
     }
-    
+
     public Zone() {
         super("");
     }
 
     public void setZoneType(String type) {
-        
+
     }
-    
+
     public long getHiddenSeed() {
         return hiddenSeed;
     }
-    
+
     public void setHiddenSeed(long seed) {
         hiddenSeed = seed;
     }
@@ -50,51 +52,51 @@ public class Zone extends EditorShape {
     public ImInt getZoneType() {
         return zoneType;
     }
-    
+
     public int getDivisions() {
         return divisions.get();
     }
-    
+
     public ImInt getRegions() {
         return regions;
     }
-    
+
     public float getMinPerimeter() {
         return minPerimeter.get();
     }
-    
+
     public float getMinSideLength() {
         return minSideSize.get();
     }
-    
+
     public int[] getDivisionData() {
         return divisions.getData();
     }
-    
+
     public float[] getMinPerimeterData() {
         return minPerimeter.getData();
     }
-    
+
     public float[] getMinSideLengthData() {
         return minSideSize.getData();
     }
-    
+
     public ArrayList<Building> getContainedShapes() {
         return containedShapes;
     }
-    
+
     public void addBuildings(ArrayList<Building> shapes) {
         containedShapes.addAll(shapes);
     }
-    
+
     public void clearContainedShapes() {
         containedShapes.clear();
     }
-    
+
     public ImInt getSelectedContainedBuilding() {
         return this.selectedContainedBuilding;
     }
-    
+
     public String[] getContainedBuildingNames() {
         String[] s = new String[this.containedShapes.size()];
         for (int i = 0; i < this.containedShapes.size(); i++) {
@@ -102,8 +104,35 @@ public class Zone extends EditorShape {
         }
         return s;
     }
-    
+
     public ImFloat getRoadSize() {
         return roadSize;
+    }
+
+    Point accumulate = new Point(0,0);
+    
+    @Override
+    public void moveCenterTo(Point p) {
+        this.CalculateCenter();
+
+        double xChange = p.x - this.getCenter().x;
+        double yChange = p.y - this.getCenter().y;
+
+        Point change = new Point(xChange, yChange);
+        for (int i = 0; i < this.points.size(); i++) {
+            this.points.get(i).add(change);
+        }
+        
+        accumulate.add(new Point(xChange,yChange));
+        
+        //System.out.println(Utils.averagePoint(this.visualPoints));
+    }
+    
+    public void finishTranslation() {
+        for (int i = 0; i < this.containedShapes.size(); i++) {
+            this.containedShapes.get(i).translate(accumulate.x, accumulate.y);
+        }
+        accumulate.setX(0);
+        accumulate.setY(0);
     }
 }

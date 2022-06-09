@@ -237,7 +237,7 @@ public class Shape {
             points.get(i).setY(center.y + ((points.get(i).y - center.y) * y));
         }
     }
-    
+
     public void ScaleByNumber(double number) {
         if (center == null) {
             this.CalculateCenter();
@@ -245,7 +245,7 @@ public class Shape {
         for (int i = 0; i < points.size(); i++) {
             Line line = new Line(points.get(i), center);
             Point p = Utils.getPointAlongLine(line, number);
-            
+
             points.get(i).set(p);
         }
     }
@@ -273,6 +273,36 @@ public class Shape {
             copy.getPoints()[i].setY(copy.getPoints()[i].y + y);
         }
         return copy;
+    }
+
+    public void translate(double x, double y) {
+        this.CalculateCenter();
+        Point translation = new Point(x, y);
+
+        ArrayList<Point> doNotTranslate = new ArrayList();
+        for (int i = 0; i < this.points.size(); i++) {
+            if (!doNotTranslate.contains(this.points.get(i))) {
+                this.points.get(i).add(translation);
+                doNotTranslate.add(this.points.get(i));
+            }
+        }
+        for (int i = 0; i < this.visualPoints.size(); i++) {
+            if (!doNotTranslate.contains(this.visualPoints.get(i))) {
+                this.visualPoints.get(i).add(translation);
+                doNotTranslate.add(this.visualPoints.get(i));
+            }
+        }
+    }
+
+    public void moveCenterTo(Point p) {
+        this.CalculateCenter();
+        double xChange = p.x - this.center.x;
+        double yChange = p.y - this.center.y;
+
+        Point change = new Point(xChange, yChange);
+        for (int i = 0; i < this.points.size(); i++) {
+            this.points.get(i).add(change);
+        }
     }
 
     public String[] toStringArray() {
@@ -478,7 +508,7 @@ public class Shape {
 
         this.points = points;
     }
-    
+
     /*
     given p[k], p[k+1], p[k+2] each with coordinates x, y:
     dx1 = x[k+1]-x[k]
@@ -486,32 +516,31 @@ public class Shape {
     dx2 = x[k+2]-x[k+1]
     dy2 = y[k+2]-y[k+1]
     zcrossproduct = dx1*dy2 - dy1*dx2
-    */
-    
+     */
     public boolean isConvex() {
         int sign = 0;
         for (int i = 0; i < this.points.size(); i++) {
             int place1 = i;
-            int place2 = i+1;
-            int place3 = i+3;
-            
+            int place2 = i + 1;
+            int place3 = i + 3;
+
             while (place2 >= this.points.size()) {
                 place2 -= this.points.size();
             }
             while (place3 >= this.points.size()) {
                 place3 -= this.points.size();
             }
-            
-            double dx1 = this.points.get(place2).x-this.points.get(place1).x;
-            double dy1 = this.points.get(place2).y-this.points.get(place1).y;
-            double dx2 = this.points.get(place3).x-this.points.get(place2).x;
-            double dy2 = this.points.get(place3).y-this.points.get(place2).y;
-            
-            double zcrossproduct = dx1*dy2 - dy1*dx2;
-            
+
+            double dx1 = this.points.get(place2).x - this.points.get(place1).x;
+            double dy1 = this.points.get(place2).y - this.points.get(place1).y;
+            double dx2 = this.points.get(place3).x - this.points.get(place2).x;
+            double dy2 = this.points.get(place3).y - this.points.get(place2).y;
+
+            double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+
             if (sign == 0) {
-                sign = (int)Math.signum(zcrossproduct);
-            } else if (sign != (int)Math.signum(zcrossproduct)) {
+                sign = (int) Math.signum(zcrossproduct);
+            } else if (sign != (int) Math.signum(zcrossproduct)) {
                 return false;
             }
         }
@@ -526,7 +555,7 @@ public class Shape {
         }
         return s;
     }
-    
+
     public void clear() {
         this.points.clear();
     }

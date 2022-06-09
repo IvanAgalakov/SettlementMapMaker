@@ -12,6 +12,7 @@ import java.util.List;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  *
@@ -93,6 +94,17 @@ public class Utils {
         boxShape.addPoints(one, new Point(one.x, two.y), two, new Point(two.x, one.y));
 
         return boxShape;
+    }
+    
+    public static Point averagePoint(ArrayList<Point> points) {
+        Point p = new Point(0,0);
+        int i = 0;
+        for (i = 0; i < points.size(); i++) {
+            p.add(points.get(i));
+        }
+        p.divide(new Point(i,i));
+        
+        return p;
     }
 
 }
