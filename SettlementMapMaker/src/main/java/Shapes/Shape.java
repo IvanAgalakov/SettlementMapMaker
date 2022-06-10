@@ -370,14 +370,16 @@ public class Shape {
             }
         }
 
-        Line testLine = new Line(p, new Point(p.x + this.getPerimeter(), p.y));
-
+        Line testLine = new Line(p, new Point(p.x - this.getPerimeter(), p.y - this.getPerimeter()));
+        
         int numberOfIntersections = 0;
         for (int i = 0; i < lines.size(); i++) {
             Point inter = lines.get(i).getIntersection(testLine);
             if (inter != null) {
                 if (inter.x > p.x) {
-                    numberOfIntersections++;
+                    if (p.x < this.topRight.x && p.y < this.topRight.y && p.x > this.bottomLeft.y && p.y > this.bottomLeft.y) {
+                        numberOfIntersections++;
+                    }
                 }
             }
         }
@@ -385,7 +387,7 @@ public class Shape {
 //        if (numberOfIntersections != 0) {
 //            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
 //        }
-        return numberOfIntersections == 1;
+        return numberOfIntersections%2 == 1;
     }
 
     public boolean hasPointsInside(Shape s) {
@@ -410,6 +412,11 @@ public class Shape {
                 }
             }
         }
+        
+        if (s.hasPointsInside(this) || this.hasPointsInside(s)) {
+            return true;
+        }
+        
         return false;
     }
 
