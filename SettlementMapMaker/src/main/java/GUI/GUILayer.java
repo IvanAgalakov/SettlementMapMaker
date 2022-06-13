@@ -66,24 +66,24 @@ public class GUILayer {
 
     private boolean openConfirmationPopup = false;
     private boolean openErrorPopup = false;
+
     public void imgui() {
         toolBar();
-        
-        
+
         if (!runMan.getSettlementFileDirectory().get().equals("")) {
             settlementManagement();
         }
-        
+
         if (openConfirmationPopup) {
             ImGui.openPopup("Confirmation Popup");
             openConfirmationPopup = false;
         }
-        
+
         if (openErrorPopup) {
             ImGui.openPopup("Error Popup");
             openErrorPopup = false;
         }
-        
+
         modalPopups();
     }
 
@@ -109,9 +109,7 @@ public class GUILayer {
     private ImVec2 rightClickPosition = new ImVec2();
 
     private ImBoolean showCamera = new ImBoolean(false);
-    
-    
-    
+
     public void settlementManagement() {
         runMan.clearEditingShapes();
 
@@ -145,7 +143,7 @@ public class GUILayer {
             }
             ImGui.sameLine();
             ImGui.checkbox("Show Camera", showCamera);
-            
+
         } else {
             ImGui.beginDisabled();
             ImGui.button("Toggle Draw Menu");
@@ -154,7 +152,7 @@ public class GUILayer {
             ImGui.checkbox("Show Camera", showCamera);
             ImGui.endDisabled();
         }
-        
+
         if (this.showCamera.get()) {
             runMan.addEditingShape(Utils.boxPoints(runMan.getCameraShape()));
         }
@@ -162,38 +160,32 @@ public class GUILayer {
         if (showDrawMenu) {
             drawMenu();
         }
-        
-        
-        
+
 //        if (ImGui.button("test")) {
 //            yesMethod = () -> System.out.println("working");
 //            ImGui.openPopup("Confirmation Popup");
 //        }
-        
-        
-        
-
         ImGui.end();
-        
+
     }
-    
+
     String confirmationMessage = "Are you sure about blah blah blah?";
     MethodPass yesMethod;
     String errorMessage = "ERROR: SOMETHING WENT WRONG, PLEASE TRY AGAIN.";
-    
+
     public void modalPopups() {
-        
+
         int width = 150;
         int height = 100;
         float buttonWidth = 50;
         float buttonHeight = 40;
         ImVec2 result = new ImVec2();
         ImGui.calcTextSize(result, confirmationMessage);
-        if (width < result.x+10) {
-            width = (int)result.x+10;
+        if (width < result.x + 10) {
+            width = (int) result.x + 10;
         }
         ImGui.setNextWindowSize(width, height);
-        ImGui.setNextWindowPos(runMan.getWidth()/2-width/2, runMan.getHeight()/2-height/2);
+        ImGui.setNextWindowPos(runMan.getWidth() / 2 - width / 2, runMan.getHeight() / 2 - height / 2);
         if (ImGui.beginPopupModal("Confirmation Popup", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse)) {
             ImGui.text(confirmationMessage);
             if (ImGui.button("yes", buttonWidth, buttonHeight)) {
@@ -202,40 +194,39 @@ public class GUILayer {
                 }
                 ImGui.closeCurrentPopup();
             }
-            ImGui.sameLine(width-buttonWidth);
-            if(ImGui.button("no", buttonWidth, buttonHeight)) {
+            ImGui.sameLine(width - buttonWidth);
+            if (ImGui.button("no", buttonWidth, buttonHeight)) {
                 ImGui.closeCurrentPopup();
             }
             ImGui.endPopup();
         }
-        
-        
+
         width = 150;
         height = 100;
         buttonWidth = 50;
         buttonHeight = 40;
         ImGui.calcTextSize(result, errorMessage);
-        if (width < result.x+10) {
-            width = (int)result.x+10;
+        if (width < result.x + 10) {
+            width = (int) result.x + 10;
         }
         ImGui.setNextWindowSize(width, height);
-        ImGui.setNextWindowPos(runMan.getWidth()/2-width/2, runMan.getHeight()/2-height/2);
+        ImGui.setNextWindowPos(runMan.getWidth() / 2 - width / 2, runMan.getHeight() / 2 - height / 2);
         if (ImGui.beginPopupModal("Error Popup", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse)) {
             ImGui.textColored(Constants.COLOR_RED, errorMessage);
-            ImGui.indent(width/2-buttonWidth/2);
+            ImGui.indent(width / 2 - buttonWidth / 2);
             if (ImGui.button("Ok", buttonWidth, buttonHeight)) {
                 ImGui.closeCurrentPopup();
             }
             ImGui.endPopup();
         }
     }
-    
+
     public void openConfirmationPopup(MethodPass method, String message) {
         this.confirmationMessage = message;
         this.yesMethod = method;
         this.openConfirmationPopup = true;
     }
-    
+
     public void openErrorPopup(String message) {
         this.errorMessage = message;
         this.openErrorPopup = true;
@@ -346,7 +337,7 @@ public class GUILayer {
             }
             ImGui.sameLine();
             if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_MOVE_ARROW), 20, 20)) {
-                runMan.setEditPoint(new Point(0,0));
+                runMan.setEditPoint(new Point(0, 0));
                 runMan.setEditShape(runMan.getShapes(editorType.get()).get(runMan.getSelectedShape().get()));
                 runMan.setEditShapeMoveMode(true);
             }
@@ -405,9 +396,9 @@ public class GUILayer {
             ImGui.listBox("Points", selectedPoint, shapeToEdit.toStringArray(), 4);
             if (ImGui.button("Draw Point")) {
                 runMan.addPoint(shapeToEdit);
-                selectedPoint.set(shapeToEdit.size()-1);
+                selectedPoint.set(shapeToEdit.size() - 1);
             }
-            if (selectedPoint.get() < shapeToEdit.getPointList().size() && !shapeToEdit.getPointList().isEmpty()) {
+            if (selectedPoint.get() < shapeToEdit.getPointList().size() && !shapeToEdit.getPointList().isEmpty() && selectedPoint.get() >= 0) {
                 if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20)) {
                     runMan.movePoint(-1, shapeToEdit, selectedPoint);
                 }
@@ -420,14 +411,17 @@ public class GUILayer {
                     runMan.setEditPoint(shapeToEdit.getPointList().get(selectedPoint.get()));
                     runMan.setEditShape(shapeToEdit);
                 }
-                
+
                 if (ImGui.button("Delete Point")) {
                     runMan.removePoint(shapeToEdit, shapeToEdit.getPointList().get(selectedPoint.get()));
+                    selectedPoint.set(selectedPoint.get() - 1);
                 }
-                
+
                 // adding a highlighted point for the shape currently being edited
-                Point thePoint = new Point(shapeToEdit.getPointList().get(selectedPoint.get()));
-                runMan.addEditingPoint(thePoint);
+                if (selectedPoint.get() > 0 && selectedPoint.get() < shapeToEdit.getPointList().size()) {
+                    Point thePoint = new Point(shapeToEdit.getPointList().get(selectedPoint.get()));
+                    runMan.addEditingPoint(thePoint);
+                }
             } else {
                 ImGui.beginDisabled();
                 ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_ARROW_UP), 20, 20);
@@ -702,33 +696,34 @@ public class GUILayer {
     }
 
     boolean exportJustOpened = true;
+
     public void exportWindow() {
         ImGui.setNextWindowPos((runMan.getWidth() / 4), runMan.getHeight() / 4);
         ImGui.setNextWindowSize((runMan.getWidth() / 2), runMan.getHeight() / 2);
         if (!ImGui.begin("Export", showExportWin, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)) {
             ImGui.end();
         } else {
-            
+
             EditorShape camera = runMan.getCameraShape();
             double width = camera.getTopRight().x - camera.getBottomLeft().x;
             double height = camera.getTopRight().y - camera.getBottomLeft().y;
-            
-            double ratio = height/width;
-            
+
+            double ratio = height / width;
+
             if (ImGui.inputInt("Width", runMan.getImageResXArray())) {
-                runMan.getImageResYArray().set((int)(ratio*runMan.getImageResXArray().get()));
+                runMan.getImageResYArray().set((int) (ratio * runMan.getImageResXArray().get()));
             }
             if (ImGui.inputInt("Height", runMan.getImageResYArray())) {
-                runMan.getImageResXArray().set((int)(runMan.getImageResYArray().get() / ratio));
+                runMan.getImageResXArray().set((int) (runMan.getImageResYArray().get() / ratio));
             }
-            
+
             if (exportJustOpened) {
                 runMan.getImageResXArray().set(1000);
-                runMan.getImageResYArray().set((int)(ratio*runMan.getImageResXArray().get()));
+                runMan.getImageResYArray().set((int) (ratio * runMan.getImageResXArray().get()));
                 exportJustOpened = false;
             }
-            
-            ImGui.inputText("File Location",runMan.getExportFilePath());
+
+            ImGui.inputText("File Location", runMan.getExportFilePath());
             ImGui.sameLine();
             if (ImGui.imageButton(TextureLibrary.getTexture(Constants.TEXTURE_FOLDER), 25, 22) && !this.fileChooserOpen) {
                 SwingUtilities.invokeLater(() -> {
@@ -747,11 +742,9 @@ public class GUILayer {
                     this.fileChooserOpen = false;
                 });
             }
-            
+
             ImGui.inputText("Name", runMan.getExportFileName());
-            
-            
-            
+
             if (ImGui.button("Save Image")) {
                 File f = new File(runMan.getExportFilePath().get());
                 if (f.canWrite()) {

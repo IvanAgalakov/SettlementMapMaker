@@ -526,11 +526,14 @@ public class Shape {
      */
     public boolean isConvex() {
         int sign = 0;
-        for (int i = 0; i < this.points.size(); i++) {
+        for (int i = 0; i <= this.points.size(); i++) {
             int place1 = i;
             int place2 = i + 1;
-            int place3 = i + 3;
+            int place3 = i + 2;
 
+            if (place1 == points.size()) {
+                place1 = 0;
+            }
             while (place2 >= this.points.size()) {
                 place2 -= this.points.size();
             }
