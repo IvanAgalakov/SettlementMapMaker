@@ -10,6 +10,7 @@ import Shapes.Obstacle;
 import Shapes.Building;
 import com.wiz.settlementmapmaker.Utilities.CityEditorState;
 import imgui.ImColor;
+import imgui.type.ImFloat;
 import java.util.function.Function;
 
 /**
@@ -25,8 +26,6 @@ public class Constants {
     
     public static final int COLOR_CALM_GREEN = ImColor.intToColor(55, 140, 78, 255);
     public static final int COLOR_RED = ImColor.intToColor(212, 46, 34, 255);
-    
-    public static final float LINE_THICKNESS = 0.01f;
     
     public static enum CityShapeTypes {
         ZONE((state) -> new Zone(state.defaultZoneName, 0)),

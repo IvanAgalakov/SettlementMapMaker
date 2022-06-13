@@ -290,6 +290,11 @@ public class DataDisplayer {
                 this.selectProgram(program);
                 GL33C.glUniform3f(GL33C.glGetUniformLocation(program, "col"), color.getRed(), color.getGreen(), color.getBlue());
 
+                
+                // make sure that the editShape is not included in the display
+                shapeList.remove(this.editShape);
+                
+                
                 if (Style.styleTypes[(style.getSelectedStyle().get())].equals("point")) {
                     WindowVisualizer.drawPoints(shapeList, 8, style.getColor());
                 } else if (Style.styleTypes[(style.getSelectedStyle().get())].equals("solid")) {
