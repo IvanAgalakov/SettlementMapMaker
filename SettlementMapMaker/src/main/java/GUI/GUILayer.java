@@ -575,6 +575,7 @@ public class GUILayer {
             ImGui.checkbox("Show Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getShowLabel());
             ImGui.inputText("Building Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getName());
         }
+        System.out.println(runMan.getMouseWorldPoint());
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             if (i == zone.getSelectedContainedBuilding().get() || zone.getContainedShapes().get(i).isPointInside(runMan.getMouseWorldPoint())) {
                 runMan.addEditingShape(zone.getContainedShapes().get(i));

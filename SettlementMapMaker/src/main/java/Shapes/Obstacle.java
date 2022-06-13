@@ -19,9 +19,9 @@ public class Obstacle extends EditorShape{
     private final ImLong seed = new ImLong(0);
     private final ImFloat devMax = new ImFloat(0.02f);
     private final ImFloat devMin = new ImFloat(0.01f);
-    private final ImFloat divisions = new ImFloat(0.01f);
+    private final ImFloat divisions = new ImFloat(0.05f);
     private final ImInt resolution = new ImInt(3);
-    private final ImFloat thickness = new ImFloat(0.01f);
+    private final ImFloat thickness = new ImFloat(0.025f);
     private final ImFloat sectionDev = new ImFloat(0.01f);
     
     

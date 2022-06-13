@@ -4,8 +4,10 @@
  */
 package Shapes;
 
+import GUI.DrawColor;
 import com.wiz.settlementmapmaker.SettlementGenerator;
 import com.wiz.settlementmapmaker.Utilities.Utils;
+import com.wiz.settlementmapmaker.WindowVisualizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -361,6 +363,12 @@ public class Shape {
     }
 
     public boolean isPointInside(Point p) {
+        
+        this.CalculateCenter();
+        if (this.center.getDistanceToPoint(p) > this.getPerimeter()) {
+            return false;
+        }
+        
         ArrayList<Line> lines = new ArrayList<>();
         for (int i = 1; i <= points.size(); i++) {
             if (i < points.size()) {
@@ -377,16 +385,13 @@ public class Shape {
             Point inter = lines.get(i).getIntersection(testLine);
             if (inter != null) {
                 if (inter.x > p.x) {
-                    if (p.x < this.topRight.x && p.y < this.topRight.y && p.x > this.bottomLeft.y && p.y > this.bottomLeft.y) {
+                    if (p.x < this.topRight.x && p.y < this.topRight.y && p.x > this.bottomLeft.x && p.y > this.bottomLeft.y) {
                         numberOfIntersections++;
                     }
                 }
             }
         }
-
-//        if (numberOfIntersections != 0) {
-//            System.out.println(numberOfIntersections + "   \n" + this + "\nPoint: " + p);
-//        }
+        
         return numberOfIntersections%2 == 1;
     }
 

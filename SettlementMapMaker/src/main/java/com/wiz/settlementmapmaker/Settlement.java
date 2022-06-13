@@ -32,7 +32,7 @@ public class Settlement {
     private Style defaultStyle = new Style(new DrawColor(0, 0, 0, 1), 0);
     private Style backdropStyle = new Style(new DrawColor(0.9216f, 0.8353f, 0.702f, 1f), 0);
     private Style editStyle = new Style(new DrawColor(1f, 0, 0, 1f), 0);
-    private Style waterStyle = new Style(new DrawColor(0, 0, 1f, 1f), 3);
+    private Style waterStyle = new Style(new DrawColor(0.489f, 0.627f, 0.683f, 1f), 3);
     
     private HashMap<String, Style> style = new HashMap<>();
 

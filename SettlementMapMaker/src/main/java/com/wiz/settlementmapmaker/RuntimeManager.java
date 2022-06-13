@@ -384,12 +384,12 @@ public class RuntimeManager {
 
     public void removeShape(int selectedShape, String shapeType) {
         EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
-        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList()), new MethodRunAction(() -> this.updateShape(shape))));
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList()), new MethodRunAction(() -> updateDataDisplay())));
     }
 
     public void addPoint(EditorShape addTo) {
         Point newPoint = new Point(0, 0);
-        useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false)));
+        useAction(new CombinedAction(new AlterListAction(addTo.getPointList(), newPoint, false), new MethodRunAction(() -> this.updateShape(addTo))));
         addTo.CalculateCenter();
         this.setEditPoint(newPoint);
         this.setEditShape(addTo);
@@ -413,7 +413,7 @@ public class RuntimeManager {
     }
 
     public void removePoint(EditorShape removeFrom, Point point) {
-        useAction(new AlterListAction(removeFrom.getPointList(), point, true));
+        useAction(new CombinedAction(new AlterListAction(removeFrom.getPointList(), point, true), new MethodRunAction(() -> this.updateShape(removeFrom))));
     }
 
     public ImString getSelectedDrawingType() {
