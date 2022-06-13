@@ -11,6 +11,7 @@ import GUI.GUILayer;
 import Shapes.Building;
 import com.wiz.settlementmapmaker.Utilities.FixedStack;
 import Shapes.EditorShape;
+import Shapes.Line;
 import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.Zone;
@@ -34,6 +35,7 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 import java.io.IOException;
@@ -382,7 +384,7 @@ public class RuntimeManager {
 
     public void removeShape(int selectedShape, String shapeType) {
         EditorShape shape = currentSettlement.getShapes(shapeType).get(selectedShape);
-        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList()), new MethodRunAction(() -> updateDataDisplay())));
+        useAction(new CombinedAction(new AlterListAction(currentSettlement.getShapes(shapeType), shape, true), new MethodRunAction(() -> updateShapeList()), new MethodRunAction(() -> this.updateShape(shape))));
     }
 
     public void addPoint(EditorShape addTo) {
@@ -587,6 +589,11 @@ public class RuntimeManager {
             }
         }
         
+        ArrayList<Line> borderLines = new ArrayList<>();
+        for (int i = 0; i < buildings.size(); i++) {
+            borderLines.addAll(buildings.get(i).getLines(true));
+        }
+        
         
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
         
@@ -596,6 +603,24 @@ public class RuntimeManager {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
                 buildings.remove(i);
             } else {
+                boolean remove = true;
+                for (int x = 0; x < borderLines.size(); x++) {
+                    for (int y = 0; y < buildings.get(i).size(); y++) {
+                        if (borderLines.get(x).isPointOnLine(buildings.get(i).getPoint(y))) {
+                            remove = false;
+                            break;
+                        }
+                    }
+                    if (!remove) {
+                        break;
+                    }
+                }
+                if (remove) {
+                    buildings.remove(i);
+                    continue;
+                }
+                
+                //checks for overlaps with blocking shapes
                 for (int a = 0; a < block.size(); a++) {
                     if (buildings.get(i).overlaps(block.get(a))) {
                         buildings.remove(i);
@@ -610,12 +635,12 @@ public class RuntimeManager {
         zone.getContainedShapes().addAll(buildings);
     }
 
-    public static void calculateShape(EditorShape shape, Style style) {
+    public void calculateShape(EditorShape shape, Style style) {
         switch (Style.styleTypes[style.getSelectedStyle().get()]) {
             case "line" ->
-                shape.calculateLinesFromPoints(Constants.LINE_THICKNESS, true);
+                shape.calculateLinesFromPoints(currentSettlement.getLineThickness(), true);
             case "dashed line" ->
-                shape.calculateDottedLinesFromPoints(Constants.LINE_THICKNESS, true);
+                shape.calculateDottedLinesFromPoints(currentSettlement.getLineThickness(), true);
             case "point" ->
                 shape.calculatePointsAsPoints();
             case "solid" ->
@@ -680,6 +705,10 @@ public class RuntimeManager {
     
     public ImString getExportFileName() {
         return this.currentSettlement.getExportFileName();
+    }
+    
+    public ImFloat getLineThickness() {
+        return this.currentSettlement.getLineThicknessDisplay();
     }
 
     public class WindowFocus implements GLFWWindowFocusCallbackI {

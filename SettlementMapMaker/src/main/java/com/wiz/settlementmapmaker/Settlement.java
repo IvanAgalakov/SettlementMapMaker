@@ -12,6 +12,7 @@ import Shapes.Obstacle;
 import Shapes.Building;
 import Shapes.Shape;
 import imgui.ImColor;
+import imgui.type.ImFloat;
 import imgui.type.ImString;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,8 @@ public class Settlement {
     
     private ImString exportFilePath = new ImString(FileSystemView.getFileSystemView().getDefaultDirectory().getPath());
     private ImString exportFileName = new ImString();
+    
+    private ImFloat lineThickness = new ImFloat(0.01f);
 
     public Settlement(String name) {
         style.put("Zone Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
@@ -165,6 +168,14 @@ public class Settlement {
     
     public ImString getExportFileName() {
         return this.exportFileName;
+    }
+    
+    public float getLineThickness() {
+        return this.lineThickness.get();
+    }
+    
+    public ImFloat getLineThicknessDisplay() {
+        return this.lineThickness;
     }
 
 }

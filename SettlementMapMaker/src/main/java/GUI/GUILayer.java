@@ -70,7 +70,9 @@ public class GUILayer {
     public void imgui() {
         toolBar();
 
-        if (!runMan.getSettlementFileDirectory().get().equals("")) {
+        
+        
+        if (this.settlementOpen()) {
             settlementManagement();
         }
 
@@ -120,9 +122,9 @@ public class GUILayer {
 //        else if (runMan.getLeftClickState()) {
 //            showRightClickMenu = false;
 //        }
-        if (showRightClickMenu) {
-            rightClick();
-        }
+//        if (showRightClickMenu) {
+//            rightClick();
+//        }
 
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
@@ -152,6 +154,8 @@ public class GUILayer {
             ImGui.checkbox("Show Camera", showCamera);
             ImGui.endDisabled();
         }
+        
+        ImGui.sliderFloat("Line Thickness", runMan.getLineThickness().getData(), 0.005f, 0.05f);
 
         if (this.showCamera.get()) {
             runMan.addEditingShape(Utils.boxPoints(runMan.getCameraShape()));
