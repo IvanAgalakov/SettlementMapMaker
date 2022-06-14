@@ -97,7 +97,7 @@ public class RuntimeManager {
 
     private ImInt imageXRes = new ImInt(8000);
     private ImInt imageYRes = new ImInt(8000);
-    
+
     private boolean settingCamera = false;
 
     public RuntimeManager(Window window, GUILayer gui) {
@@ -141,7 +141,7 @@ public class RuntimeManager {
         //ImFont defaultFont = io.getFonts().addFontFromFileTTF("C:\\Users\\904187003\\Downloads\\Palanquin\\Palanquin-Regular.ttf", 20);
         //io.setFontDefault(defaultFont);
     }
-    
+
     public long getStartTime() {
         return window.getStartTime();
     }
@@ -195,7 +195,7 @@ public class RuntimeManager {
         }
         lastLeftClick = io.getMouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
 
-        if (io.getMouseWheel() != 0) {
+        if (io.getMouseWheel() != 0 && !this.imGuiWantCaptureMouse()) {
             this.zoom[0] += io.getMouseWheel() * Constants.MOUSE_WHEEL_SENSITIVITY;
             if (this.zoom[0] > Constants.MAX_ZOOM) {
                 this.zoom[0] = Constants.MAX_ZOOM;
@@ -206,8 +206,7 @@ public class RuntimeManager {
         }
 
         lastSPress = io.getKeysDown(GLFW.GLFW_KEY_S);
-        
-        
+
         if (this.settingCamera) {
             if (this.getCurrentSettlement().getCamera().size() >= 2 && this.getCurrentSettlement().getCamera() != dataDis.getEditShape()) {
                 this.setCamera(false);
@@ -235,11 +234,11 @@ public class RuntimeManager {
     public void setEditShape(EditorShape editShape) {
         dataDis.setEditShape(editShape);
     }
-    
+
     public void setEditShapeMoveMode(boolean b) {
         this.dataDis.setEditShapeMoveMode(b);
     }
-    
+
     public void addEditingPoint(Point p) {
         dataDis.addEditingPoint(p);
     }
@@ -284,7 +283,7 @@ public class RuntimeManager {
         this.updateStyleList();
         this.updateShapeList();
         this.updateDataDisplay();
-        
+
         dataDis.clearObstacleList();
     }
 
@@ -522,7 +521,7 @@ public class RuntimeManager {
         ArrayList<String> cityStyles = this.currentSettlement.getCityStyles();
         int pos = cityStyles.indexOf(style);
         Style styleToGo = this.currentSettlement.getStyle(style);
-        
+
         this.useAction(new CombinedAction(new MethodRunAction(() -> this.currentSettlement.removeStyle(style), () -> this.currentSettlement.addStyle(style, styleToGo, pos)), new MethodRunAction(() -> this.updateStyleList())));
         //this.currentSettlement.removeStyle(style);
         //this.updateStyleList();
@@ -552,12 +551,15 @@ public class RuntimeManager {
         return this.imageYRes;
     }
 
-    public void generateBlockInZone(Zone zone) {
+    public void generateBlockInZone(Zone zone, long seed) {
+        SettlementGenerator.setRandomSeed(seed);
+
         zone.clearContainedShapes();
         ArrayList<Building> toCut = new ArrayList();
         toCut.add(new Building((EditorShape) zone));
+
         ArrayList<Building> buildings = SettlementGenerator.cutUpShape(toCut, zone.getDivisions(), zone.getMinPerimeter());
-        
+
         ArrayList<EditorShape> block = dataDis.getBlockingShapes();
         for (int i = buildings.size() - 1; i >= 0; i--) {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
@@ -570,35 +572,47 @@ public class RuntimeManager {
                     }
                 }
             }
-        } 
-        
-        
+        }
+
         for (int i = 0; i < buildings.size(); i++) {
+            buildings.get(i).setName(buildings.get(i).getName().get() + i);
             calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
         }
         zone.addBuildings(buildings);
     }
 
-    public void generateCitySectionsInZone(Zone zone, long seed) {
+    public void generateCitySectionsInZone(Zone zone, long seed, boolean keepSeed) {
+
         zone.clearContainedShapes();
-        ArrayList<Building> buildings = SettlementGenerator.getMultipleBlocks(zone, seed);
-        
+        ArrayList<Building> buildings = new ArrayList<>();
+        ArrayList<Line> borderLines = new ArrayList<>();
+        // needed to make sure that the old regions are used if we are not generating a new city
+        if (!keepSeed) {
+            buildings = SettlementGenerator.getMultipleBlocks(zone);
+            zone.setOldCityRegions(buildings);
+        }
+
+        buildings = zone.getOldCityRegions();
+
         for (int i = buildings.size() - 1; i >= 0; i--) {
+
+            // needs to be done here so that regions are scaled even if they aren't regenerated
+            buildings.get(i).ScaleByNumber(zone.getRoadSize().get());
+
             if (buildings.get(i).getPerimeter() < zone.getMinPerimeter()) {
                 buildings.remove(i);
             }
         }
-        
-        ArrayList<Line> borderLines = new ArrayList<>();
+
         for (int i = 0; i < buildings.size(); i++) {
             borderLines.addAll(buildings.get(i).getLines(true));
         }
-        
-        
+
+        SettlementGenerator.setRandomSeed(seed);
         buildings = SettlementGenerator.cutUpShape(buildings, zone.getDivisions(), zone.getMinPerimeter());
-        
+
         ArrayList<EditorShape> block = dataDis.getBlockingShapes();
-       
+
         for (int i = buildings.size() - 1; i >= 0; i--) {
             if (buildings.get(i).getSmallestSide() < zone.getMinSideLength()) {
                 buildings.remove(i);
@@ -619,7 +633,7 @@ public class RuntimeManager {
                     buildings.remove(i);
                     continue;
                 }
-                
+
                 //checks for overlaps with blocking shapes
                 for (int a = 0; a < block.size(); a++) {
                     if (buildings.get(i).overlaps(block.get(a))) {
@@ -631,6 +645,7 @@ public class RuntimeManager {
         }
         for (int i = 0; i < buildings.size(); i++) {
             calculateShape(buildings.get(i), this.getStyle(this.getStyles()[zone.getStyle().get()]));
+            buildings.get(i).setName(buildings.get(i).getName().get() + i);
         }
         zone.getContainedShapes().addAll(buildings);
     }
@@ -660,53 +675,53 @@ public class RuntimeManager {
     public void updateObstacle(Obstacle obs) {
         dataDis.updateAnObstacle(obs);
     }
-    
+
     public void removeObstacle(Obstacle obs) {
         dataDis.removeObstacleEntry(obs);
     }
-    
+
     public boolean isSettingCamera() {
         return this.settingCamera;
     }
-    
+
     public void setCamera(boolean b) {
         this.settingCamera = b;
         if (b) {
             dataDis.setEditShape(this.currentSettlement.getCamera());
-            Point p = new Point(0,0);
-            
+            Point p = new Point(0, 0);
+
             this.currentSettlement.getCamera().addPoints(p);
-            
+
             dataDis.setEditPoint(p);
         } else {
             dataDis.setEditShape(null);
         }
     }
-    
+
     public void clearCameraShape() {
         this.currentSettlement.clearCameraShape();
     }
-    
+
     public EditorShape getCameraShape() {
         return this.currentSettlement.getCamera();
     }
-    
+
     public DataDisplayer getDataDisplay() {
         return this.dataDis;
     }
-    
+
     public ImString getExportFilePath() {
         return this.currentSettlement.getExportFilePath();
     }
-    
+
     public void setExportFilePath(String s) {
         this.currentSettlement.setExportFilePath(s);
     }
-    
+
     public ImString getExportFileName() {
         return this.currentSettlement.getExportFileName();
     }
-    
+
     public ImFloat getLineThickness() {
         return this.currentSettlement.getLineThicknessDisplay();
     }

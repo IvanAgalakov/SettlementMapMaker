@@ -70,8 +70,6 @@ public class GUILayer {
     public void imgui() {
         toolBar();
 
-        
-        
         if (this.settlementOpen()) {
             settlementManagement();
         }
@@ -125,7 +123,6 @@ public class GUILayer {
 //        if (showRightClickMenu) {
 //            rightClick();
 //        }
-
         ImGui.setNextWindowSize(500, 400, ImGuiCond.Once);
         ImGui.setNextWindowPos(runMan.getWidth() - 500, 20, ImGuiCond.Once);
         ImGui.begin("Management");
@@ -154,8 +151,8 @@ public class GUILayer {
             ImGui.checkbox("Show Camera", showCamera);
             ImGui.endDisabled();
         }
-        
-        ImGui.sliderFloat("Line Thickness", runMan.getLineThickness().getData(), 0.005f, 0.05f);
+
+        ImGui.inputFloat("Line Thickness", runMan.getLineThickness());
 
         if (this.showCamera.get()) {
             runMan.addEditingShape(Utils.boxPoints(runMan.getCameraShape()));
@@ -456,11 +453,15 @@ public class GUILayer {
 
     }
 
-    private void generateBlock(Zone zone) {
+    private void generateBlock(Zone zone, boolean sameSeed) {
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             runMan.removeEditingShape(zone.getContainedShapes().get(i));
         }
-        runMan.generateBlockInZone(zone);
+        Random r = new Random();
+        if (!sameSeed) {
+            zone.setHiddenSeed(r.nextLong(0, Long.MAX_VALUE));
+        }
+        runMan.generateBlockInZone(zone, zone.getHiddenSeed());
     }
 
     private void generateCity(Zone zone, boolean sameSeed) {
@@ -475,12 +476,12 @@ public class GUILayer {
         if (!sameSeed) {
             zone.setHiddenSeed(r.nextLong(0, Long.MAX_VALUE));
         }
-        runMan.generateCitySectionsInZone(zone, zone.getHiddenSeed());
+        runMan.generateCitySectionsInZone(zone, zone.getHiddenSeed(), sameSeed);
     }
 
     private void generate(int gen, Zone zone, boolean sameSeed) {
         if (gen == 0) {
-            generateBlock(zone);
+            generateBlock(zone, sameSeed);
         } else {
             generateCity(zone, sameSeed);
         }
@@ -495,12 +496,16 @@ public class GUILayer {
         int gen = -1;
         if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate Buildings")) {
             gen = 0;
-            if (ImGui.button("Generate Block")) {
-                generateBlock(zone);
+            if (ImGui.button("Generate New Block")) {
+                if (zone.size() > 2) {
+                    generateBlock(zone, false); 
+                } else {
+                    this.openErrorPopup("3 or more points needed to generate buildings in a zone.");
+                }
             }
         } else if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Generate City")) {
             gen = 1;
-            if (ImGui.button("Generate City")) {
+            if (ImGui.button("Generate New City")) {
                 generateCity(zone, false);
             }
 
@@ -522,6 +527,10 @@ public class GUILayer {
         }
 
         if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
+            generate(gen, zone, true);
+        }
+        
+        if (ImGui.button("Update")) {
             generate(gen, zone, true);
         }
 
@@ -575,7 +584,7 @@ public class GUILayer {
             ImGui.checkbox("Show Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getShowLabel());
             ImGui.inputText("Building Name", zone.getContainedShapes().get(zone.getSelectedContainedBuilding().get()).getName());
         }
-        System.out.println(runMan.getMouseWorldPoint());
+
         for (int i = 0; i < zone.getContainedShapes().size(); i++) {
             if (i == zone.getSelectedContainedBuilding().get() || zone.getContainedShapes().get(i).isPointInside(runMan.getMouseWorldPoint())) {
                 runMan.addEditingShape(zone.getContainedShapes().get(i));
@@ -871,12 +880,16 @@ public class GUILayer {
                 runMan.getPendingSettlementName().set(SettlementNameGenerator.getRandomSettlementName());
             }
             if (ImGui.button("Create")) {
-                File f = new File(runMan.getPendingSettlementFolderDirectory().get());
-                if (f.canWrite()) {
-                    runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
-                    showNewSetWin.set(false);
+                if (runMan.getPendingSettlementName().get().isBlank()) {
+                    this.openErrorPopup("Please choose a different settlement name.");
                 } else {
-                    this.openErrorPopup("Invalid Path");
+                    File f = new File(runMan.getPendingSettlementFolderDirectory().get());
+                    if (f.canWrite()) {
+                        runMan.createNewSettlement(runMan.getPendingSettlementName().get(), runMan.getPendingSettlementFolderDirectory().get());
+                        showNewSetWin.set(false);
+                    } else {
+                        this.openErrorPopup("Invalid Path");
+                    }
                 }
             }
             ImGui.end();

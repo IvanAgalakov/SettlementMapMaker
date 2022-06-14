@@ -19,7 +19,9 @@ public class Building extends EditorShape {
     
     public Building(Building base) {
         super(base.getName().get());
-        this.points = new ArrayList<>(base.getPointList());
+        for (int i = 0; i < base.getPointList().size(); i++) {
+            points.add(new Point(base.getPoint(i)));
+        }
     }
 
     public Building(EditorShape base) {

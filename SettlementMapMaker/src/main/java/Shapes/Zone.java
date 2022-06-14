@@ -27,6 +27,8 @@ public class Zone extends EditorShape {
     private ImInt selectedContainedBuilding = new ImInt();
     private ImFloat roadSize = new ImFloat(0.01f);
     private long hiddenSeed = 0;
+    
+    private ArrayList<Building> oldCityRegions = new ArrayList();
 
     public Zone(String name, int zoneType) {
         super(name);
@@ -84,6 +86,18 @@ public class Zone extends EditorShape {
     public ArrayList<Building> getContainedShapes() {
         return containedShapes;
     }
+    
+    public ArrayList<Building> getOldCityRegions() {
+        ArrayList<Building> regionClone = new ArrayList();
+        for(int i = 0; i < this.oldCityRegions.size(); i++){
+            regionClone.add(new Building(this.oldCityRegions.get(i)));
+        }
+        return regionClone;
+    }
+    
+    public void setOldCityRegions(ArrayList<Building> regions) {
+        oldCityRegions = regions;
+    }
 
     public void addBuildings(ArrayList<Building> shapes) {
         containedShapes.addAll(shapes);
@@ -109,7 +123,7 @@ public class Zone extends EditorShape {
         return roadSize;
     }
 
-    Point accumulate = new Point(0,0);
+    private Point accumulate = new Point(0,0);
     
     @Override
     public void moveCenterTo(Point p) {

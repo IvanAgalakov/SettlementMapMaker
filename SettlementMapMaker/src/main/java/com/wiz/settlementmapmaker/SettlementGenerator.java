@@ -54,7 +54,7 @@ public class SettlementGenerator {
             }
         }
 
-        //rand.setSeed(0);
+        
         int ranLine = lines.size() - 1;//rand.nextInt(lines.size());
         if (ranLine >= lines.size()) {
             ranLine = 0;
@@ -62,7 +62,7 @@ public class SettlementGenerator {
 
         // noise so that buildings are not perfectly uniform
         float noise = rand.nextFloat(-0.2f, 0.2f);
-
+        
         Line wL = lines.get(ranLine);
         Point tempStart = Utils.getPointAlongLine(wL.getStart(), wL.getRise(), wL.getRun(), wL.getLength(), wL.getLength() / (2f + noise));
 
@@ -142,29 +142,12 @@ public class SettlementGenerator {
             safety++;
         }
 
-//        for (int i = 0; i < blockShapes.size(); i++) {
-//            ArrayList<Point> blockPoints = blockShapes.get(i).getPointList();
-//            boolean hasPointOnLine = false;
-//            for (int x = 0; x < blockPoints.size(); x++) {
-//                for (int a = 0; a < lines.size(); a++) {
-//                    if (lines.get(a).isPointOnLine(blockPoints.get(x))) {
-//                        hasPointOnLine = true;
-//                    }
-//                }
-//            }
-//            if (!hasPointOnLine) {
-//                blockShapes.remove(i);
-//                i--;
-//            }
-//            //blockShapes.get(i).ScaleShape(0.99f, 0.99f);
-//        }
         for (int i = 0; i < blockShapes.size(); i++) {
             blockShapes.get(i).squarizeShape();
-            //blockShapes.get(i).ScaleByNumber(0.001f, 0.001f);
         }
         return blockShapes;
     }
-
+    
     public static ArrayList<Building> cutUpShape(ArrayList<Building> v, int times, float minPerimeter) {
         
         if (times <= 0) {
@@ -183,10 +166,9 @@ public class SettlementGenerator {
         
         return ret;
     }
+    
 
-    public static ArrayList<Building> getMultipleBlocks(Zone base, long seed) {
-        rand.setSeed(seed);
-        
+    public static ArrayList<Building> getMultipleBlocks(Zone base) {
         ArrayList<Building> zones = new ArrayList<>();
 
         PowerDiagram diagram = new PowerDiagram();
@@ -203,6 +185,8 @@ public class SettlementGenerator {
         double height = (base.getTopRight().y - base.getBottomLeft().y);
         double addx = base.getBottomLeft().x;
         double addy = base.getBottomLeft().y;
+        // Open List for whatever reason doesn't keep the order in check properly :/
+        ArrayList<Site> sitesInOrder = new ArrayList<>();
         for (int i = 0; i < base.getRegions().get(); i++) {
             Point place = new Point(addx + rand.nextDouble(width), addy + rand.nextDouble(height));
             Site site = new Site(place.x,place.y);
@@ -215,6 +199,7 @@ public class SettlementGenerator {
             // we could also set a different weighting to some sites
             //site.setWeight(rand.nextDouble(10));
             sites.add(site);
+            sitesInOrder.add(site);
         }
 
         diagram.setSites(sites);
@@ -223,13 +208,12 @@ public class SettlementGenerator {
 
         diagram.computeDiagram();
 
-        for (int i = 0; i < sites.size; i++) {
-            Site site = sites.array[i];
+        for (int i = 0; i < sitesInOrder.size(); i++) {
+            Site site = sitesInOrder.get(i);
             PolygonSimple polygon = site.getPolygon();
             if (polygon != null) {
                 Building build = new Building(polygon);
                 build.removeAllOfPoint(Point.zero);
-                build.ScaleByNumber(base.getRoadSize().get());
                 zones.add(build);
                 //System.out.println(build.size());
             }
@@ -258,6 +242,10 @@ public class SettlementGenerator {
         }
 
         return s;
+    }
+    
+    public static void setRandomSeed(long seed) {
+        rand.setSeed(seed);
     }
 
 }
