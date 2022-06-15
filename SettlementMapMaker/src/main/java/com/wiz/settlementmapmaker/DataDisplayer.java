@@ -54,6 +54,8 @@ public class DataDisplayer {
     private HashMap<Obstacle, ImBoolean> updateObstacle = new HashMap<>();
 
     private GUILayer gui;
+    
+    private ArrayList<EditorShape> blockingShapes = new ArrayList<>();
 
     public DataDisplayer(RuntimeManager runMan, ImGuiIO io, Window window, GUILayer gui) {
         this.runMan = runMan;
@@ -72,6 +74,8 @@ public class DataDisplayer {
     private int selectedProgram = GL33C.GL_NONE;
 
     public void display() {
+        
+        blockingShapes.clear();
 
         //System.out.println("Camera: " + this.cameraX + ", " + this.cameraY);
         //GL33C.glUseProgram(ShaderManager.getProgram(ShaderManager.ProgramNames.DEFAULT));
@@ -237,6 +241,10 @@ public class DataDisplayer {
                             shapeList.remove(shapeList.get(x));
                             x--;
                             shapeList.addAll(zone.getContainedShapes());
+                        } else if (Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Block Generation")) {
+                            this.blockingShapes.add(shapeList.get(x));
+                            shapeList.remove(shapeList.get(x));
+                            x--;
                         }
                     } else if (shapeList.get(x) instanceof Obstacle obs) {
                         if (this.updateObstacle.containsKey(obs)) {
@@ -428,6 +436,7 @@ public class DataDisplayer {
                 singleList.add(new EditorShape(shapes.get(i).get(a).getVisualPoints()));
             }
         }
+        singleList.addAll(this.blockingShapes);
         return singleList;
     }
 

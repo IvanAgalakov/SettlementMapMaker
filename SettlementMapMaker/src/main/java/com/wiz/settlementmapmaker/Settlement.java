@@ -48,11 +48,11 @@ public class Settlement {
     public Settlement(String name) {
         style.put("Zone Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
         cityStyles.add("Zone Color");
-        style.put("Placed Building Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
+        style.put("Placed Building Color", new Style(new DrawColor(0, 1, 0.285f, 1), 0));
         cityStyles.add("Placed Building Color");
-        style.put("Generated Building Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
+        style.put("Generated Building Color", new Style(new DrawColor(0.719f, 0, 1, 1), 0));
         cityStyles.add("Generated Building Color");
-        style.put("Obstacle Color", new Style(new DrawColor(0.549f, 0.784f, 0.949f, 1), 0));
+        style.put("Obstacle Color", new Style(new DrawColor(0.89f, 1, 0, 1), 0));
         cityStyles.add("Obstacle Color");
 
         for (int i = 0; i < Constants.CITY_SHAPE_TYPES.length; i++) {

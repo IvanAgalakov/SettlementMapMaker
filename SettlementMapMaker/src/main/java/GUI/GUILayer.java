@@ -374,8 +374,8 @@ public class GUILayer {
     String oldName = "";
 
     public void shapeEdit(ImVec2 pos) {
-        ImGui.setNextWindowSize(400, 500, ImGuiCond.Once);
-        ImGui.setNextWindowPos(pos.x - 700, pos.y - 550, ImGuiCond.Once);
+        ImGui.setNextWindowSize(400, 600, ImGuiCond.Once);
+        ImGui.setNextWindowPos(pos.x - 700, pos.y - 650, ImGuiCond.Once);
         ImGui.begin("Shape Edit");
         if (shapeToEdit != null) {
 
@@ -498,7 +498,7 @@ public class GUILayer {
             gen = 0;
             if (ImGui.button("Generate New Block")) {
                 if (zone.size() > 2) {
-                    generateBlock(zone, false); 
+                    generateBlock(zone, false);
                 } else {
                     this.openErrorPopup("3 or more points needed to generate buildings in a zone.");
                 }
@@ -509,29 +509,36 @@ public class GUILayer {
                 generateCity(zone, false);
             }
 
-            if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 100)) {
+            if (ImGui.sliderInt("Regions", zone.getRegions().getData(), 2, 1000)) {
                 generateCity(zone, true);
             }
+//            if (ImGui.isItemHovered()) {
+//                ImGui.beginTooltip();
+//                ImGui.text("Select the number of regions in your city.\nHit \"Generate New City\" to see the changes.");
+//                ImGui.endTooltip();
+//            }
 
             if (ImGui.sliderFloat("Road Size", zone.getRoadSize().getData(), 0.001f, 0.1f)) {
                 generateCity(zone, true);
             }
         }
 
-        if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.001f, 3f)) {
-            generate(gen, zone, true);
-        }
+        if (!Constants.ZONE_TYPES[zone.getZoneType().get()].equals("Block Generation")) {
+            if (ImGui.sliderFloat("Minimum Perimeter", zone.getMinPerimeterData(), 0.001f, 3f)) {
+                generate(gen, zone, true);
+            }
 
-        if (ImGui.sliderFloat("Minimum Side Length", zone.getMinSideLengthData(), 0.0001f, 0.1f)) {
-            generate(gen, zone, true);
-        }
+            if (ImGui.sliderFloat("Minimum Side Length", zone.getMinSideLengthData(), 0.0001f, 0.1f)) {
+                generate(gen, zone, true);
+            }
 
-        if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
-            generate(gen, zone, true);
-        }
-        
-        if (ImGui.button("Update")) {
-            generate(gen, zone, true);
+            if (ImGui.sliderInt("Block Divisions", zone.getDivisionData(), 1, 15)) {
+                generate(gen, zone, true);
+            }
+
+            if (ImGui.button("Update")) {
+                generate(gen, zone, true);
+            }
         }
 
         ImVec2 pos = ImGui.getWindowPos();
@@ -593,6 +600,9 @@ public class GUILayer {
                 }
             }
         }
+
+        ImGui.text(zone.getContainedShapes().size() + " buildings.");
+
         ImGui.end();
     }
 
@@ -781,7 +791,7 @@ public class GUILayer {
             ImGui.end();
         } else {
             ImGui.beginTabBar("Select");
-            if (ImGui.tabItemButton("Test")) {
+            if (ImGui.tabItemButton("General Settings")) {
                 selectedTab = 0;
             }
             if (this.settlementOpen()) {
@@ -796,7 +806,7 @@ public class GUILayer {
             ImGui.endTabBar();
 
             if (selectedTab == 0) {
-
+                ImGui.text("There are currently no General Settings to be edited.");
             }
 
             if (selectedTab == 1) {
@@ -818,7 +828,17 @@ public class GUILayer {
                     }
                     ImGui.sameLine();
                     ImGui.colorEdit4(runMan.getCityStyles().get(i), runMan.getColor(runMan.getCityStyles().get(i)));
+                    ImGui.beginDisabled();
                     ImGui.combo("Style Select##" + i, runMan.getStyle(runMan.getCityStyles().get(i)).getSelectedStyle(), Style.styleTypes);
+                    ImGui.endDisabled();
+                    ImGui.textDisabled("(?)");
+                    // remove once styles are fixed
+                    if (ImGui.isItemHovered()) {
+                        ImGui.beginTooltip();
+                        ImGui.text("Changing style types is not yet implemented.");
+                        ImGui.endTooltip();
+                    }
+
                     ImGui.dummy(0, 5f);
                     ImGui.separator();
                     ImGui.dummy(0, 5f);
