@@ -549,7 +549,7 @@ public class GUILayer {
     public void obstacleShapeEditOptions(EditorShape toParse) {
         Obstacle obst = (Obstacle) toParse;
         if (ImGui.combo("Obstacle Types", obst.getObstacleType(), Constants.OBSTACLE_TYPES)) {
-
+                runMan.updateObstacle(obst);
         }
 
         if (Constants.OBSTACLE_TYPES[obst.getObstacleType().get()].equals("River")) {
@@ -575,6 +575,21 @@ public class GUILayer {
                 runMan.updateObstacle(obst);
             }
 
+        }
+
+        if (Constants.OBSTACLE_TYPES[obst.getObstacleType().get()].equals("Wall")) {
+            if (ImGui.sliderFloat("thickness", obst.getThickness().getData(), 0.01f, 0.05f)) {
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Divisions", obst.getDivisions().getData(), 0.05f, 1f)) {
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Wall Edge Thickness", obst.getWallEdgeThickness().getData(), 0.01f, 0.08f)) {
+                runMan.updateObstacle(obst);
+            }
+            if (ImGui.sliderFloat("Wall Edge Width", obst.getWallEdgeWidth().getData(), 0.01f, 1f)) {
+                runMan.updateObstacle(obst);
+            }
         }
     }
 

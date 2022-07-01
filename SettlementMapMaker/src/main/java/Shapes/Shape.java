@@ -574,5 +574,10 @@ public class Shape {
     public void clear() {
         this.points.clear();
     }
+    
+    public void setVisualPoints(ArrayList<Point> p) {
+        this.visualPoints.clear();
+        this.visualPoints.addAll(p);
+    }
 
 }

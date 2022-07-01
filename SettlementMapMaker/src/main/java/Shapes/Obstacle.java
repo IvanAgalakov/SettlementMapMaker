@@ -24,6 +24,9 @@ public class Obstacle extends EditorShape{
     private final ImFloat thickness = new ImFloat(0.025f);
     private final ImFloat sectionDev = new ImFloat(0.01f);
     
+    private final ImFloat wallEdgeThickness = new ImFloat(0.02f);
+    private final ImFloat wallEdgeWidth = new ImFloat(0.01f);
+    
     
     public Obstacle(String name) {
         super(name);
@@ -59,6 +62,14 @@ public class Obstacle extends EditorShape{
     
     public ImInt getResolution() {
         return resolution;
+    }
+    
+    public ImFloat getWallEdgeThickness() {
+        return this.wallEdgeThickness;
+    }
+    
+    public ImFloat getWallEdgeWidth() {
+        return this.wallEdgeWidth;
     }
     
     

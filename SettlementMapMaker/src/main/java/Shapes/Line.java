@@ -149,6 +149,10 @@ public class Line {
         }
     }
     
+    public Line reverse() {
+        return new Line(new Point(this.end), new Point(this.start));
+    }
+    
     
     @Override
     public String toString() {

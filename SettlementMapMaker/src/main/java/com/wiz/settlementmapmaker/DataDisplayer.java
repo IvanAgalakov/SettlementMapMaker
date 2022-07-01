@@ -13,6 +13,7 @@ import Shapes.Obstacle;
 import Shapes.Point;
 import Shapes.QuadBezierCurve;
 import Shapes.River;
+import Shapes.Wall;
 import Shapes.Zone;
 import com.wiz.settlementmapmaker.Utilities.Utils;
 import imgui.ImGuiIO;
@@ -247,7 +248,9 @@ public class DataDisplayer {
                             x--;
                         }
                     } else if (shapeList.get(x) instanceof Obstacle obs) {
+
                         if (this.updateObstacle.containsKey(obs)) {
+
                             if (this.updateObstacle.get(obs).get()) {
                                 if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
                                     ArrayList<River> rivers = new ArrayList();
@@ -265,6 +268,34 @@ public class DataDisplayer {
                                         ArrayList<EditorShape> drawData = new ArrayList();
                                         for (int a = 0; a < rivers.size(); a++) {
                                             drawData.addAll(rivers.get(a).getCurves());
+                                        }
+
+                                        shapeList.addAll(drawData);
+                                        this.obstacles.put(obs, drawData);
+                                        this.updateObstacle.get(obs).set(false);
+
+                                    }
+                                }
+                                
+                                System.out.println(obs.getName().get());
+                                if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("Wall")) {
+                                    //System.out.println("updating" + System.currentTimeMillis());
+                                    //System.out.println("runs walls");
+                                    ArrayList<Wall> walls = new ArrayList();
+                                    ArrayList<Line> lines = obs.getLines(false);
+                                    for (int a = 0; a < lines.size(); a++) {
+                                        Wall previous = null;
+                                        if (!walls.isEmpty()) {
+                                            previous = walls.get(walls.size() - 1);
+                                        }
+                                        walls.add(new Wall(lines.get(a), obs, previous));
+                                    }
+                                    if (!walls.isEmpty()) {
+                                        shapeList.remove(shapeList.get(x));
+                                        x--;
+                                        ArrayList<EditorShape> drawData = new ArrayList();
+                                        for (int a = 0; a < walls.size(); a++) {
+                                            drawData.addAll(walls.get(a).getWallSegments());
                                         }
 
                                         shapeList.addAll(drawData);
@@ -370,8 +401,8 @@ public class DataDisplayer {
             if (shapes.get(x) instanceof Obstacle obs) {
                 if (Constants.OBSTACLE_TYPES[obs.getObstacleType().get()].equals("River")) {
                     this.shapesByStyle.get("water").add(shapes.get(x));
+                    continue;
                 }
-                continue;
             }
 
             currentStyleShapes.add(shapes.get(x));
@@ -389,6 +420,7 @@ public class DataDisplayer {
         } else {
             this.updateObstacle.put(ob, new ImBoolean(true));
         }
+        System.out.println(this.updateObstacle.get(ob));
     }
 
     public void setEditPoint(Point editPoint) {
