@@ -37,18 +37,21 @@ public class TextureLibrary {
     private static HashMap<String, Texture> textures = new HashMap<>();
 
     public static void loadAllTextures() {
-        try {
-            URI uri = TextureLibrary.class.getResource("/Textures").toURI();
-            Path dirPath = Paths.get(uri);
+        String dir = System.getProperty("user.dir");
+        dir += "\\Textures";
+        System.out.println(dir);
+      //  try {
+            //URI uri = TextureLibrary.class.getResource("/Textures").toURI();
+            Path dirPath = Paths.get(dir);
             try {
                 Files.list(dirPath)
                         .forEach(p -> textureLocations.add(p.toString()));
             } catch (IOException ex) {
                 Logger.getLogger(TextureLibrary.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(TextureLibrary.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      //  } catch (URISyntaxException ex) {
+       //     Logger.getLogger(TextureLibrary.class.getName()).log(Level.SEVERE, null, ex);
+       // }
 
         for (int i = 0; i < textureLocations.size(); i++) {
             String[] nameLoc = textureLocations.get(i).split("\\\\");

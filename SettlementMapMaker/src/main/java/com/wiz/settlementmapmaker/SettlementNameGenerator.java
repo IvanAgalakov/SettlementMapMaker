@@ -28,19 +28,22 @@ public class SettlementNameGenerator {
     private static HashMap<String, ArrayList<String>> randomNameLists = new HashMap();
     
     public static void loadAllNames() {
+        String dir = System.getProperty("user.dir");
+        dir += "\\Name Generation";
+        System.out.println(dir);
         ArrayList<String> allPaths = new ArrayList<>();
-        try {
-            URI uri = SettlementNameGenerator.class.getResource("/Name Generation").toURI();
-            Path dirPath = Paths.get(uri);
+        //try {
+      //      URI uri = SettlementNameGenerator.class.getResource("/Name Generation").toURI();
+            Path dirPath = Paths.get(dir);
             try {
                 Files.list(dirPath)
                         .forEach(p -> allPaths.add(p.toString()));
             } catch (IOException ex) {
                 Logger.getLogger(SettlementNameGenerator.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(SettlementNameGenerator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       // } catch (URISyntaxException ex) {
+      //      Logger.getLogger(SettlementNameGenerator.class.getName()).log(Level.SEVERE, null, ex);
+      //  }
 
         for (int i = 0; i < allPaths.size(); i++) {
             try {
