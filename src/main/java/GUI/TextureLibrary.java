@@ -56,10 +56,11 @@ public class TextureLibrary {
         for (int i = 0; i < textureLocations.size(); i++) {
             String[] nameLoc = textureLocations.get(i).split("\\\\");
             String name = nameLoc[nameLoc.length - 1];
+            System.out.println(name);
 
             try {
                 BufferedImage image = ImageIO.read(new File(textureLocations.get(i)));
-                Texture tex = new Texture(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), 0, image.getWidth(), image.getHeight(), image);
+                Texture tex = new Texture(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), 0, image.getWidth(), image.getHeight(), image, textureLocations.get(i));
                 textures.put(name, tex);
             } catch (Exception e) {
                 System.err.println("Unsuccessful creation of texture");
@@ -70,5 +71,9 @@ public class TextureLibrary {
     
     public static int getTexture(String texture) {
         return textures.get(texture).texture;
+    }
+
+    public static Texture getTextureObject(String texture) {
+        return textures.get(texture);
     }
 }

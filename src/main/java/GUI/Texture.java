@@ -21,19 +21,25 @@ public class Texture {
     
     public int width;
     public int height;
+    public ByteBuffer original;
+    public String path;
 
-    public Texture(byte[] pixels, int mipMapLevel, int width, int height, BufferedImage b) {
+    public Texture(byte[] pixels, int mipMapLevel, int width, int height, BufferedImage b, String path) {
         //bind();
         
+        this.path = path;
+
         texture = GL30C.glGenTextures();
         bind();
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * Integer.BYTES);
+
         this.width = width;
         this.height = height;
         //buffer.put(pixels);
         //buffer.flip();
         //buffer.rewind();
         buffer = convertImage(b);
+        original = buffer;
 
         GL30C.glTexImage2D(GL30C.GL_TEXTURE_2D, mipMapLevel, GL30C.GL_RGBA, width, height, 0, GL30C.GL_RGBA, GL30C.GL_UNSIGNED_BYTE, buffer);
 

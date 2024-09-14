@@ -5,29 +5,49 @@
  */
 package com.wiz.settlementmapmaker;
 
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowIcon;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_RGB;
+import static org.lwjgl.opengl.GL11C.GL_VIEWPORT;
+import static org.lwjgl.opengl.GL11C.glClear;
+import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.GL30C.GL_RENDERBUFFER;
+import static org.lwjgl.opengl.GL30C.glCheckFramebufferStatus;
+
+import java.util.ArrayList;
+
+import org.lwjgl.glfw.Callbacks;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL33C;
+
 import GUI.DrawColor;
 import GUI.GUILayer;
 import GUI.Texture;
+import GUI.TextureLibrary;
 import Shapes.EditorShape;
 import Shapes.Point;
+
 import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
-import org.lwjgl.glfw.Callbacks;
-import org.lwjgl.glfw.GLFW;
-import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL33C;
-import static org.lwjgl.opengl.GL33C.*;
 
 /**
  *
@@ -114,6 +134,8 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
+        
+
         windowPtr = glfwCreateWindow(1920, 1070, "Settlement Map Maker", 0, 0);
 
         if (windowPtr == 0) {
@@ -123,6 +145,8 @@ public class Window {
 
         glfwMakeContextCurrent(windowPtr);
         glfwSwapInterval(1);
+
+
         glfwShowWindow(windowPtr);
 
         GL.createCapabilities();
@@ -147,6 +171,16 @@ public class Window {
     private void initImGui() {
         ImGui.createContext();
         runMan.initIO(imgui.internal.ImGui.getIO());
+
+
+        //ImageParser resource_01 = ImageParser.load_image(TextureLibrary.getTextureObject(Constants.ICON).path);
+        //GLFWImage image = GLFWImage.malloc(); GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+        //image.set(resource_01.get_width(), resource_01.get_heigh(), resource_01.get_image());
+        //imagebf.put(0, image);
+        //glfwSetWindowIcon(window, imagebf);
+
+        //image.close();
+
         imGuiGlfw.init(windowPtr, true);
         imGuiGl3.init();
     }
