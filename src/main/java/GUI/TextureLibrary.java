@@ -38,7 +38,7 @@ public class TextureLibrary {
 
     public static void loadAllTextures() {
         String dir = System.getProperty("user.dir");
-        dir += "\\Textures";
+        dir += "/Textures";
         System.out.println(dir);
       //  try {
             //URI uri = TextureLibrary.class.getResource("/Textures").toURI();
@@ -52,9 +52,9 @@ public class TextureLibrary {
       //  } catch (URISyntaxException ex) {
        //     Logger.getLogger(TextureLibrary.class.getName()).log(Level.SEVERE, null, ex);
        // }
-
+        System.out.println(textureLocations.size());
         for (int i = 0; i < textureLocations.size(); i++) {
-            String[] nameLoc = textureLocations.get(i).split("\\\\");
+            String[] nameLoc = textureLocations.get(i).split("[/\\\\]");
             String name = nameLoc[nameLoc.length - 1];
             System.out.println(name);
 

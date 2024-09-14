@@ -30,7 +30,7 @@ public class FontLibrary {
 
     public static void loadAllFonts(ImGuiIO io) {
         String dir = System.getProperty("user.dir");
-        dir += "\\Fonts";
+        dir += "/Fonts";
         System.out.println(dir);
 
 
@@ -50,7 +50,7 @@ public class FontLibrary {
         //}
 
         for (int i = 0; i < fontLocations.size(); i++) {
-            String[] nameLoc = fontLocations.get(i).split("\\\\");
+            String[] nameLoc = fontLocations.get(i).split("/");
             String name = nameLoc[nameLoc.length - 1];
 
             fontNames.add(name);

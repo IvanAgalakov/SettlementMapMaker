@@ -263,7 +263,7 @@ public class RuntimeManager {
         System.out.println(name);
         setupSettlement(new Settlement(name));
         settlementFilePath.set(path);
-        String fileDir = pendingSettlementFolderPath.get() + "\\" + name + ".stmap";
+        String fileDir = pendingSettlementFolderPath.get() + "/" + name + ".stmap";
         FileManager.saveSettlement(currentSettlement, fileDir);
         this.setSettlementFileDirectory(fileDir);
     }

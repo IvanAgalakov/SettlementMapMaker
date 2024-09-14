@@ -29,7 +29,7 @@ public class SettlementNameGenerator {
     
     public static void loadAllNames() {
         String dir = System.getProperty("user.dir");
-        dir += "\\Name Generation";
+        dir += "/Name Generation";
         System.out.println(dir);
         ArrayList<String> allPaths = new ArrayList<>();
         //try {
