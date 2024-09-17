@@ -1,7 +1,7 @@
 # Description
 A map maker that can be used to create birds-eye-view maps of towns, cities, villages... any sort of settlements.
 
-![example](https://github.com/user-attachments/assets/37f97267-3be7-4643-909c-2ecce18be88d | width=500)
+<img src="https://github.com/user-attachments/assets/37f97267-3be7-4643-909c-2ecce18be88d" alt="alt text" width="500">
 
 ## Built Using
 Built using Java Maven, making use of the LWJGL library suites. The rendering is done using OpenGL, using vertex-buffers, fragment and vertex shaders.
