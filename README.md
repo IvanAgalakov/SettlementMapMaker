@@ -7,7 +7,9 @@ A map maker that can be used to create birds-eye-view maps of towns, cities, vil
 Built using Java Maven, making use of the LWJGL library suites. The rendering is done using OpenGL, using vertex-buffers, fragment and vertex shaders.
 
 It uses the Power Voronoi Diagram library made by ArlindNocaj: https://github.com/ArlindNocaj/power-voronoi-diagram
+
 As well as the imgui-java library, which makes bindings for the imgui library, made by SpaiR: https://github.com/SpaiR/imgui-java
+
 The rest of the libraries are from the LWJGL suite of libararies: https://www.lwjgl.org/
 
 ## Background
